@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tx.framework.web.dao.operateflow.OperateFlowDao">
+	<resultMap id="BaseResultMap" type="OperateFlow">
+		<id column="id" property="id" jdbcType="CHAR" />
+		<result column="action" property="action" jdbcType="TINYINT" />
+		<result column="cardid" property="cardid" jdbcType="CHAR" />
+		<result column="customerid" property="customerid" jdbcType="CHAR" />
+		<result column="pay" property="pay" jdbcType="DOUBLE" />
+		<result column="operatorid" property="operatorid" jdbcType="CHAR" />
+		<result column="disposename" property="disposename" jdbcType="VARCHAR" />
+		<result column="payid" property="payid" jdbcType="CHAR" />
+		<result column="shopentityid" property="shopentityid" jdbcType="CHAR" />
+		<result column="valid" property="valid" jdbcType="BIT" />
+		<result column="optime" property="optime" jdbcType="TIMESTAMP" />
+		<result column="op_action" property="opAction" />
+	</resultMap>
+
+	<insert id="save" parameterType="OperateFlow">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select REPLACE(UUID(),'-','')
+		</selectKey>
+		insert into operate_flow
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="action != null">
+				action,
+			</if>
+			<if test="cardid != null">
+				cardid,
+			</if>
+			<if test="customerid != null">
+				customerid,
+			</if>
+			<if test="pay != null">
+				pay,
+			</if>
+			<if test="operatorid != null">
+				operatorid,
+			</if>
+			<if test="disposename != null">
+				disposename,
+			</if>
+			<if test="payid != null">
+				payid,
+			</if>
+			<if test="shopentityid != null">
+				shopentityid,
+			</if>
+			<if test="valid != null">
+				valid,
+			</if>
+			<if test="optime != null">
+				optime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="action != null">
+				#{action,jdbcType=TINYINT},
+			</if>
+			<if test="cardid != null">
+				#{cardid,jdbcType=CHAR},
+			</if>
+			<if test="customerid != null">
+				#{customerid,jdbcType=CHAR},
+			</if>
+			<if test="pay != null">
+				#{pay,jdbcType=DOUBLE},
+			</if>
+			<if test="operatorid != null">
+				#{operatorid,jdbcType=CHAR},
+			</if>
+			<if test="disposename != null">
+				#{disposename,jdbcType=VARCHAR},
+			</if>
+			<if test="payid != null">
+				#{payid,jdbcType=CHAR},
+			</if>
+			<if test="shopentityid != null">
+				#{shopentityid,jdbcType=CHAR},
+			</if>
+			<if test="valid != null">
+				#{valid,jdbcType=BIT},
+			</if>
+			<if test="optime != null">
+				#{optime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+
+	<!-- 查询操作流水分页 -->
+	<select id="getPage" resultMap="BaseResultMap">
+		select action,cardid,customerid,
+		disposename,optime,pay,b.name as op_action
+		from operate_flow a
+		left join dict_op_status b
+		on a.action = b.value
+		<where>
+			<if test="po.cardid != null and po.cardid != ''">
+				cardid = #{po.cardid}
+			</if>
+			<if test="po.action != null and po.action != ''">
+				and action = #{po.action}
+			</if>
+		</where>
+		order by a.optime desc
+	</select>
+
+</mapper>

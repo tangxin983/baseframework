@@ -1,0 +1,210 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.tx.framework</groupId>
+		<artifactId>framework-parent</artifactId>
+		<version>0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>framework-web</artifactId>
+	<name>framework-web</name>
+	<packaging>war</packaging>
+	<description>web module</description>
+
+	<!-- 依赖项定义 -->
+	<dependencies>
+		<!-- spring basic -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<!-- spring data access -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>
+
+		<!-- AOP -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
+
+		<!-- PERSISTENCE begin -->
+		<!-- mybatis -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+		</dependency>
+ 
+		<!-- connection pool -->
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jdbc</artifactId>
+		</dependency>
+
+		<!-- jdbc driver -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- PERSISTENCE end -->
+
+		<!-- WEB begin -->
+		<dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>sitemesh</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+		</dependency>
+		<!-- WEB end -->
+
+		<!-- SECURITY begin -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-ehcache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+		</dependency>
+		<!-- SECURITY end -->
+		
+		<!-- TEST begin -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+ 
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- TEST end -->
+		
+		<!-- j2ee web spec from common -->
+
+		<!-- JSR303 BeanValidator from common -->
+
+		<!-- JSON from common -->
+
+		<!-- LOGGING from common -->
+		 
+		<!-- UTILS from common -->
+		 
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>framework-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+	
+	<profiles>
+		<!-- 开发环境 -->
+		<profile>
+			<id>development</id>
+			<properties>
+				<portableConfig.path>src/main/resources/portable/development.xml</portableConfig.path>
+			</properties>
+		</profile>
+		<!-- 生产环境 -->
+		<profile>
+			<id>production</id>
+			<properties>
+				<portableConfig.path>src/main/resources/portable/production.xml</portableConfig.path>
+			</properties>
+			<!-- 默认打包为生产环境 -->
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+	</profiles>
+
+	<build>
+		<finalName>dining</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+			    	<archive>
+			        	<addMavenDescriptor>false</addMavenDescriptor>
+			        </archive>
+			    </configuration>
+			</plugin>
+			<!-- 按照不同环境替换prop文件属性 -->
+			<plugin>
+				<groupId>com.juvenxu.portable-config-maven-plugin</groupId>
+				<artifactId>portable-config-maven-plugin</artifactId>
+				<version>1.1.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>replace-package</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<portableConfig>${portableConfig.path}</portableConfig>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

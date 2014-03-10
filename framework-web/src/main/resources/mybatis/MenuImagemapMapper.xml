@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tx.framework.web.dao.menu.MenuImagemapDao">
+	<resultMap id="BaseResultMap" type="MenuImagemap">
+		<id column="id" property="id" jdbcType="CHAR" />
+		<result column="menu_layout_id" property="menuLayoutId"
+			jdbcType="CHAR" />
+		<result column="menu_id" property="menuId" jdbcType="CHAR" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+		<result column="width" property="width" jdbcType="INTEGER" />
+		<result column="height" property="height" jdbcType="INTEGER" />
+		<result column="topx" property="topx" jdbcType="INTEGER" />
+		<result column="topy" property="topy" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="bottomx" property="bottomx" jdbcType="INTEGER" />
+		<result column="bottomy" property="bottomy" jdbcType="INTEGER" />
+		<result column="coord" property="coord" jdbcType="VARCHAR" />
+		<result column="menu_name" property="menuName" />
+	</resultMap>
+	
+	<!-- 删除热区 -->
+	<delete id="delete" parameterType="java.lang.String">
+		delete from menu_imagemap where
+		id = #{id,jdbcType=CHAR}
+	</delete>
+	
+	<!-- 删除排版下所有热区 -->
+	<delete id="deleteByLayout" parameterType="java.lang.String">
+		delete from menu_imagemap where
+		menu_layout_id = #{menuLayoutId,jdbcType=CHAR}
+	</delete>
+	
+	<!-- 查找热区 -->
+	<select id="findByParams" parameterType="Map" resultMap="BaseResultMap">
+		select a.*, b.menu_name from menu_imagemap a
+		left join menu b
+		on a.menu_id = b.id
+		<where>
+			<if test="menuLayoutId != null and menuLayoutId != ''">
+				a.menu_layout_id = #{menuLayoutId}
+			</if>
+			<if test="coord != null and coord != ''">
+				a.coord = #{coord}
+			</if>
+		</where>
+		order by a.sort
+	</select>
+	
+	<!-- 保存热区 -->
+	<insert id="save" parameterType="MenuImagemap">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select REPLACE(UUID(),'-','')
+		</selectKey>
+		insert into menu_imagemap
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="menuLayoutId != null">
+				menu_layout_id,
+			</if>
+			<if test="menuId != null">
+				menu_id,
+			</if>
+			<if test="sort != null">
+				sort,
+			</if>
+			<if test="width != null">
+				width,
+			</if>
+			<if test="height != null">
+				height,
+			</if>
+			<if test="topx != null">
+				topx,
+			</if>
+			<if test="topy != null">
+				topy,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="bottomx != null">
+				bottomx,
+			</if>
+			<if test="bottomy != null">
+				bottomy,
+			</if>
+			<if test="coord != null">
+				coord,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="menuLayoutId != null">
+				#{menuLayoutId,jdbcType=CHAR},
+			</if>
+			<if test="menuId != null">
+				#{menuId,jdbcType=CHAR},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="width != null">
+				#{width,jdbcType=INTEGER},
+			</if>
+			<if test="height != null">
+				#{height,jdbcType=INTEGER},
+			</if>
+			<if test="topx != null">
+				#{topx,jdbcType=INTEGER},
+			</if>
+			<if test="topy != null">
+				#{topy,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="bottomx != null">
+				#{bottomx,jdbcType=INTEGER},
+			</if>
+			<if test="bottomy != null">
+				#{bottomy,jdbcType=INTEGER},
+			</if>
+			<if test="coord != null">
+				#{coord,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+</mapper>

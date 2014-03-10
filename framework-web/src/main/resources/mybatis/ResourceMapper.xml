@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.tx.framework.web.dao.resource.ResourceDao">
+
+	<resultMap id="resourceMap" type="Resource">
+		<id column="id" property="id" jdbcType="CHAR" />
+		<result column="resource_name" property="resourceName" jdbcType="VARCHAR" />
+		<result column="uri" property="uri" jdbcType="VARCHAR" />
+		<result column="permission" property="permission" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="CHAR" />
+		<result column="resource_type_name" property="resourceTypeName" />
+		<result column="parent_resource_name" property="parentResourceName" />
+		<result column="path" property="path" />
+	</resultMap>
+
+	<!-- 根据UserId查找用户权限 -->
+	<select id="findByUserId" parameterType="String" resultMap="resourceMap">
+		select
+		distinct re.*, attachment.path from
+		user u left join role_user ru on u.id =
+		ru.user_id
+		left join role r on ru.role_id = r.id
+		left join role_resource
+		rr on r.id = rr.role_id
+		left join resource re on rr.resource_id = re.id
+		left join attachment on re.id = attachment.service_id
+		where u.id = #{id}
+		order by re.sort
+	</select>
+
+	<!-- 查询所有资源(按sort排序 越靠前越先匹配) -->
+	<select id="findAll" resultMap="resourceMap">
+		select * from resource order by
+		sort
+	</select>
+
+	<!-- 根据ID查询 -->
+	<select id="findOne" resultMap="resourceMap" parameterType="String">
+		select a.*, b.name as resource_type_name, c.resource_name as parent_resource_name 
+		from resource a
+		left join dict_resource_type b
+		on a.type = b.value
+		left join resource c
+		on a.parent_id = c.id
+		where a.id=#{id}
+	</select>
+	
+	<!-- 面包屑导航查询-->
+	<select id="getBreadcrumb" resultMap="resourceMap" parameterType="String">
+		select a.resource_name, b.resource_name as parent_resource_name, a.parent_id
+		from resource a
+		LEFT JOIN resource b
+		on a.parent_id = b.id
+		where a.type=1 and a.uri = #{uri} 
+		and a.parent_id is not null
+	</select>
+
+	<!-- 查询分页 -->
+	<select id="getPage" resultMap="resourceMap">
+		select a.*, b.name as resource_type_name, c.resource_name as parent_resource_name 
+		from resource a
+		left join dict_resource_type b
+		on a.type = b.value
+		left join resource c
+		on a.parent_id = c.id
+		<where>
+			<if test="po.resourceName != null and po.resourceName != ''">
+				a.resource_name like CONCAT('%',#{po.resourceName},'%')
+			</if>
+			<if test="po.type != null and po.type != ''">
+				and a.type = #{po.type}
+			</if>
+		</where>
+	</select>
+
+	<!-- 新增资源 -->
+	<insert id="save" parameterType="Resource">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select REPLACE(UUID(),'-','')
+		</selectKey>
+		insert into resource
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="resourceName != null">
+				resource_name,
+			</if>
+			<if test="uri != null">
+				uri,
+			</if>
+			<if test="permission != null">
+				permission,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="sort != null">
+				sort,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="resourceName != null">
+				#{resourceName,jdbcType=VARCHAR},
+			</if>
+			<if test="uri != null">
+				#{uri,jdbcType=VARCHAR},
+			</if>
+			<if test="permission != null">
+				#{permission,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=CHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 更新 -->
+	<update id="update" parameterType="Resource">
+		update resource
+		<set>
+			<if test="resourceName != null">
+				resource_name = #{resourceName,jdbcType=VARCHAR},
+			</if>
+			<if test="uri != null">
+				uri = #{uri,jdbcType=VARCHAR},
+			</if>
+			<if test="permission != null">
+				permission = #{permission,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				sort = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=CHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=CHAR}
+	</update>
+
+	<!-- 删除 -->
+	<delete id="delete" parameterType="String">
+		delete from resource where
+		id=#{id}
+	</delete>
+
+	<!-- 删除资源角色对应关系 -->
+	<delete id="deleteResourceRole" parameterType="String">
+		delete from
+		role_resource where resource_id=#{id}
+	</delete>
+</mapper> 

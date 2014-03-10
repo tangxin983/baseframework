@@ -1,0 +1,106 @@
+body {
+	background-image: url("../image/bg.png");
+}
+
+.main-container {
+	margin: 30px 10px 25px;
+}
+
+.login-container {
+	margin: 0 auto;
+    padding: 7% 0;
+    width: 500px;
+}
+
+.content-widget {
+	background-color: #FFFFFF;
+	border-left: 1px solid #BBBBBB;
+	border-right: 1px solid #BBBBBB;
+	border-bottom: 1px solid #BBBBBB;
+	padding: 0 1px 1px;
+	min-height: 400px;
+}
+#content-widget {
+	padding-top: 15px;
+}
+.content-container {
+	background-color: #FFFFFF;
+	padding: 0px 10px 10px;
+	background-image: url("../image/book-cover.png");
+}
+
+.data-content {
+	margin: 0px 15px;
+}
+
+.user-info {
+	margin-left: 100px;
+}
+
+.user-info .name {
+	color: #FEE392;
+	display: block;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.user-info,.profile {
+	display: inline-block;
+}
+
+
+.border-black{
+    border-color: #323232;
+}
+
+.profile {
+	margin-bottom: 20px;
+	bottom:0px;
+	position: absolute;
+	box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.heading-background{
+	background-image: url("../image/header-bg.png") !important;
+	height: 67px;
+	border-color: #323232 !important;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.4);
+    color: #FFFFFF;
+    position: relative;
+	z-index: 1010;
+}
+.pictrue {
+	width: 90px;
+	margin: 0 auto;
+	position: relative;
+}
+
+.file-upload {
+	height: 100%;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    position: absolute
+}
+
+.server-error {
+	padding: 5% 20px;
+	width: 400px;
+	margin: 0 auto;
+}
+
+.server-error h1{
+	font-size: 100px;
+}
+
+tbody tr.highlight td { background-color: #cfcfcf; }
+
+#pic_container {
+	width: 100%;
+	height: 500px;
+	border: solid 1px #bfc1c5;
+	overflow: auto;
+}
+
+.navbar-default {
+  	background: url("../image/bg.png") repeat-x;
+}

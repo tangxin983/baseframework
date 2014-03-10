@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tx.framework.web.dao.area.AreaDao">
+	<resultMap id="BaseResultMap" type="Area">
+		<id column="id" property="id" jdbcType="CHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+		<result column="area_name" property="areaName" jdbcType="VARCHAR" />
+		<result column="memo" property="memo" jdbcType="VARCHAR" />
+		<result column="valid" property="valid" jdbcType="TINYINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<!-- 查询区域分页 -->
+	<select id="getPage" resultMap="BaseResultMap">
+		select * from area
+		<where>
+			<if test="po.areaName != null and po.areaName != ''">
+				and area_name like CONCAT('%',#{po.areaName},'%')
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询所有区域-->
+	<select id="findAll" resultMap="BaseResultMap">
+		select id, area_name from area
+	</select>
+	
+	<!-- 根据id查找区域 -->
+	<select id="findOne" parameterType="String" resultMap="BaseResultMap">
+		select * from area where id=#{id}
+	</select>
+	
+	<!-- 根据区域名称查找 -->
+	<select id="findByName" parameterType="String" resultMap="BaseResultMap">
+		select id,area_name from area 
+		<where>
+			<if test=" _parameter != null and  _parameter != ''">
+				and area_name = #{areaName}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 删除区域 -->
+	<delete id="delete" parameterType="String">
+		delete from area where id=#{id}
+	</delete>
+
+	<!-- 添加区域 -->
+	<insert id="save" parameterType="Area">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select REPLACE(UUID(),'-','')
+		</selectKey>
+		insert into area
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="code != null">
+				code,
+			</if>
+			<if test="sort != null">
+				sort,
+			</if>
+			<if test="areaName != null">
+				area_name,
+			</if>
+			<if test="memo != null">
+				memo,
+			</if>
+			<if test="valid != null">
+				valid,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="areaName != null">
+				#{areaName,jdbcType=VARCHAR},
+			</if>
+			<if test="memo != null">
+				#{memo,jdbcType=VARCHAR},
+			</if>
+			<if test="valid != null">
+				#{valid,jdbcType=TINYINT},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 更新区域 -->
+	<update id="update" parameterType="Area">
+		update area
+		<set>
+			<if test="code != null">
+				code = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				sort = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="areaName != null">
+				area_name = #{areaName,jdbcType=VARCHAR},
+			</if>
+			<if test="memo != null">
+				memo = #{memo,jdbcType=VARCHAR},
+			</if>
+			<if test="valid != null">
+				valid = #{valid,jdbcType=TINYINT},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=CHAR}
+	</update>
+</mapper>

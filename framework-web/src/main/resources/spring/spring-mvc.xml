@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<!-- 自动扫描且只扫描@Controller -->
+	<context:component-scan base-package="com.tx.framework.web" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+	
+	<!-- 
+		BeanPostProcessor用于去掉MVC URL匹配后缀 
+		缺点：通过后缀名来区分返回xml或json就不行了
+	-->
+	<bean class="com.tx.framework.web.common.config.SuffixPostProcessor" />
+	
+	<!-- 启用Spring MVC 注解驱动-->
+    <!-- 自动初始化7个转换器（包括json和xml） -->
+    <!-- 使用@ResponseBody和@RequestBody来自动转换 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<!-- 将StringHttpMessageConverter的默认编码设为UTF-8 -->
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+		    	<constructor-arg value="UTF-8" />
+			</bean>
+			<!-- 将json优先级调到xml之前 -->
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+			<bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter" />  
+  		</mvc:message-converters>
+	</mvc:annotation-driven>
+	
+	<!-- 针对controller启用aop注解 -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+
+	<!-- ajax session过期拦截器 -->
+	<!-- 
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<mvc:exclude-mapping path="/static/**" />
+			<mvc:exclude-mapping path="/api/**" />
+			<bean class="com.tx.framework.web.manage.interceptor.AjaxSessionInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	 -->
+	<!--
+       	@ResponseBody返回内容格式的默认策略优先级从高到低:
+        1. 后缀名：http://myserver/myapp/accounts/list.json代表返回json
+        2. 格式：http://myserver/myapp/accounts/list?format=xml代表返回xml，format是默认参数
+        3. 检查Accept
+    
+ 	<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+      	<property name="favorPathExtension" value="true" />
+    	<property name="favorParameter" value="true" />
+    	<property name="parameterName" value="mediaType" />
+    	<property name="ignoreAcceptHeader" value="true"/>
+    	<property name="useJaf" value="false"/>
+    	<property name="mediaTypes">
+        	<map>
+            	<entry key="json" value="application/json" />
+            	<entry key="xml" value="application/xml" />
+       		</map>
+    	</property>
+ 	</bean>
+	-->
+	<!-- 定义JSP文件的位置 --> 
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+	
+			
+	<!-- 容器默认的DefaultServletHandler处理 所有静态内容与无RequestMapping处理的URL-->	
+	<mvc:default-servlet-handler/>
+	
+	<!-- 定义无需Controller的url<->view直接映射，这里定义用户登录成功后的默认显示页面 -->
+	<mvc:view-controller path="/" view-name="redirect:/index"/> 
+	
+	<!-- 将Controller抛出的异常转到特定View, 保持SiteMesh的装饰效果 -->
+	<!-- 
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
+		<property name="exceptionMappings">  
+			<props>  
+				<prop key="java.lang.Throwable">error/500</prop>
+            </props>  
+		</property>  
+    </bean>
+     -->
+    <!-- 
+    	applicationContext-shiro.xml中的AOP管不到controller
+    	在spring-mvc中需要再定义一次以支持对Controller的方法级AOP安全控制
+    -->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor">
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+	
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+    	<property name="securityManager" ref="securityManager"/>
+	</bean>
+	
+	<!-- 文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 限制20MB -->
+    	<property name="maxUploadSize" value="20480000" />
+    	<property name="defaultEncoding" value="UTF-8" />
+    </bean>
+</beans>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tx.framework.web.dao.order.OrderDetailDao">
+	<resultMap id="BaseResultMap" type="OrderDetail">
+		<id column="id" property="id" jdbcType="CHAR" />
+		<result column="order_id" property="orderId" jdbcType="CHAR" />
+		<result column="menu_id" property="menuId" jdbcType="CHAR" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="done_time" property="doneTime" jdbcType="BIGINT" />
+		<result column="menu_name" property="menuName" />
+	</resultMap>
+
+	<!-- 根据id查找订单项 -->
+	<select id="findOne" parameterType="String" resultMap="BaseResultMap">
+		select a.*, b.menu_name 
+		from order_detail a 
+		LEFT JOIN menu b on a.menu_id = b.id
+		where a.id = #{id}
+	</select>
+	
+	<!-- 根据订单id、订单项状态、订单项类型查找订单项 -->
+	<select id="findByParams" parameterType="Map" resultMap="BaseResultMap">
+		select a.*, b.menu_name 
+		from order_detail a 
+		LEFT JOIN menu b on a.menu_id = b.id
+		<where>
+			<if test="orderId != null and orderId != ''">
+				and a.order_id = #{orderId}
+			</if>
+			<if test="type != null and type != ''">
+				and a.type = #{type}
+			</if>
+			<if test="status != null and status != ''">
+				and a.status = #{status}
+			</if>
+		</where>
+		order by create_time
+	</select>
+
+	<!-- 生成订单详情 -->
+	<insert id="save" parameterType="OrderDetail">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select REPLACE(UUID(),'-','')
+		</selectKey>
+		insert into order_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="orderId != null">
+				order_id,
+			</if>
+			<if test="menuId != null">
+				menu_id,
+			</if>
+			<if test="num != null">
+				num,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="doneTime != null">
+				done_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=CHAR},
+			</if>
+			<if test="menuId != null">
+				#{menuId,jdbcType=CHAR},
+			</if>
+			<if test="num != null">
+				#{num,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=BIGINT},
+			</if>
+			<if test="doneTime != null">
+				#{doneTime,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 更新订单项（状态、类型、出菜时间等） -->
+	<update id="update" parameterType="OrderDetail">
+		update order_detail
+		<set>
+			<if test="orderId != null">
+				order_id = #{orderId,jdbcType=CHAR},
+			</if>
+			<if test="menuId != null">
+				menu_id = #{menuId,jdbcType=CHAR},
+			</if>
+			<if test="num != null">
+				num = #{num,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=BIGINT},
+			</if>
+			<if test="doneTime != null">
+				done_time = #{doneTime,jdbcType=BIGINT},
+			</if>
+		</set>
+		where id = #{id,jdbcType=CHAR}
+	</update>
+</mapper>
