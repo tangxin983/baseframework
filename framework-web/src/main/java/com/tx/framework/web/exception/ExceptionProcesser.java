@@ -57,7 +57,7 @@ public class ExceptionProcesser {
     @AfterThrowing(throwing="ex",pointcut="serviceMethod()")  
     public void toServiceException(JoinPoint jp, Throwable ex){  
     	ServiceExceptionLogger.error(jp.toShortString(), parseParameters(jp), ex);
-        throw new ServiceException(ex.getMessage());
+        //throw new ServiceException(ex.getMessage());
     }  
     
     private String parseParameters(JoinPoint jp) {
