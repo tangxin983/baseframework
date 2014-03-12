@@ -60,16 +60,18 @@ public class LoginController implements ServletContextAware{
 
 	/**
 	 * shiro登录失败时会post到这个方法，为了用户友好性考虑需要把之前输入的用户名重新展示出来
-	 * 浏览器回退时会有问题
 	 * @param userName
 	 * @param model
 	 * @return
 	 */
-//	@RequestMapping(value = "/login", method = RequestMethod.POST)
-//	public String fail(@RequestParam(FormAuthenticationFilter.DEFAULT_USERNAME_PARAM) String userName, Model model) {
-//		model.addAttribute(FormAuthenticationFilter.DEFAULT_USERNAME_PARAM, userName);
-//		return "account/login";
-//	}
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public String loginFail(@RequestParam("username") String userName, Model model) {
+		if(ShiroUtil.isAuthenticated() || ShiroUtil.isRemembered()){
+			return "redirect:/index";
+		}
+		model.addAttribute("username", userName);
+		return "account/login";
+	}
 	
 	/**
 	 * 生成验证码

@@ -25,7 +25,7 @@
 	    <!-- 指定ehcache配置中缓存名 -->
 	    <property name="authorizationCacheName" value="shiroAuthorizationCache" />
 	    <!-- 默认的权限 -->
-	    <property name="defaultPermissionString" value="security:change-password,security:index" />
+	    <property name="defaultPermissionString" value="security:index" />
 	</bean>
 	
 	<!-- Shiro Filter -->

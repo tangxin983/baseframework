@@ -1,6 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
-<%@ page
-	import="org.apache.shiro.web.filter.authc.FormAuthenticationFilter"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
@@ -30,11 +28,11 @@
 						
 						<div class="form-group">
 							<label for="username">帐号:</label> 
-							<input type="text" class="form-control required" name="username" id="username" value="admin">
+							<input type="text" class="form-control required" name="username" id="username" value="${username}">
 						</div>
 						<div class="form-group">
 							<label for="password">密码:</label> 
-							<input type="password" class="form-control required" name="password" id="password" value="1">
+							<input type="password" class="form-control required" name="password" id="password">
 						</div>
 						<div class="form-group">
 							<label for="rememberMe">有效期:</label> 
@@ -76,10 +74,6 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		$(document).ready(function() {
-			//$("#loginForm").validate();
-		});
-
 		function reloadCaptcha() {
 			$("#captchaImg").attr("src", "getCaptcha");
 		}
