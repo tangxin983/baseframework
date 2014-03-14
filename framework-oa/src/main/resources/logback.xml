@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 级别从低到高：TRACE、DEBUG、INFO、WARN、ERROR。打印等于或高于本级别的日志 -->
+<!-- additivity="false" 禁止内容向上级传递  -->
+<configuration>
+	<property name="logBase" value="../logs/dining" />
+
+	<!-- 控制台输出 -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{0}.%M - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 总错误日志文件  -->
+	<appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logBase}/error/log.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>log.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{0}.%M - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- sql日志文件  -->
+	<appender name="sql" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logBase}/sql/log.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>log.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{0}.%M - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- manage模块日志文件  -->
+	<appender name="manage" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logBase}/manage/log.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>log.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{0}.%M - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- webservice模块日志文件  -->
+	<appender name="webservice" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logBase}/webservice/log.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>log.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{0}.%M - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- 打印com.tx.framework.web.manage日志 -->
+ 	<logger name="com.tx.framework.web.manage" level="DEBUG" additivity="false">
+ 		<appender-ref ref="manage" />
+		<appender-ref ref="console" />
+	</logger>
+	
+	<!-- 打印com.tx.framework.web.webservice包日志 -->
+ 	<logger name="com.tx.framework.web.webservice" level="DEBUG" additivity="false">
+ 		<appender-ref ref="webservice" />
+		<appender-ref ref="console" />
+	</logger>
+	 
+	<!-- 打印sql日志 --> 
+	<logger name="jdbc.sqltiming" level="INFO" additivity="false">
+		<appender-ref ref="sql" />
+		<appender-ref ref="console" />
+	</logger>
+	
+	<!-- 
+	      默认打印所有包日志 包括第三方jar包日志 
+	      其他logger继承root 可通过additivity="false"禁止子logger向root传递 
+	      子logger的name就是包名
+	-->
+	<root level="ERROR">
+		<appender-ref ref="error" />
+	</root>
+</configuration>

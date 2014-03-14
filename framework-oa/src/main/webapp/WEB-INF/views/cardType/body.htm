@@ -1,0 +1,24 @@
+<#if entitys?size gt 0 > 
+<#list entitys as entity>
+<tr>
+	<td><input type="checkbox" name="ids" value="${entity.id}"><input type="hidden" name="clickId" value="${entity.id}"></td>
+	<td>${entity.cardtypename}</td>
+	<td>${entity.discount}</td>
+	<td>${entity.precharge}</td>
+	<td>${entity.forcediscountchs}</td>
+	<td>${entity.needpwdchs}</td>
+</tr>
+</#list> 
+</#if> 
+<#if supplementSize gt 0 > 
+<#list 1..supplementSize as i>
+<tr>
+	<td>&nbsp;</td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+</#list> 
+</#if>

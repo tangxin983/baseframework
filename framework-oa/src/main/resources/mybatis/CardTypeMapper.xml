@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tx.framework.web.dao.cardtype.CardTypeDao">
+	<resultMap id="BaseResultMap" type="CardType">
+		<id column="id" property="id" jdbcType="CHAR" />
+		<result column="cardtypename" property="cardtypename" jdbcType="VARCHAR" />
+		<result column="updegree" property="updegree" jdbcType="BIGINT" />
+		<result column="upcardid" property="upcardid" jdbcType="CHAR" />
+		<result column="discount" property="discount" jdbcType="DOUBLE" />
+		<result column="needpwd" property="needpwd" jdbcType="BIT" />
+		<result column="forcediscount" property="forcediscount"
+			jdbcType="BIT" />
+		<result column="exchangedegree" property="exchangedegree"
+			jdbcType="DOUBLE" />
+		<result column="valid" property="valid" jdbcType="BIT" />
+		<result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+		<result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+		<result column="precharge" property="precharge" jdbcType="DOUBLE" />
+		<result column="predegree" property="predegree" jdbcType="BIT" />
+		<result column="discountdegree" property="discountdegree"
+			jdbcType="BIT" />
+		<result column="discountexchangedegree" property="discountexchangedegree"
+			jdbcType="DOUBLE" />
+		<result column="memo" property="memo" jdbcType="VARCHAR" />
+		<result column="forcediscountchs" property="forcediscountchs" />
+		<result column="needpwdchs" property="needpwdchs" />
+	</resultMap>
+
+	<!-- 查询卡类型分页 -->
+	<select id="getPage" resultMap="BaseResultMap">
+		select id,cardtypename,discount,precharge,
+		IF(forcediscount=1,'打折','不打折') as
+		forcediscountchs,
+		IF(needpwd=1,'必须','可不输') as needpwdchs
+		from card_type
+		where valid=1
+		<if test="po.name != null and po.name != ''">
+			and cardtypename like CONCAT('%',#{po.name},'%')
+		</if>
+	</select>
+
+	<!-- 根据id查找卡类型 -->
+	<select id="findOne" parameterType="String" resultMap="BaseResultMap">
+		select a.*,
+		IF(forcediscount=1,'打折','不打折') as forcediscountchs,
+		IF(needpwd=1,'必须','可不输') as needpwdchs
+		from card_type a
+		where id=#{id}
+	</select>
+
+	<!-- 查找有效的上级卡类型（不包括本身） -->
+	<select id="findValidUpCard" parameterType="String" resultMap="BaseResultMap">
+		select id,cardtypename from card_type where valid=1
+		<if test=" _parameter != null and  _parameter != ''">
+			and id != #{id}
+		</if>
+	</select>
+	
+	<!-- 根据卡类型名称查找 -->
+	<select id="findByName" parameterType="String" resultMap="BaseResultMap">
+		select id,cardtypename from card_type where valid=1
+		<if test=" _parameter != null and  _parameter != ''">
+			and cardtypename = #{cardTypeName}
+		</if>
+	</select>
+	
+	<!-- 查询所有卡类型 -->
+	<select id="findAll" resultMap="BaseResultMap">
+		select * from card_type
+	</select>
+	
+	<!-- 判断卡类型是否重名(修改界面要传id) -->
+	<select id="findCountByParams" parameterType="Map" resultType="Long">
+		select count(*) from card_type
+		<where>
+			<if test="cardTypeName != null and cardTypeName != ''">
+				and cardtypename = #{cardTypeName}
+			</if>
+			<if test="id != null and id != ''">
+				and id != #{id}
+			</if>
+		</where>
+	</select>
+
+	<insert id="save" parameterType="CardType">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select REPLACE(UUID(),'-','')
+		</selectKey>
+		insert into card_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="cardtypename != null">
+				cardtypename,
+			</if>
+			<if test="updegree != null">
+				updegree,
+			</if>
+			<if test="upcardid != null">
+				upcardid,
+			</if>
+			<if test="discount != null">
+				discount,
+			</if>
+			<if test="needpwd != null">
+				needpwd,
+			</if>
+			<if test="forcediscount != null">
+				forcediscount,
+			</if>
+			<if test="exchangedegree != null">
+				exchangedegree,
+			</if>
+			<if test="valid != null">
+				valid,
+			</if>
+			<if test="createtime != null">
+				createtime,
+			</if>
+			<if test="updatetime != null">
+				updatetime,
+			</if>
+			<if test="precharge != null">
+				precharge,
+			</if>
+			<if test="predegree != null">
+				predegree,
+			</if>
+			<if test="discountdegree != null">
+				discountdegree,
+			</if>
+			<if test="discountexchangedegree != null">
+				discountexchangedegree,
+			</if>
+			<if test="memo != null">
+				memo,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="cardtypename != null">
+				#{cardtypename,jdbcType=VARCHAR},
+			</if>
+			<if test="updegree != null">
+				#{updegree,jdbcType=BIGINT},
+			</if>
+			<if test="upcardid != null">
+				#{upcardid,jdbcType=CHAR},
+			</if>
+			<if test="discount != null">
+				#{discount,jdbcType=DOUBLE},
+			</if>
+			<if test="needpwd != null">
+				#{needpwd,jdbcType=BIT},
+			</if>
+			<if test="forcediscount != null">
+				#{forcediscount,jdbcType=BIT},
+			</if>
+			<if test="exchangedegree != null">
+				#{exchangedegree,jdbcType=DOUBLE},
+			</if>
+			<if test="valid != null">
+				#{valid,jdbcType=BIT},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatetime != null">
+				#{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="precharge != null">
+				#{precharge,jdbcType=DOUBLE},
+			</if>
+			<if test="predegree != null">
+				#{predegree,jdbcType=BIT},
+			</if>
+			<if test="discountdegree != null">
+				#{discountdegree,jdbcType=BIT},
+			</if>
+			<if test="discountexchangedegree != null">
+				#{discountexchangedegree,jdbcType=DOUBLE},
+			</if>
+			<if test="memo != null">
+				#{memo,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="CardType">
+		update card_type
+		<set>
+			<if test="cardtypename != null">
+				cardtypename = #{cardtypename,jdbcType=VARCHAR},
+			</if>
+			<if test="updegree != null">
+				updegree = #{updegree,jdbcType=BIGINT},
+			</if>
+			<if test="upcardid != null">
+				upcardid = #{upcardid,jdbcType=CHAR},
+			</if>
+			<if test="discount != null">
+				discount = #{discount,jdbcType=DOUBLE},
+			</if>
+			<if test="needpwd != null">
+				needpwd = #{needpwd,jdbcType=BIT},
+			</if>
+			<if test="forcediscount != null">
+				forcediscount = #{forcediscount,jdbcType=BIT},
+			</if>
+			<if test="exchangedegree != null">
+				exchangedegree = #{exchangedegree,jdbcType=DOUBLE},
+			</if>
+			<if test="valid != null">
+				valid = #{valid,jdbcType=BIT},
+			</if>
+			<if test="createtime != null">
+				createtime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatetime != null">
+				updatetime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="precharge != null">
+				precharge = #{precharge,jdbcType=DOUBLE},
+			</if>
+			<if test="predegree != null">
+				predegree = #{predegree,jdbcType=BIT},
+			</if>
+			<if test="discountdegree != null">
+				discountdegree = #{discountdegree,jdbcType=BIT},
+			</if>
+			<if test="discountexchangedegree != null">
+				discountexchangedegree = #{discountexchangedegree,jdbcType=DOUBLE},
+			</if>
+			<if test="memo != null">
+				memo = #{memo,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=CHAR}
+	</update>
+
+	<!-- 删除卡类型（即更新为不可用状态） -->
+	<update id="updateCardTypeStatus" parameterType="String">
+		update card_type
+		set valid = 0
+		where id=#{id}
+	</update>
+
+	<!-- 删除卡类型后，变更对应upcardid信息 -->
+	<update id="updateUpCardInfo" parameterType="String">
+		update card_type
+		set
+		upcardid = null
+		where upcardid=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,49 @@
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">${pModuleName}</div>
+			<div class="panel-body">
+				<#if entitys?size gt 0 >
+				<div class="row">
+					<#list entitys as entity>
+						<div class="col-lg-3">
+							<a href="${ctx}${entity.uri}" class="thumbnail"> 
+								<#if entity.path = ""> 
+									<img data-src="holder.js/100%x150/text:${entity.resourceName}"/>
+								<#else>
+									<img src="${ctx}/${entity.path}"/>
+								</#if> 
+								<div class="caption" align="center">${entity.resourceName}</div>
+							</a>
+						</div>
+						<#if entity_index gte 3> 
+							<#break/> 
+						</#if> 
+					</#list>
+				</div>
+				</#if>
+				<br />
+				<#if entitys?size gte 5 >
+				<div class="row">
+					<#list entitys as entity> 
+						<#if entity_index gte 4>
+							<div class="col-lg-3">
+								<a href="${ctx}${entity.uri}" class="thumbnail"> 
+									<#if entity.path = ""> 
+										<img data-src="holder.js/100%x150/text:${entity.resourceName}"/>
+									<#else>
+										<img src="${ctx}/${entity.path}"/>
+									</#if>
+									<div class="caption" align="center">${entity.resourceName}</div>
+								</a>
+							</div>
+						</#if> 
+					</#list>
+				</div>
+				</#if> 
+			</div>
+		</div>
+	</div>
+</div>
+
+

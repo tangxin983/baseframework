@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.tx.framework.web.dao.role.RoleDao">
+
+	<resultMap type="Role" id="roleMap">
+		<id property="id" column="r_id" />
+		<result property="roleName" column="role_name" />
+		<result property="state" column="state" />
+		<result property="remark" column="remark" />
+		<result property="parentId" column="parent_id" />
+	</resultMap>
+
+	<resultMap type="Role" id="roleResourceMap" extends="roleMap">
+		<collection property="resources"
+			resultMap="com.tx.framework.web.dao.resource.ResourceDao.resourceMap" />
+	</resultMap>
+
+	<!-- 查询分页 -->
+	<select id="getPage" resultMap="roleMap">
+		select id as r_id, role_name, remark, IF(state=1,'启用','停用') as state,
+		parent_id from role
+		<where>
+			<if test="po.remark != null and po.remark != ''">
+				remark like CONCAT('%',#{po.remark},'%')
+			</if>
+			<if test="po.role_name != null and po.role_name != ''">
+				role_name like CONCAT('%',#{po.role_name},'%')
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询所有角色 -->
+	<select id="findAll" resultMap="roleMap">
+		select id as r_id, role_name,
+		remark, IF(state=1,'启用','停用') as state, parent_id from role
+	</select>
+
+	<!-- 按条件参数查询 -->
+	<select id="findByParams" resultMap="roleMap" parameterType="java.util.Map">
+		select id as r_id, role_name, remark, IF(state=1,'启用','停用') as state,
+		parent_id from role
+		<where>
+			<if test="roleName != null and roleName != ''">
+				role_name like CONCAT('%',#{roleName},'%')
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询单个角色 -->
+	<select id="findOne" parameterType="String" resultMap="roleResourceMap">
+		select
+		r.id as r_id, r.role_name, r.state, r.remark, r.parent_id, re.*
+		from
+		role r left join role_resource rr on r.id = rr.role_id
+		left join
+		resource re on rr.resource_id = re.id
+		where r.id=#{id}
+	</select>
+
+	<!-- 查询角色关联的用户数 -->
+	<select id="findUserCount" parameterType="String" resultType="int">
+		select count(1) from role_user where role_id=#{id}
+	</select>
+
+	<!-- 创建角色 -->
+	<insert id="save" parameterType="Role">
+		<selectKey resultType="String" keyProperty="id" order="BEFORE">
+			select REPLACE(UUID(),'-','')
+		</selectKey>
+		insert into role
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="roleName != null">
+				role_name,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=CHAR},
+			</if>
+			<if test="roleName != null">
+				#{roleName,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=INTEGER},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=CHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 更新 -->
+	<update id="update" parameterType="Role">
+		update role
+		<set>
+			<if test="roleName != null">
+				role_name = #{roleName},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="state != null">
+				state = #{state},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除角色 -->
+	<delete id="delete" parameterType="String">
+		delete from role where
+		id=#{id}
+	</delete>
+
+	<!-- 保存角色用户对应关系 -->
+	<insert id="saveRoleUser" parameterType="Map">
+		insert into role_user
+		(user_id, role_id)
+		values (#{userId}, #{roleId})
+	</insert>
+
+	<!-- 保存角色资源对应关系 -->
+	<insert id="saveRoleResource" parameterType="Map">
+		insert into
+		role_resource (resource_id, role_id)
+		values (#{resourceId}, #{roleId})
+	</insert>
+
+	<!-- 删除角色对应资源 -->
+	<delete id="deleteRoleResource" parameterType="String">
+		delete from
+		role_resource where role_id=#{id}
+	</delete>
+
+	<!-- 删除用户对应角色 -->
+	<delete id="deleteUserRole" parameterType="String">
+		delete from role_user
+		where user_id=#{id}
+	</delete>
+
+	<!-- 删除角色用户对应关系 -->
+	<delete id="deleteRoleUser" parameterType="String">
+		delete from role_user
+		where role_id=#{id}
+	</delete>
+</mapper> 
