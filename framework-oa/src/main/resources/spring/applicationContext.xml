@@ -31,7 +31,6 @@
 		<!-- 分页插件 -->
 		<property name="plugins">
 	        <array>
-	        	<ref bean="selectInterceptor" />
 	            <ref bean="pageInterceptor" />
 	        </array>
 	    </property>
@@ -80,6 +79,7 @@
 		<!-- Connection Pooling Info -->
 		<property name="maxActive" value="${jdbc.pool.maxActive}" />
 		<property name="minIdle" value="${jdbc.pool.minIdle}" />
+		<property name="maxIdle" value="${jdbc.pool.maxIdle}" />
 		<property name="defaultAutoCommit" value="false" />
 		<!-- 每隔200s检查连接有效性 -->
 		<property name="testWhileIdle" value="true" />
