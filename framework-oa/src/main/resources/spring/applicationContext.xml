@@ -31,6 +31,7 @@
 		<!-- 分页插件 -->
 		<property name="plugins">
 	        <array>
+	        	<ref bean="selectInterceptor" />
 	            <ref bean="pageInterceptor" />
 	        </array>
 	    </property>

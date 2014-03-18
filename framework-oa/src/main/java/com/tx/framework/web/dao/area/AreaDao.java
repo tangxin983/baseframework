@@ -6,7 +6,7 @@ import com.tx.framework.web.common.persistence.entity.Area;
 
 
 @MyBatisDao
-public interface AreaDao extends BaseDaoNew<Area> {
+public interface AreaDao extends BaseDaoNew<Area, String> {
 
 	Area findByName(String areaName);
 }

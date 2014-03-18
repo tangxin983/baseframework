@@ -5,30 +5,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.executor.ExecutorException;
+import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.BaseStatementHandler;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.mapping.ParameterMode;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.property.PropertyTokenizer;
-import org.apache.ibatis.scripting.xmltags.ForEachSqlNode;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.springframework.stereotype.Component;
 
 import com.tx.framework.web.common.persistence.entity.Page;
@@ -42,8 +33,7 @@ import com.tx.framework.web.common.persistence.entity.Page;
  * 目前只支持把page放到HashMap中(或使用接口时，把page作为方法的参数),并且key为"page"
  * </p>
  * 
- * @author dixingxing
- * @date 2012-7-12
+ * @author tangx
  */
 @Intercepts({ @Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class }) })
 @Component
@@ -56,11 +46,9 @@ public class PageInterceptor implements Interceptor {
 
 	public Object intercept(Invocation invocation) throws Throwable {
 		if (invocation.getTarget() instanceof RoutingStatementHandler) {
-			RoutingStatementHandler statementHandler = (RoutingStatementHandler) invocation
-					.getTarget();
-			BaseStatementHandler handler = (BaseStatementHandler) FieldUtils.readField(statementHandler, "delegate", true);
+			RoutingStatementHandler statementHandler = (RoutingStatementHandler) invocation.getTarget();
+			StatementHandler handler = (StatementHandler) FieldUtils.readField(statementHandler, "delegate", true);
 			MappedStatement ms = (MappedStatement) FieldUtils.readField(handler, "mappedStatement", true);
-
 			BoundSql bs = handler.getBoundSql();
 			Object param = bs.getParameterObject();
 			String sql = bs.getSql();
@@ -68,7 +56,7 @@ public class PageInterceptor implements Interceptor {
 			if (param instanceof HashMap) {
 
 				HashMap map = (HashMap) param;
-				Page p = (Page) map.get(PAGE_KEY);
+				Page<?> p = (Page<?>) map.get(PAGE_KEY);
 				if (p != null) {
 					p.setTotal(queryTotal(invocation, ms, bs, param, sql));
 					FieldUtils.writeField(bs, "sql", pageSql(sql, p), true);
@@ -79,68 +67,6 @@ public class PageInterceptor implements Interceptor {
 		return invocation.proceed();
 	}
 
-	/**
-	 * 为count语句设置参数.
-	 * 
-	 * @see org.apache.ibatis.executor.parameter.DefaultParameterHandler#setParameters(PreparedStatement)
-	 * 
-	 * @param ps
-	 * @param ms
-	 * @param bs
-	 * @param parameterObject
-	 * @throws SQLException
-	 */
-	private void setParameters(PreparedStatement ps, MappedStatement ms,
-			BoundSql bs, Object parameterObject) throws SQLException {
-		ErrorContext.instance().activity("setting parameters")
-				.object(ms.getParameterMap().getId());
-		List<ParameterMapping> mappings = bs.getParameterMappings();
-		if (mappings == null) {
-			return;
-		}
-		Configuration configuration = ms.getConfiguration();
-		TypeHandlerRegistry typeHandlerRegistry = configuration
-				.getTypeHandlerRegistry();
-		MetaObject metaObject = parameterObject == null ? null : configuration
-				.newMetaObject(parameterObject);
-		for (int i = 0; i < mappings.size(); i++) {
-			ParameterMapping parameterMapping = mappings.get(i);
-			if (parameterMapping.getMode() != ParameterMode.OUT) {
-				Object value;
-				String propertyName = parameterMapping.getProperty();
-				PropertyTokenizer prop = new PropertyTokenizer(propertyName);
-				if (parameterObject == null) {
-					value = null;
-				} else if (typeHandlerRegistry.hasTypeHandler(parameterObject
-						.getClass())) {
-					value = parameterObject;
-				} else if (bs.hasAdditionalParameter(propertyName)) {
-					value = bs.getAdditionalParameter(propertyName);
-				} else if (propertyName.startsWith(ForEachSqlNode.ITEM_PREFIX)
-						&& bs.hasAdditionalParameter(prop.getName())) {
-					value = bs.getAdditionalParameter(prop.getName());
-					if (value != null) {
-						value = configuration.newMetaObject(value)
-								.getValue(
-										propertyName.substring(prop.getName()
-												.length()));
-					}
-				} else {
-					value = metaObject == null ? null : metaObject
-							.getValue(propertyName);
-				}
-				TypeHandler typeHandler = parameterMapping.getTypeHandler();
-				if (typeHandler == null) {
-					throw new ExecutorException(
-							"There was no TypeHandler found for parameter "
-									+ propertyName + " of statement "
-									+ ms.getId());
-				}
-				typeHandler.setParameter(ps, i + 1, value,
-						parameterMapping.getJdbcType());
-			}
-		}
-	}
 
 	/**
 	 * 生成特定数据库的分页语句
@@ -175,7 +101,7 @@ public class PageInterceptor implements Interceptor {
 			sb.append(") where row_id>");
 			sb.append(page.getCurrentResult());
 		} else {
-			throw new IllegalArgumentException("分页插件不支持此数据库：" + dialect);
+			throw new IllegalArgumentException("PageInterceptor error:does not support " + dialect);
 		}
 		return sb.toString();
 	}
@@ -204,24 +130,29 @@ public class PageInterceptor implements Interceptor {
 	private int queryTotal(Invocation invocation, MappedStatement ms, BoundSql boundSql,
 			Object param, String sql) throws SQLException {
 		Connection conn = (Connection) invocation.getArgs()[0];
-		String countSql = "select count(0) from (" + sql + ") tmp_count";
-		BoundSql bs = new BoundSql(ms.getConfiguration(), countSql,
+		int index = sql.indexOf("from");  
+		if(index == -1){
+			throw new RuntimeException("PageInterceptor error:statement has no 'from' key word");
+		}
+		String countSql = "select count(*) " + sql.substring(index);
+		BoundSql countBoundSql = new BoundSql(ms.getConfiguration(), countSql,
 				boundSql.getParameterMappings(), param);
-
+		ParameterHandler parameterHandler = new DefaultParameterHandler(ms, param, countBoundSql);
+		
+		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		PreparedStatement stmt = null;
-
 		int count = 0;
 		try {
-			stmt = conn.prepareStatement(countSql);
-			setParameters(stmt, ms, bs, param);
-			rs = stmt.executeQuery();
+			pstmt = conn.prepareStatement(countSql);
+			//通过parameterHandler给PreparedStatement对象设置参数  
+	        parameterHandler.setParameters(pstmt);  
+			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				count = rs.getInt(1);
 			}
 		} finally {
 			rs.close();
-			stmt.close();
+			pstmt.close();
 		}
 		return count;
 	}
