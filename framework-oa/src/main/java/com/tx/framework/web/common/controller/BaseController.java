@@ -7,6 +7,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +30,8 @@ import com.tx.framework.web.common.service.BaseService;
  * @param <T>
  */
 public abstract class BaseController<T>  implements ServletContextAware{
+	
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	protected BaseService<T> service;
 

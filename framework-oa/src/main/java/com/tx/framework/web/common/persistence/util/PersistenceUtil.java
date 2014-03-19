@@ -57,7 +57,7 @@ public class PersistenceUtil {
 	private static String getParentIdFieldName(Class<?> clazz) {
 		if (MybatisEntity.class.equals(clazz)) {
 			// 如果向上找到MybatisEntity基类则返回默认的'id'
-			return "id";
+			return MybatisEntity.nameId;
 		}
 		for (Field field : clazz.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Id.class))
@@ -95,7 +95,7 @@ public class PersistenceUtil {
 	private static String getParentIdColumnName(Class<?> clazz) {
 		if (MybatisEntity.class.equals(clazz)) {
 			// 如果向上找到MybatisEntity基类则返回默认的'id'
-			return "id";
+			return MybatisEntity.nameId;
 		}
 		for (Field field : clazz.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Id.class)) {
@@ -223,6 +223,17 @@ public class PersistenceUtil {
 		caculationColumnList(clazz);
 		Map<String, String> columnDefs = columnMap.get(clazz);
 		return columnDefs.get(fieldName);
+	}
+	
+	/**
+	 * 根据类获取对应的属性名-列名关系
+	 * @param clazz
+	 * @param fieldName
+	 * @return
+	 */
+	public static Map<String, String> getFieldColumnMapping(Class<?> clazz) {
+		caculationColumnList(clazz);
+		return columnMap.get(clazz);
 	}
 	
 	/**

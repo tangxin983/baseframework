@@ -405,7 +405,7 @@ public class DataImportService {
 				entity = new Area();
 				entity.setAreaName(areaName);
 				entity.setCreateTime(DateProvider.DEFAULT.getDate());
-				areaDao.save(entity);
+				areaDao.insert(entity);
 			}
 			areaMap.put(areaName, entity.getId());
 		}

@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 
 import com.tx.framework.web.common.persistence.entity.MybatisEntity;
+import com.tx.framework.web.common.persistence.entity.Page;
 
 /**
  * 提供基本增删改查方法的基础接口<br>
@@ -20,7 +21,7 @@ import com.tx.framework.web.common.persistence.entity.MybatisEntity;
  *
  * @param <T>
  */
-public interface BaseDaoNew<T extends MybatisEntity, PK> extends BaseDao {
+public interface BaseDaoNew<T, PK> {
 	
 	public static final String CLASS_KEY = "clazz";
 	
@@ -28,18 +29,21 @@ public interface BaseDaoNew<T extends MybatisEntity, PK> extends BaseDao {
 	
 	public static final String PARA_KEY = "para";
 	
+	public static final String PAGE_KEY = "page";
+	
 	/**
 	 * 查找所有记录
 	 * @param clazz 实体class
 	 * @return
 	 */
-	@SelectProvider(type = CrudProvider.class, method = "selectAll")
-	public List<T> selectAll(Class<T> clazz);  
+	@SelectProvider(type = CrudProvider.class, method = "select")
+	public List<T> select(Class<T> clazz);  
+	
 	
 	/**
 	 * 根据条件查找记录
 	 * @param clazz 实体class
-	 * @param param 参数Map
+	 * @param paramMap 参数Map(如果传null则忽略条件)
 	 * @return
 	 */
 	@SelectProvider(type = CrudProvider.class, method = "selectByCondition")
@@ -53,6 +57,42 @@ public interface BaseDaoNew<T extends MybatisEntity, PK> extends BaseDao {
 	 */
 	@SelectProvider(type = CrudProvider.class, method = "selectById")
 	public T selectById(@Param(CLASS_KEY)Class<T> clazz, @Param(ID_KEY)PK id);  
+	
+	/**
+	 * 分页查找记录
+	 * @param clazz 实体class
+	 * @param page 分页对象
+	 * @return
+	 */
+	@SelectProvider(type = CrudProvider.class, method = "selectByPage")
+	public List<T> selectByPage(@Param(CLASS_KEY)Class<T> clazz, @Param(PAGE_KEY)Page<T> page);  
+	
+	/**
+	 * 根据条件分页查找记录
+	 * @param clazz 实体class
+	 * @param page 分页对象
+	 * @param paramMap 参数Map(如果传null则忽略条件)
+	 * @return
+	 */
+	@SelectProvider(type = CrudProvider.class, method = "selectByCondition")
+	public List<T> selectByPageAndCondition(@Param(CLASS_KEY)Class<T> clazz, @Param(PAGE_KEY)Page<T> page, @Param(PARA_KEY)Map<String, Object> paramMap);  
+	
+	/**
+	 * 获取表记录个数
+	 * @param clazz 实体class
+	 * @return
+	 */
+	@SelectProvider(type = CrudProvider.class, method = "count")
+	public long count(Class<T> clazz); 
+	
+	/**
+	 * 根据条件获取表记录个数
+	 * @param clazz 实体class
+	 * @param paramMap 参数Map(如果传null则忽略条件)
+	 * @return
+	 */
+	@SelectProvider(type = CrudProvider.class, method = "countByCondition")
+	public long countByCondition(@Param(CLASS_KEY)Class<T> clazz, @Param(PARA_KEY)Map<String, Object> paramMap);  
 	
 	/**
 	 * 更新(忽略空字段)
