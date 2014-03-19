@@ -1,5 +1,6 @@
 package com.tx.framework.web.common.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,22 +22,25 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.tx.framework.common.util.Servlets;
-import com.tx.framework.web.common.service.BaseService;
+import com.tx.framework.web.common.config.Constant;
+import com.tx.framework.web.common.persistence.entity.Page;
+import com.tx.framework.web.common.service.BaseServiceNew;
+import com.tx.framework.web.manage.freemarker.FreeMarkerResolver;
 
 /**
  * 提供基础的crud控制处理
- * 
  * @author tangx
- * 
+ *
  * @param <T>
+ * @param <PK>
  */
-public abstract class BaseController<T>  implements ServletContextAware{
+public abstract class BaseControllerNew<T, PK>  implements ServletContextAware{
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
-	protected BaseService<T> service;
+	protected BaseServiceNew<T, PK> service;
 
-	public void setService(BaseService<T> service) {
+	public void setService(BaseServiceNew<T, PK> service) {
 		this.service = service;
 	}
 	
@@ -44,6 +49,17 @@ public abstract class BaseController<T>  implements ServletContextAware{
     public void setServletContext(ServletContext context){
     	this.servletContext = context;
     }
+    
+    @Autowired
+	private FreeMarkerResolver freeMarkerResolver;
+    
+    /**
+	 * 供子类设置额外的查询参数
+	 * @param searchParams
+	 */
+	protected void setExtraSearchParam(Map<String, Object> searchParams){
+		
+	}
 	
 	/**
 	 * 通过反射取得requestMapping value
@@ -91,6 +107,73 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	}
 	
 	/**
+	 * 跳转列表页
+	 * URL:/
+	 * @param model
+	 * @return 列表页
+	 */
+	@RequestMapping
+	public String list(Model model, ServletRequest request) {
+		model.addAttribute("templateUrl", getControllerContext() + "/template");
+		model.addAttribute("module", getControllerContext());
+		return getControllerContext() + "/" + getListPageName();
+	}
+	
+	/**
+	 * 使用指定模板构造分页表单体
+	 * @param pageNumber 当前页码
+	 * @param pageSize 每页记录数
+	 * @param sortType 排序（暂时没用）
+	 * @param templateName 模板名
+	 * @param request
+	 * @return Page对象
+	 */
+	@RequestMapping(value = "template/{templateName}")
+	@ResponseBody
+	public Page<T> template(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
+			@RequestParam(value = "page.size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
+			@RequestParam(value = "sortType", defaultValue = "auto") String sortType, 
+			@PathVariable("templateName") String templateName, ServletRequest request) {
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "search_");
+		setExtraSearchParam(searchParams);
+		Page<T> entitys = service.selectByPage(searchParams, pageNumber, pageSize);
+		this.buildTemplate(entitys, templateName);
+		return entitys;
+	}
+	
+	/**
+	 * 使用默认模板"body"构造分页表单体
+	 * @param pageNumber 当前页码
+	 * @param pageSize 每页记录数
+	 * @param sortType 排序（暂时没用）
+	 * @param request
+	 * @return Page对象
+	 */
+	@RequestMapping(value = "template")
+	@ResponseBody
+	public Page<T> template(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
+			@RequestParam(value = "page.size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
+			@RequestParam(value = "sortType", defaultValue = "auto") String sortType, 
+			ServletRequest request) {
+		return template(pageNumber, pageSize, sortType, "body", request);
+	}
+	
+	/**
+	 * 使用模板生成HTML Tbody
+	 * @param page Page对象
+	 * @param templateName 模板名
+	 */
+	protected void buildTemplate(Page<T> page, String templateName){
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("entitys", page.getResult());
+		model.put("ctx", servletContext.getContextPath());
+		model.put("module", getControllerContext());
+		//要补足的行数
+		model.put("supplementSize", Integer.valueOf(Constant.PAGINATION_SIZE) - page.getResult().size());
+		page.setBody(freeMarkerResolver.mergeModelToTemlate(getControllerContext() + "/" + templateName + ".htm", model));
+	}
+	
+	/**
 	 * 不分页展示所有记录
 	 * URL:/view
 	 * @param model
@@ -100,8 +183,7 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	@RequestMapping(value = "view")
 	public String view(Model model, ServletRequest request) {
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "search_");
-		List<T> entitys = service.getEntityByParams(searchParams);
-		model.addAttribute("entitys", entitys);
+		model.addAttribute("entitys", service.select(searchParams));
 		return getControllerContext() + "/" + getListPageName();
 	}
 	
@@ -126,8 +208,8 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	public String create(@Valid T entity, RedirectAttributes redirectAttributes) {
-		service.saveEntity(entity);
-		redirectAttributes.addFlashAttribute("message", "创建成功");
+		service.insert(entity);
+		redirectAttributes.addFlashAttribute("message", "添加成功");
 		return "redirect:/" + getControllerContext();
 	}
 
@@ -139,8 +221,8 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @return 更新页面
 	 */
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
-	public String updateForm(@PathVariable("id") String id, Model model) {
-		model.addAttribute("entity", service.getEntity(id));
+	public String updateForm(@PathVariable("id") PK id, Model model) {
+		model.addAttribute("entity", service.selectById(id));
 		model.addAttribute("action", "update");
 		return getControllerContext() + "/" + getUpdateFormPageName();
 	}
@@ -154,7 +236,7 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	public String update(@Valid @ModelAttribute("entity")T entity, RedirectAttributes redirectAttributes) {
-		service.updateEntity(entity);
+		service.update(entity);
 		redirectAttributes.addFlashAttribute("message", "更新成功");
 		return "redirect:/" + getControllerContext();
 	}
@@ -167,8 +249,8 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @return redirect到列表页
 	 */
 	@RequestMapping(value = "delete/{id}")
-	public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
-		service.deleteEntity(id);
+	public String delete(@PathVariable("id") PK id, RedirectAttributes redirectAttributes) {
+		service.deleteById(id);
 		redirectAttributes.addFlashAttribute("message", "删除成功");
 		return "redirect:/" + getControllerContext();
 	}
@@ -181,9 +263,9 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @return redirect到列表页
 	 */
 	@RequestMapping("delete")
-	public String multiDelete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
-		service.multiDeleteEntity(ids);
-		redirectAttributes.addFlashAttribute("message", "删除" + ids.size() + "个记录 成功");
+	public String multiDelete(@RequestParam("ids")List<PK> ids,RedirectAttributes redirectAttributes) {
+		service.deleteByIds(ids);
+		redirectAttributes.addFlashAttribute("message", "删除" + ids.size() + "条记录 成功");
 		return "redirect:/" + getControllerContext();
 	}
 	
@@ -194,8 +276,8 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 */
 	@RequestMapping(value = "get/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public T get(@PathVariable("id") String id) {
-		return service.getEntity(id);
+	public T get(@PathVariable("id") PK id) {
+		return service.selectById(id);
 	}
 	
 	/**
@@ -206,9 +288,9 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @param model
 	 */
 	@ModelAttribute
-	public void bindingEntity(@RequestParam(value = "id", defaultValue = "-1") String id, Model model) {
+	public void bindingEntity(@RequestParam(value = "id", defaultValue = "-1") PK id, Model model) {
 		if (!id.equals("-1")) {
-			model.addAttribute("entity", service.getEntity(id));
+			model.addAttribute("entity", service.selectById(id));
 		}
 	}
 }

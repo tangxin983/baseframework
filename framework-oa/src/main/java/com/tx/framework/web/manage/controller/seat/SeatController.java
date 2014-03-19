@@ -38,7 +38,7 @@ public class SeatController extends AjaxPaginationController<Seat> {
 	@RequestMapping
 	@Override
 	public String list(Model model, ServletRequest request) {
-		model.addAttribute("areaList", areaService.getAllEntity());
+		model.addAttribute("areaList", areaService.select());
 		return super.list(model, request);
 	}
  

@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.tx.framework.web.common.persistence.entity.Page;
-import com.tx.framework.web.common.persistence.interceptor.PageInterceptor;
 
 
 
@@ -77,5 +76,5 @@ public interface BaseDao<T> {
 	 * @param map 参数map
 	 * @return
 	 */
-	List<T> getPage(@Param(PageInterceptor.PAGE_KEY) Page<T> p, @Param(PO_KEY) Map map);
+	List<T> getPage(@Param(BaseDaoNew.PAGE_KEY) Page<T> p, @Param(PO_KEY) Map map);
 }
