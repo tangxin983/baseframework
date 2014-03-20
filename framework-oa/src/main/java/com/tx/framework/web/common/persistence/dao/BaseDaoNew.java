@@ -5,12 +5,13 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 
-import com.tx.framework.web.common.persistence.entity.MybatisEntity;
+import com.tx.framework.web.common.persistence.entity.BaseEntity;
 import com.tx.framework.web.common.persistence.entity.Page;
 
 /**
@@ -103,13 +104,25 @@ public interface BaseDaoNew<T, PK> {
 
 	/**
 	 * 有主键表插入(忽略空字段)<br>
-	 * keyProperty是硬编码，如果实体有定义@Id而不是使用MybatisEntity通用id字段的情况下会有问题
+	 * 主键生成方式：uuid<br>
+	 * keyProperty是硬编码，如果实体有定义@Id而不使用公用id字段的情况下会有问题
 	 * 
 	 * @param t 实体对象
 	 */
 	@InsertProvider(type = CrudProvider.class, method = "insert")
-	@SelectKey(statement = "select REPLACE(UUID(),'-','')", keyProperty = MybatisEntity.nameId, before = true, resultType = String.class)
+	@SelectKey(statement = "select REPLACE(UUID(),'-','')", keyProperty = BaseEntity.ID_FIELD_NAME, before = true, resultType = String.class)
 	public void insert(T t);
+	
+	/**
+	 * 有主键表插入(忽略空字段)<br>
+	 * 主键生成方式：自动递增<br>
+	 * keyProperty是硬编码，如果实体有定义@Id而不使用公用id字段的情况下会有问题
+	 * 
+	 * @param t 实体对象
+	 */
+	@InsertProvider(type = CrudProvider.class, method = "insertWithoutId")
+	@Options(useGeneratedKeys = true, keyProperty = BaseEntity.ID_FIELD_NAME)  
+	public void insertByAutoIncId(T t);
 	
 	/**
 	 * 无主键表插入(忽略空字段)<br>

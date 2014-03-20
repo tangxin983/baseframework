@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import com.tx.framework.web.common.persistence.dao.BaseDaoNew;
-import com.tx.framework.web.common.persistence.entity.MybatisEntity;
+import com.tx.framework.web.common.persistence.entity.BaseEntity;
 
 public class PersistenceUtil {
 	
@@ -55,9 +55,9 @@ public class PersistenceUtil {
 	 * @return
 	 */
 	private static String getParentIdFieldName(Class<?> clazz) {
-		if (MybatisEntity.class.equals(clazz)) {
+		if (BaseEntity.class.equals(clazz)) {
 			// 如果向上找到MybatisEntity基类则返回默认的'id'
-			return MybatisEntity.nameId;
+			return BaseEntity.ID_FIELD_NAME;
 		}
 		for (Field field : clazz.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Id.class))
@@ -93,9 +93,9 @@ public class PersistenceUtil {
 	 * @return
 	 */
 	private static String getParentIdColumnName(Class<?> clazz) {
-		if (MybatisEntity.class.equals(clazz)) {
+		if (BaseEntity.class.equals(clazz)) {
 			// 如果向上找到MybatisEntity基类则返回默认的'id'
-			return MybatisEntity.nameId;
+			return BaseEntity.ID_FIELD_NAME;
 		}
 		for (Field field : clazz.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Id.class)) {

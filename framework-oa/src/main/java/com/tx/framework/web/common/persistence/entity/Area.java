@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.persistence.Column;
 
 @SuppressWarnings("serial")
-public class Area extends MybatisEntity {
+public class Area extends BaseEntity {
 
 	@Column
 	private String code;

@@ -8,9 +8,9 @@ import java.io.Serializable;
  * @author tangx
  * 
  */
-public class MybatisEntity implements Serializable {
+public class BaseEntity implements Serializable {
 	
-	public static final String nameId = "id";
+	public static final String ID_FIELD_NAME = "id";
 
 	private static final long serialVersionUID = 1L;
 
