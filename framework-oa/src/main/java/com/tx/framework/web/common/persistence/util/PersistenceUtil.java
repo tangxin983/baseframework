@@ -19,7 +19,7 @@ import com.tx.framework.web.common.persistence.entity.BaseEntity;
 public class PersistenceUtil {
 	
 	// 用于存放各实体的属性名-列名关系
-	private static Map<Class<?>, Map<String, String>> columnMap = Maps.newConcurrentMap();
+	private static final Map<Class<?>, Map<String, String>> columnMap = Maps.newConcurrentMap();
 
 	/**
 	 * 获取表名。实体需定义@Table(name)，如果没有定义则取类名为表名
