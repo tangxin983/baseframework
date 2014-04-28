@@ -5,6 +5,7 @@
 
 <html>
 <head>
+<meta name="decorator" content="default1" />
 <title>资源管理</title>
 <script type="text/javascript" src="${ctx}/static/script/jquery.ui.widget.js"></script>
 <script type="text/javascript" src="${ctx}/static/script/jquery.iframe-transport.js"></script>

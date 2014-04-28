@@ -23,9 +23,9 @@ public abstract class BaseServiceNew<T, PK> {
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
-	private final Class<T> genericType;
-
-	protected BaseDaoNew<T, PK> dao;  
+	protected BaseDaoNew<T, PK> dao; 
+	
+	protected final Class<T> genericType;
 	
 	public void setDao(BaseDaoNew<T, PK> dao) {  
         this.dao = dao;  
@@ -37,7 +37,7 @@ public abstract class BaseServiceNew<T, PK> {
 		Class<?>[] clazzs = GenericTypeResolver.resolveTypeArguments(getClass(), BaseServiceNew.class);
 		this.genericType = (Class<T>)clazzs[0];
 	}
-	
+	 
 	/**
 	 * 根据主键获取记录
 	 * @param id 主键
@@ -45,6 +45,15 @@ public abstract class BaseServiceNew<T, PK> {
 	 */
 	public T selectById(PK id) {
 		return dao.selectById(genericType, id);
+	}
+	
+	/**
+	 * 根据查询参数获取记录集(where key1 like '%value1%' and key2 like '%value2%')
+	 * @param searchParams
+	 * @return
+	 */
+	public List<T> selectByLikeCondition(Map<String, Object> searchParams) {
+		return dao.selectByLikeCondition(genericType, searchParams);
 	}
 	
 	/**
@@ -56,12 +65,31 @@ public abstract class BaseServiceNew<T, PK> {
 	}
 	
 	/**
-	 * 根据查询参数获取记录集
+	 * 获取所有记录集并排序（升序排列）
+	 * @param orders 要排序的字段列表
+	 * @return
+	 */
+	public List<T> select(List<String> orders) {
+		return dao.selectByOrder(genericType, orders);
+	}
+	
+	/**
+	 * 根据查询参数获取记录集(where key1=value1 and key2=value2)
 	 * @param searchParams
 	 * @return
 	 */
 	public List<T> select(Map<String, Object> searchParams) {
 		return dao.selectByCondition(genericType, searchParams);
+	}
+	
+	/**
+	 * 根据查询参数获取记录集并排序(where key1=value1 and key2=value2 order by order1,order2..)
+	 * @param searchParams
+	 * @param orders 要排序的字段列表
+	 * @return
+	 */
+	public List<T> select(Map<String, Object> searchParams, List<String> orders) {
+		return dao.selectByConditionAndOrder(genericType, searchParams, orders);
 	}
 	
 	/**
@@ -73,7 +101,7 @@ public abstract class BaseServiceNew<T, PK> {
 	}
 	
 	/**
-	 * 根据查询参数获取表记录数
+	 * 根据查询参数获取表记录数(where key1=value1 and key2=value2)
 	 * @param searchParams
 	 * @return
 	 */

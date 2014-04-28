@@ -2,7 +2,7 @@
 <!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
 <generatorConfiguration>
 	<classPathEntry
-		location="F:\apache-maven-3.1.0\repository\mysql\mysql-connector-java\5.1.25\mysql-connector-java-5.1.25.jar" />
+		location="D:\.m2\repository\mysql\mysql-connector-java\5.1.25\mysql-connector-java-5.1.25.jar" />
 	<context id="mysql">
 		<!-- 去除自动生成的注释 -->
 		<commentGenerator>
@@ -11,11 +11,11 @@
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
 			connectionURL="jdbc:mysql://localhost:3306/dining" userId="root"
 			password="root" />
-		<javaModelGenerator targetPackage="dining.common"
-			targetProject="dining" />
-		<sqlMapGenerator targetPackage="dining.common"
-			targetProject="dining" />
-		<table schema="" tableName="attachment">
+		<javaModelGenerator targetPackage="com.tx.framework.web.modules.sys.entity"
+			targetProject="framework-oa" />
+		<sqlMapGenerator targetPackage="com.tx.framework.web.modules.sys.entity"
+			targetProject="framework-oa" />
+		<table schema="" tableName="sys_menu">
 		</table>
 	</context>
 </generatorConfiguration>

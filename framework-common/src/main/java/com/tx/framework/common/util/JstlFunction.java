@@ -1,6 +1,9 @@
 package com.tx.framework.common.util;
 
 import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 自定义jstl函数
@@ -15,5 +18,9 @@ public class JstlFunction {
 		}else{
 			return false;
 		}
+	}
+	
+	public static String join(List<?> list, String separator) {
+		return StringUtils.join(list, separator);
 	}
 }

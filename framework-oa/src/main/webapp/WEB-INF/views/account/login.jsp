@@ -4,6 +4,7 @@
 
 <html>
 <head>
+<meta name="decorator" content="default"/>
 <title>登录页</title>
 </head>
 

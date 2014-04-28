@@ -32,14 +32,13 @@ import org.springframework.stereotype.Service;
 
 import com.tx.framework.common.util.CollectionUtils;
 import com.tx.framework.common.util.Encodes;
-import com.tx.framework.web.common.persistence.entity.Resource;
-import com.tx.framework.web.common.persistence.entity.Role;
 import com.tx.framework.web.common.persistence.entity.ShiroEntity;
-import com.tx.framework.web.common.persistence.entity.User;
 import com.tx.framework.web.common.utils.ShiroUtil;
-import com.tx.framework.web.dao.resource.ResourceDao;
 import com.tx.framework.web.exception.ServiceException;
-import com.tx.framework.web.manage.service.user.UserService;
+import com.tx.framework.web.modules.sys.entity.Menu;
+import com.tx.framework.web.modules.sys.entity.User;
+import com.tx.framework.web.modules.sys.service.MenuService;
+import com.tx.framework.web.modules.sys.service.UserNewService;
 
 /**
  * 系统安全认证实现类
@@ -63,13 +62,13 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 	private String defaultPermission;// 配置文件中默认的权限,如果存在多个值，使用逗号分割
 
 	@Autowired
-	private ResourceDao resourceDao;
-	
-	@Autowired
 	private ShiroFilterFactoryBean shiroFilterFactoryBean;
 
 	@Autowired
-	private UserService userService;
+	private UserNewService userNewService;
+	
+	@Autowired
+	private MenuService menuService;
 	
 	
 	/**
@@ -95,7 +94,7 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 		if (username == null) {
 			throw new AccountException("用户名不能为空");
 		}
-		User user = userService.findUserByLoginName(username);
+		User user = userNewService.findUserByLoginName(username);
 		if (user != null) {
 			byte[] salt = Encodes.decodeHex(user.getSalt());
 			return new SimpleAuthenticationInfo(new ShiroEntity(user),
@@ -111,26 +110,21 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(
 			PrincipalCollection principals) {
-		ShiroEntity shiroEntity = (ShiroEntity) principals
-				.getPrimaryPrincipal();
-		// 获取登录用户的perm、role、menu信息
-		List<Resource> permList = userService.getResourcesByUserId(shiroEntity.getUser().getId().toString());
-		List<Resource> menuList = userService.getMenuList(permList);
-		List<Role> roleList = shiroEntity.getUser().getRoles();
-		shiroEntity.setPerms(permList);
-		shiroEntity.setRoles(roleList);
-		shiroEntity.setMenus(menuList);
-
+		ShiroEntity shiroEntity = (ShiroEntity) principals.getPrimaryPrincipal();
+		List<Menu> resources = menuService.getAuthByUserId(shiroEntity.getUser().getId().toString());//总资源
+		List<Menu> menus = menuService.getSidebarMenus(resources);// 侧边栏
+		List<Menu> perms = menuService.getPerms(resources);// 权限
+		shiroEntity.setPerms(perms);
+		shiroEntity.setMenus(menus);
+		// 添加permission
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-		// 添加用户拥有的permission
-		addPermissions(info, permList);
+		addPermissions(info, perms);
 		// 将shiroEntity放入session
 		ShiroUtil.setAttribute("shiroEntity", shiroEntity);
 		return info;
 	}
 
-	private void addPermissions(SimpleAuthorizationInfo info,
-			List<Resource> authorizationInfo) {
+	private void addPermissions(SimpleAuthorizationInfo info, List<Menu> authorizationInfo) {
 		// 解析当前用户资源中的permissions
 		List<String> permissions = CollectionUtils.extractToList(authorizationInfo, "permission", true);
 		//添加默认的permissions到permissions
@@ -151,17 +145,17 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 	 */
 	public String loadFilterChainDefinitions() {
 		StringBuffer sb = new StringBuffer("");
-		// 加载默认filter定义
+		// 加载数据库配置
+		List<Menu> menuList = menuService.findAllMenuBySort(null);
+		for (Menu menu : menuList) {
+			if (StringUtils.isNotBlank(menu.getHref()) && StringUtils.isNotBlank(menu.getPermission())) {
+				String uri = menu.getHref().startsWith("/") ? menu.getHref() : "/" + menu.getHref();
+				sb.append(uri + "=" + MessageFormat.format("perms[\"{0}\"]", menu.getPermission()) + "\r\n");
+			}
+		}
+		// 加载默认filter
 		for (String def : StringUtils.split(defaultFilterChainDefinitions, ",")) {
 			sb.append(def.trim() + "\r\n");
-		}
-		// 加载uri=perm规则
-		List<Resource> resourceList = resourceDao.findAll();
-		for (Resource resource : resourceList) {
-			if (StringUtils.isNotEmpty(resource.getUri()) && StringUtils.isNotEmpty(resource.getPermission())) {
-				String uri = resource.getUri().startsWith("/") ? resource.getUri() : "/" + resource.getUri();
-				sb.append(uri + "=" + MessageFormat.format("perms[\"{0}\"]", resource.getPermission()) + "\r\n");
-			}
 		}
 		return sb.toString();
 	}

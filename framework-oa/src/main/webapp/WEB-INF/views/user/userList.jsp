@@ -5,6 +5,7 @@
 
 <html>
 <head>
+<meta name="decorator" content="default1" />
 <title>用户管理</title>
 <script type="text/javascript">
 	var id;//当前选中行id

@@ -1,341 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.tx.framework.web.dao.menu.MenuDao">
-	<resultMap id="menuMap" type="Menu">
+<mapper namespace="com.tx.framework.web.modules.sys.dao.MenuDao">
+	<resultMap id="BaseResultMap" type="com.tx.framework.web.modules.sys.entity.Menu">
 		<id column="id" property="id" jdbcType="CHAR" />
-		<result column="menu_type_id" property="menuTypeId" jdbcType="CHAR" />
+		<result column="parent_id" property="parentId" jdbcType="CHAR" />
+		<result column="parent_ids" property="parentIds" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="href" property="href" jdbcType="VARCHAR" />
+		<result column="target" property="target" jdbcType="VARCHAR" />
+		<result column="icon" property="icon" jdbcType="VARCHAR" />
 		<result column="sort" property="sort" jdbcType="INTEGER" />
-		<result column="code" property="code" jdbcType="VARCHAR" />
-		<result column="menu_name" property="menuName" jdbcType="VARCHAR" />
-		<result column="taste" property="taste" jdbcType="VARCHAR" />
-		<result column="spell" property="spell" jdbcType="VARCHAR" />
-		<result column="spell2" property="spell2" jdbcType="VARCHAR" />
-		<result column="buy_account" property="buyAccount" jdbcType="VARCHAR" />
-		<result column="pay_account" property="payAccount" jdbcType="VARCHAR" />
-		<result column="price" property="price" jdbcType="DOUBLE" />
-		<result column="special_price" property="specialPrice"
-			jdbcType="DOUBLE" />
-		<result column="member_price" property="memberPrice" jdbcType="DOUBLE" />
-		<result column="reserve_price" property="reservePrice"
-			jdbcType="DOUBLE" />
-		<result column="attachment_id" property="attachmentId"
-			jdbcType="CHAR" />
-		<result column="attachment_ver" property="attachmentVer"
-			jdbcType="INTEGER" />
-		<result column="spec_id" property="specId" jdbcType="CHAR" />
-		<result column="consume" property="consume" jdbcType="INTEGER" />
-		<result column="memo" property="memo" jdbcType="VARCHAR" />
-		<result column="ratio" property="ratio" jdbcType="TINYINT" />
-		<result column="status" property="status" jdbcType="TINYINT" />
-		<result column="status_name" property="statusName" />
+		<result column="is_show" property="isShow" jdbcType="CHAR" />
+		<result column="is_activiti" property="isActiviti" jdbcType="CHAR" />
+		<result column="permission" property="permission" jdbcType="VARCHAR" />
+		<!-- 
+		<result column="create_by" property="createBy" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_by" property="updateBy" jdbcType="VARCHAR" />
 		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-		<result column="menu_type_name" property="menuTypeName" />
-		<result column="ratio_name" property="ratioName" />
-		<result column="back_auth" property="backAuth" jdbcType="TINYINT" />
-		<result column="change_price" property="changePrice" jdbcType="TINYINT" />
-		<result column="back_auth_name" property="backAuthName" />
-		<result column="change_price_name" property="changePriceName" />
+		<result column="remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="del_flag" property="delFlag" jdbcType="CHAR" />
+		 -->
 	</resultMap>
-
-	<!-- 商品分页 -->
-	<select id="getPage" resultMap="menuMap">
-		select a.*, b.name as status_name, IF(a.ratio=1,'允许打折','不允许打折') as ratio_name 
-		from menu a
-		left join dict_menu_status b
-		on a.status = b.value
-		<where>
-			<if test="po.menuName != null and po.menuName != ''">
-				and a.menu_name like CONCAT('%',#{po.menuName},'%')
-			</if>
-			<if test="po.status != null and po.status != ''">
-				and a.status = #{po.status}
-			</if>
-			<if test="po.menuTypeId != null and po.menuTypeId != ''">
-				and a.menu_type_id = #{po.menuTypeId}
-			</if>
-		</where>
-	</select>
-
-	<!-- 根据id查找商品信息 -->
-	<select id="findOne" parameterType="String" resultMap="menuMap">
-		select
-		a.*, b.menu_type_name,c.name as status_name,
-		IF(a.ratio=1,'允许打折','不允许打折') as ratio_name, 
-		IF(a.back_auth=1,'需要验证','不需验证') as back_auth_name, 
-		IF(a.change_price=1,'允许','不允许') as change_price_name
-		from menu a
-		left join menu_type b
-		on a.menu_type_id = b.id
-		left join dict_menu_status c
-		on a.status = c.value
-		where a.id = #{id}
-	</select>
 	
-	<!-- 查询所有商品 -->
-	<select id="findAll" resultMap="menuMap">
-		select * from menu
+	<!-- 根据用户id查找权限 -->
+	<select id="findByUserId" parameterType="String" resultMap="BaseResultMap">
+		select distinct sys_menu.* 
+		from sys_user 
+		left join sys_user_role on sys_user.id = sys_user_role.user_id
+		left join sys_role on sys_user_role.role_id = sys_role.id
+		left join sys_role_menu on sys_role.id = sys_role_menu.role_id
+		left join sys_menu on sys_role_menu.menu_id = sys_menu.id
+		where sys_user.id = #{id}
+		order by sys_menu.sort
 	</select>
-	
-	<!-- 判断是否重名(修改界面要传id) -->
-	<select id="findCountByParams" parameterType="Map" resultType="Long">
-		select count(*) from menu
-		<where>
-			<if test="menuName != null and menuName != ''">
-				and menu_name = #{menuName}
-			</if>
-			<if test="id != null and id != ''">
-				and id != #{id}
-			</if>
-		</where>
-	</select>
-
-	<!-- 删除商品 -->
-	<delete id="delete" parameterType="String">
-		delete from menu where
-		id=#{id}
-	</delete>
-
-	<!-- 新增商品 -->
-	<insert id="save" parameterType="Menu">
-		<selectKey resultType="String" keyProperty="id" order="BEFORE">
-			select REPLACE(UUID(),'-','')
-		</selectKey>
-		insert into menu
-		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="id != null">
-				id,
-			</if>
-			<if test="menuTypeId != null">
-				menu_type_id,
-			</if>
-			<if test="sort != null">
-				sort,
-			</if>
-			<if test="code != null">
-				code,
-			</if>
-			<if test="menuName != null">
-				menu_name,
-			</if>
-			<if test="taste != null">
-				taste,
-			</if>
-			<if test="spell != null">
-				spell,
-			</if>
-			<if test="spell2 != null">
-				spell2,
-			</if>
-			<if test="buyAccount != null">
-				buy_account,
-			</if>
-			<if test="payAccount != null">
-				pay_account,
-			</if>
-			<if test="price != null">
-				price,
-			</if>
-			<if test="specialPrice != null">
-				special_price,
-			</if>
-			<if test="memberPrice != null">
-				member_price,
-			</if>
-			<if test="reservePrice != null">
-				reserve_price,
-			</if>
-			<if test="attachmentId != null">
-				attachment_id,
-			</if>
-			<if test="attachmentVer != null">
-				attachment_ver,
-			</if>
-			<if test="specId != null">
-				spec_id,
-			</if>
-			<if test="consume != null">
-				consume,
-			</if>
-			<if test="memo != null">
-				memo,
-			</if>
-			<if test="ratio != null">
-				ratio,
-			</if>
-			<if test="status != null">
-				status,
-			</if>
-			<if test="createTime != null">
-				create_time,
-			</if>
-			<if test="updateTime != null">
-				update_time,
-			</if>
-			<if test="backAuth != null">
-				back_auth,
-			</if>
-			<if test="changePrice != null">
-				change_price,
-			</if>
-		</trim>
-		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			<if test="id != null">
-				#{id,jdbcType=CHAR},
-			</if>
-			<if test="menuTypeId != null">
-				#{menuTypeId,jdbcType=CHAR},
-			</if>
-			<if test="sort != null">
-				#{sort,jdbcType=INTEGER},
-			</if>
-			<if test="code != null">
-				#{code,jdbcType=VARCHAR},
-			</if>
-			<if test="menuName != null">
-				#{menuName,jdbcType=VARCHAR},
-			</if>
-			<if test="taste != null">
-				#{taste,jdbcType=VARCHAR},
-			</if>
-			<if test="spell != null">
-				#{spell,jdbcType=VARCHAR},
-			</if>
-			<if test="spell2 != null">
-				#{spell2,jdbcType=VARCHAR},
-			</if>
-			<if test="buyAccount != null">
-				#{buyAccount,jdbcType=VARCHAR},
-			</if>
-			<if test="payAccount != null">
-				#{payAccount,jdbcType=VARCHAR},
-			</if>
-			<if test="price != null">
-				#{price,jdbcType=DOUBLE},
-			</if>
-			<if test="specialPrice != null">
-				#{specialPrice,jdbcType=DOUBLE},
-			</if>
-			<if test="memberPrice != null">
-				#{memberPrice,jdbcType=DOUBLE},
-			</if>
-			<if test="reservePrice != null">
-				#{reservePrice,jdbcType=DOUBLE},
-			</if>
-			<if test="attachmentId != null">
-				#{attachmentId,jdbcType=CHAR},
-			</if>
-			<if test="attachmentVer != null">
-				#{attachmentVer,jdbcType=INTEGER},
-			</if>
-			<if test="specId != null">
-				#{specId,jdbcType=CHAR},
-			</if>
-			<if test="consume != null">
-				#{consume,jdbcType=INTEGER},
-			</if>
-			<if test="memo != null">
-				#{memo,jdbcType=VARCHAR},
-			</if>
-			<if test="ratio != null">
-				#{ratio,jdbcType=TINYINT},
-			</if>
-			<if test="status != null">
-				#{status,jdbcType=TINYINT},
-			</if>
-			<if test="createTime != null">
-				#{createTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="updateTime != null">
-				#{updateTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="backAuth != null">
-				#{backAuth,jdbcType=TINYINT},
-			</if>
-			<if test="changePrice != null">
-				#{changePrice,jdbcType=TINYINT},
-			</if>
-		</trim>
-	</insert>
-
-	<!-- 更新商品 -->
-	<update id="update" parameterType="Menu">
-		update menu
-		<set>
-			<if test="menuTypeId != null">
-				menu_type_id = #{menuTypeId,jdbcType=CHAR},
-			</if>
-			<if test="sort != null">
-				sort = #{sort,jdbcType=INTEGER},
-			</if>
-			<if test="code != null">
-				code = #{code,jdbcType=VARCHAR},
-			</if>
-			<if test="menuName != null">
-				menu_name = #{menuName,jdbcType=VARCHAR},
-			</if>
-			<if test="taste != null">
-				taste = #{taste,jdbcType=VARCHAR},
-			</if>
-			<if test="spell != null">
-				spell = #{spell,jdbcType=VARCHAR},
-			</if>
-			<if test="spell2 != null">
-				spell2 = #{spell2,jdbcType=VARCHAR},
-			</if>
-			<if test="buyAccount != null">
-				buy_account = #{buyAccount,jdbcType=VARCHAR},
-			</if>
-			<if test="payAccount != null">
-				pay_account = #{payAccount,jdbcType=VARCHAR},
-			</if>
-			<if test="price != null">
-				price = #{price,jdbcType=DOUBLE},
-			</if>
-			<if test="specialPrice != null">
-				special_price = #{specialPrice,jdbcType=DOUBLE},
-			</if>
-			<if test="memberPrice != null">
-				member_price = #{memberPrice,jdbcType=DOUBLE},
-			</if>
-			<if test="reservePrice != null">
-				reserve_price = #{reservePrice,jdbcType=DOUBLE},
-			</if>
-			<if test="attachmentId != null">
-				attachment_id = #{attachmentId,jdbcType=CHAR},
-			</if>
-			<if test="attachmentVer != null">
-				attachment_ver = #{attachmentVer,jdbcType=INTEGER},
-			</if>
-			<if test="specId != null">
-				spec_id = #{specId,jdbcType=CHAR},
-			</if>
-			<if test="consume != null">
-				consume = #{consume,jdbcType=INTEGER},
-			</if>
-			<if test="memo != null">
-				memo = #{memo,jdbcType=VARCHAR},
-			</if>
-			<if test="ratio != null">
-				ratio = #{ratio,jdbcType=TINYINT},
-			</if>
-			<if test="status != null">
-				status = #{status,jdbcType=TINYINT},
-			</if>
-			<if test="createTime != null">
-				create_time = #{createTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="updateTime != null">
-				update_time = #{updateTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="backAuth != null">
-				back_auth = #{backAuth,jdbcType=TINYINT},
-			</if>
-			<if test="changePrice != null">
-				change_price = #{changePrice,jdbcType=TINYINT},
-			</if>
-		</set>
-		where id = #{id,jdbcType=CHAR}
-	</update>
-
+	 
 </mapper>
