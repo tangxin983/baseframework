@@ -8,7 +8,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$("#treeTable").treeTable({
-			expandLevel : 2
+			expandLevel : 3
 		});
 	});
 </script>
@@ -48,8 +48,12 @@
 				<tbody>
 					<c:forEach items="${entitys}" var="menu">
 						<tr id="${menu.id}" pId="${menu.parentId ne '1' ? menu.parentId : '0'}">
-							<td><i class="icon-${not empty menu.icon?menu.icon:' hide'}"></i><a
-								href="${ctxModule}/update/${menu.id}">${menu.name}</a></td>
+							<td>
+								<c:if test="${not empty menu.icon}">
+									<span class="glyphicon glyphicon-${menu.icon}"></span>
+								</c:if>
+								<a href="${ctxModule}/update/${menu.id}">${menu.name}</a>
+							</td>
 							<td>${menu.href}</td>
 							<td>${menu.sort}</td>
 							<td>${menu.isShow eq '1'?'显示':'隐藏'}</td>

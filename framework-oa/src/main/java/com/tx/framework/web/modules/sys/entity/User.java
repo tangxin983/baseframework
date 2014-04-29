@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.tx.framework.web.common.persistence.entity.BaseEntity;
 
@@ -173,6 +174,16 @@ public class User extends BaseEntity {
 
 	public void setLoginTime(Date loginTime) {
 		this.loginTime = loginTime;
+	}
+	
+	@Transient
+	public boolean isAdmin(){
+		return isAdmin(this.id);
+	}
+	
+	@Transient
+	public static boolean isAdmin(String id){
+		return id != null && id.equals("1");
 	}
 
 }

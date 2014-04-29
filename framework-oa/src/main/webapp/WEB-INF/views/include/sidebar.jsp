@@ -11,7 +11,10 @@
 				<div class="panel-body">
 					<c:forEach items="${pmenu.children}" var="menu">
 						<a href="${ctx}${menu.href}" class="list-group-item" id="${menu.id}"> 
-							<span class="glyphicon glyphicon-star"></span> ${menu.name}
+							<c:if test="${not empty menu.icon}">
+								<span class="glyphicon glyphicon-${menu.icon}"></span>
+							</c:if>
+							${menu.name}
 						</a>
 					</c:forEach>
 				</div>

@@ -9,6 +9,13 @@
 		//<c:if test="${not empty entity.roleIds}">
 		$('#roleIds').selectpicker('val', "${fns:join(entity.roleIds, ',')}".split(","));
 		//</c:if>
+		$("#loginName").rules("add", {
+			remote : {
+				url : "${ctxModule}/checkName",
+				type : "POST",
+				data : {oldName : "${entity.loginName}"}
+			}
+		});
 	});
 </script>
 </head>
@@ -24,7 +31,7 @@
 				<div class="form-group">
 					<label class="col-md-2 control-label">登录名:</label>
 					<div class="col-md-6">
-						<input name="loginName" maxlength="50"
+						<input id="loginName" name="loginName" maxlength="50"
 							class="form-control required" value="${entity.loginName}" />
 					</div>
 				</div>

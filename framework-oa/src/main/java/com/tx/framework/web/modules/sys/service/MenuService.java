@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tx.framework.common.util.CollectionUtils;
-import com.tx.framework.web.common.service.BaseServiceNew;
+import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.modules.sys.dao.MenuDao;
 import com.tx.framework.web.modules.sys.dao.RoleMenuDao;
 import com.tx.framework.web.modules.sys.entity.Menu;
@@ -21,7 +21,7 @@ import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
 
 @Service
 @Transactional
-public class MenuService extends BaseServiceNew<Menu, String> {
+public class MenuService extends BaseService<Menu, String> {
 	
 	@Autowired
 	private RoleMenuDao roleMenuDao;
@@ -106,7 +106,7 @@ public class MenuService extends BaseServiceNew<Menu, String> {
 	}
 
 	/**
-	 * 删除菜单及其子菜单
+	 * 删除菜单及其子菜单（涉及到权限变更将清除权限缓存以便重新加载）
 	 * 
 	 * @param id 要删除的菜单id
 	 */
@@ -125,7 +125,7 @@ public class MenuService extends BaseServiceNew<Menu, String> {
 	}
 
 	/**
-	 * 保存菜单
+	 * 保存菜单（涉及到权限变更将清除权限缓存以便重新加载）
 	 * 
 	 * @param menu
 	 */
@@ -137,7 +137,7 @@ public class MenuService extends BaseServiceNew<Menu, String> {
 	}
 
 	/**
-	 * 更新菜单
+	 * 更新菜单（涉及到权限变更将清除权限缓存以便重新加载）
 	 * 
 	 * @param menu
 	 */

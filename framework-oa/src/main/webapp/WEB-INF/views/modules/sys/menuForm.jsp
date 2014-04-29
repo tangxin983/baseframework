@@ -6,6 +6,9 @@
 <title>菜单管理</title>
 <script type="text/javascript">
 	$(document).ready(function() {
+		//<c:if test="${not empty entity.icon}">
+		$('#icon').selectpicker('val', "${entity.icon}");
+		//</c:if>
 		//<c:if test="${not empty entity.isShow}">
 		$('#isShow').selectpicker('val', "${entity.isShow}");
 		//</c:if>

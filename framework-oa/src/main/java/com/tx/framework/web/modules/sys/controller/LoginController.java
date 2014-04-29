@@ -32,7 +32,7 @@ public class LoginController {
 		if (ShiroUtil.isAuthenticated() || ShiroUtil.isRemembered()) {
 			return "redirect:/index";
 		} else {
-			return "account/login";
+			return "modules/sys/login";
 		}
 	}
 
@@ -50,7 +50,7 @@ public class LoginController {
 			return "redirect:/index";
 		}
 		model.addAttribute("username", userName);
-		return "account/login";
+		return "modules/sys/login";
 	}
 
 	/**

@@ -32,7 +32,7 @@ import org.apache.ibatis.session.Configuration;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Component;
 
-import com.tx.framework.web.common.persistence.dao.BaseDaoNew;
+import com.tx.framework.web.common.persistence.dao.BaseDao;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.persistence.util.PersistenceUtil;
 
@@ -83,8 +83,8 @@ public class SelectInterceptor implements Interceptor {
 				page = (Page<?>) paramObj;
 			} else if (paramObj instanceof Map) {
 				Map map = (HashMap) paramObj;
-				if (map.containsKey(BaseDaoNew.PAGE_KEY)) {
-					page = (Page<?>) map.get(BaseDaoNew.PAGE_KEY);
+				if (map.containsKey(BaseDao.PAGE_KEY)) {
+					page = (Page<?>) map.get(BaseDao.PAGE_KEY);
 				}
 			}
 			if (originalSql.indexOf("select") != -1 && page != null) {
@@ -220,7 +220,7 @@ public class SelectInterceptor implements Interceptor {
 	private Class<?> getEntityClass(String daoClassName) {
 		try {
 			Class<?>[] clazzs = GenericTypeResolver.resolveTypeArguments(
-					Class.forName(daoClassName), BaseDaoNew.class);
+					Class.forName(daoClassName), BaseDao.class);
 			return (Class<?>) clazzs[0];
 		} catch (Exception e) {
 			throw new RuntimeException(

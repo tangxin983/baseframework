@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%@ attribute name="name" type="java.lang.String" required="true" description="输入框名称"%>
 <%@ attribute name="value" type="java.lang.String" required="true" description="输入框值"%>
-<select class="selectpicker form-control" data-size="10" name="${name}">
+<select id="${name}" class="selectpicker form-control" data-size="10" name="${name}">
 	<option value="">无</option>
 	<option value="adjust" data-content="<span class='glyphicon glyphicon-adjust'></span> adjust">adjust</option>
 	<option value="align-center" data-content="<span class='glyphicon glyphicon-align-center'></span> align-center">align-center</option>

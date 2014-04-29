@@ -38,7 +38,7 @@ import com.tx.framework.web.exception.ServiceException;
 import com.tx.framework.web.modules.sys.entity.Menu;
 import com.tx.framework.web.modules.sys.entity.User;
 import com.tx.framework.web.modules.sys.service.MenuService;
-import com.tx.framework.web.modules.sys.service.UserNewService;
+import com.tx.framework.web.modules.sys.service.UserService;
 
 /**
  * 系统安全认证实现类
@@ -65,7 +65,7 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 	private ShiroFilterFactoryBean shiroFilterFactoryBean;
 
 	@Autowired
-	private UserNewService userNewService;
+	private UserService userService;
 	
 	@Autowired
 	private MenuService menuService;
@@ -94,7 +94,7 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 		if (username == null) {
 			throw new AccountException("用户名不能为空");
 		}
-		User user = userNewService.findUserByLoginName(username);
+		User user = userService.findUserByLoginName(username);
 		if (user != null) {
 			byte[] salt = Encodes.decodeHex(user.getSalt());
 			return new SimpleAuthenticationInfo(new ShiroEntity(user),
@@ -140,7 +140,7 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 	}
 
 	/**
-	 * 服务启动时加载数据库中的filterChain配置（permission）
+	 * 服务启动时加载数据库中权限配置（permission）
 	 * @return
 	 */
 	public String loadFilterChainDefinitions() {
@@ -161,7 +161,7 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 	}
 	
 	/**
-	 * 重新加载filterChain，此方法需加同步锁
+	 * 重新加载数据库权限
 	 */
 	public synchronized void reloadShiroFilterChains() {
 		try {
@@ -182,7 +182,7 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 	}
 	
 	/**
-	 * 清除缓存并重新加载filterChain
+	 * 清除缓存并重新加载数据库权限
 	 */
 	public void clearCacheAndReloadFilterChain() {
 		getAuthorizationCache().clear();

@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import com.tx.framework.common.mapper.JsonMapper;
-import com.tx.framework.web.common.persistence.entity.IdEntity;
+import com.tx.framework.web.common.persistence.entity.BaseEntity;
 import com.tx.framework.web.manage.errlog.ServiceExceptionLogger;
 import com.tx.framework.web.webservice.errlog.RestExceptionLogger;
 
@@ -68,7 +68,7 @@ public class ExceptionProcesser {
 		for (int i = 0; i < parameterValues.length; i++) {
 			Object value = parameterValues[i];
 			String name = parameterNames[i];
-			if (value != null && value instanceof IdEntity) {
+			if (value != null && value instanceof BaseEntity) {
 				sb.append(name + ":" + JsonMapper.nonEmptyMapper().toJson(value) + ";");
 			}
 			if (value != null) {

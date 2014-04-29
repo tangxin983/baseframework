@@ -20,22 +20,24 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.tx.framework.common.util.Servlets;
+import com.tx.framework.web.common.config.Constant;
+import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.service.BaseService;
 
 /**
  * 提供基础的crud控制处理
- * 
  * @author tangx
- * 
+ *
  * @param <T>
+ * @param <PK>
  */
-public abstract class BaseController<T>  implements ServletContextAware{
+public abstract class BaseController<T, PK>  implements ServletContextAware{
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
-	protected BaseService<T> service;
+	protected BaseService<T, PK> service;
 
-	public void setService(BaseService<T> service) {
+	public void setService(BaseService<T, PK> service) {
 		this.service = service;
 	}
 	
@@ -44,9 +46,28 @@ public abstract class BaseController<T>  implements ServletContextAware{
     public void setServletContext(ServletContext context){
     	this.servletContext = context;
     }
+    
+    /**
+	 * 供子类设置额外的查询参数
+	 * @param searchParams
+	 */
+	protected void setExtraSearchParam(Map<String, Object> searchParams){
+		
+	}
 	
 	/**
-	 * 通过反射取得requestMapping value
+	 * 模型公共属性设置
+	 * @param model
+	 */
+	protected void setModelAttr(Model model){
+		model.addAttribute("module", getControllerContext());
+		model.addAttribute("moduleb", getControllerContext() + "/b");
+		model.addAttribute("ctxModule", servletContext.getContextPath() + "/" + getControllerContext());
+		model.addAttribute("ctxModuleb", servletContext.getContextPath() + "/" + getControllerContext() + "/b");
+	}
+	
+	/**
+	 * 通过反射取得requestMapping value（头尾的'/'会被去掉）
 	 * @return
 	 */
 	protected String getControllerContext() {
@@ -59,35 +80,72 @@ public abstract class BaseController<T>  implements ServletContextAware{
     		if(context.startsWith("/")){
     			context = context.substring(1);
     		}
+    		if(context.endsWith("/")){
+    			context = context.substring(0,context.length() - 1);
+    		}
         }
         return context;
     }
 	
 	/**
-	 * 列表页文件名
-	 * 默认为ControllerContext + List
+	 * 列表页<br>
+	 * 默认为"modules/" + ControllerContext + "List"。比如/a/b对应modules/a/bList
 	 * @return
 	 */
-	protected String getListPageName(){
-		return getControllerContext() + "List";
+	protected String getListPage(){
+		return "modules/" + getControllerContext() + "List";
 	}
 	
 	/**
-	 * 新增表单页文件名
-	 * 默认为ControllerContext + Form
+	 * 新增表单页<br>
+	 * 默认为"modules/" + ControllerContext + "Form"。比如/a/b对应modules/a/bForm
 	 * @return
 	 */
-	protected String getCreateFormPageName(){
-		return getControllerContext() + "Form";
+	protected String getCreateFormPage(){
+		return "modules/" + getControllerContext() + "Form";
 	}
 	
 	/**
-	 * 更新表单页文件名
-	 * 默认为ControllerContext + Form
+	 * 更新表单页<br>
+	 * 默认为"modules/" + ControllerContext + "Form"。比如/a/b对应modules/a/bForm
 	 * @return
 	 */
-	protected String getUpdateFormPageName(){
-		return getControllerContext() + "Form";
+	protected String getUpdateFormPage(){
+		return "modules/" + getControllerContext() + "Form";
+	}
+	
+	/**
+	 * 添加Flash消息
+     * @param messages 消息
+	 */
+	protected void addMessage(RedirectAttributes redirectAttributes, String... messages) {
+		StringBuilder sb = new StringBuilder();
+		for (String message : messages){
+			sb.append(message).append(messages.length>1?"<br/>":"");
+		}
+		redirectAttributes.addFlashAttribute("message", sb.toString());
+	}
+	
+	/**
+	 * 分页展示
+	 * @param pageNumber 当前页码
+	 * @param pageSize 每页记录数
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("b")
+	public String list(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
+			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
+			Model model, ServletRequest request) {
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "search_");
+		setExtraSearchParam(searchParams);
+		Page<T> entitys = service.selectByPage(searchParams, pageNumber, pageSize);
+		model.addAttribute("page", entitys);
+		// 将搜索条件编码成字符串，用于分页的URL
+		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "search_"));
+		setModelAttr(model);
+		return getListPage();
 	}
 	
 	/**
@@ -97,12 +155,13 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "view")
+	@RequestMapping("b/view")
 	public String view(Model model, ServletRequest request) {
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "search_");
-		List<T> entitys = service.getEntityByParams(searchParams);
+		List<T> entitys = service.select(searchParams);
 		model.addAttribute("entitys", entitys);
-		return getControllerContext() + "/" + getListPageName();
+		setModelAttr(model);
+		return getListPage();
 	}
 	
 	/**
@@ -111,10 +170,11 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @param model
 	 * @return 新增页面
 	 */
-	@RequestMapping(value = "create", method = RequestMethod.GET)
+	@RequestMapping(value = "b/create", method = RequestMethod.GET)
 	public String createForm(Model model) {
 		model.addAttribute("action", "create");
-		return getControllerContext() + "/" + getCreateFormPageName();
+		setModelAttr(model);
+		return getCreateFormPage();
 	}
 
 	/**
@@ -124,11 +184,11 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	@RequestMapping(value = "create", method = RequestMethod.POST)
+	@RequestMapping(value = "b/create", method = RequestMethod.POST)
 	public String create(@Valid T entity, RedirectAttributes redirectAttributes) {
-		service.saveEntity(entity);
-		redirectAttributes.addFlashAttribute("message", "创建成功");
-		return "redirect:/" + getControllerContext();
+		service.insert(entity);
+		addMessage(redirectAttributes, "添加成功");
+		return "redirect:/" + getControllerContext() + "/b";
 	}
 
 	/**
@@ -138,11 +198,12 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @param model
 	 * @return 更新页面
 	 */
-	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
-	public String updateForm(@PathVariable("id") String id, Model model) {
-		model.addAttribute("entity", service.getEntity(id));
+	@RequestMapping(value = "b/update/{id}", method = RequestMethod.GET)
+	public String updateForm(@PathVariable("id") PK id, Model model) {
+		model.addAttribute("entity", service.selectById(id));
 		model.addAttribute("action", "update");
-		return getControllerContext() + "/" + getUpdateFormPageName();
+		setModelAttr(model);
+		return getUpdateFormPage();
 	}
 
 	/**
@@ -152,11 +213,11 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	@RequestMapping(value = "update", method = RequestMethod.POST)
+	@RequestMapping(value = "b/update", method = RequestMethod.POST)
 	public String update(@Valid @ModelAttribute("entity")T entity, RedirectAttributes redirectAttributes) {
-		service.updateEntity(entity);
-		redirectAttributes.addFlashAttribute("message", "更新成功");
-		return "redirect:/" + getControllerContext();
+		service.update(entity);
+		addMessage(redirectAttributes, "更新成功");
+		return "redirect:/" + getControllerContext() + "/b";
 	}
 
 	/**
@@ -166,11 +227,11 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	@RequestMapping(value = "delete/{id}")
-	public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
-		service.deleteEntity(id);
-		redirectAttributes.addFlashAttribute("message", "删除成功");
-		return "redirect:/" + getControllerContext();
+	@RequestMapping("b/delete/{id}")
+	public String delete(@PathVariable("id") PK id, RedirectAttributes redirectAttributes) {
+		service.deleteById(id);
+		addMessage(redirectAttributes, "删除成功");
+		return "redirect:/" + getControllerContext() + "/b";
 	}
 	
 	/**
@@ -180,11 +241,11 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	@RequestMapping("delete")
-	public String multiDelete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
-		service.multiDeleteEntity(ids);
-		redirectAttributes.addFlashAttribute("message", "删除" + ids.size() + "个记录 成功");
-		return "redirect:/" + getControllerContext();
+	@RequestMapping("b/delete")
+	public String multiDelete(@RequestParam("ids")List<PK> ids,RedirectAttributes redirectAttributes) {
+		service.deleteByIds(ids);
+		addMessage(redirectAttributes, "删除" + ids.size() + "条记录 成功");
+		return "redirect:/" + getControllerContext() + "/b";
 	}
 	
 	/**
@@ -192,10 +253,10 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @param id
 	 * @return json对象
 	 */
-	@RequestMapping(value = "get/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "b/get/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public T get(@PathVariable("id") String id) {
-		return service.getEntity(id);
+	public T get(@PathVariable("id") PK id) {
+		return service.selectById(id);
 	}
 	
 	/**
@@ -206,9 +267,9 @@ public abstract class BaseController<T>  implements ServletContextAware{
 	 * @param model
 	 */
 	@ModelAttribute
-	public void bindingEntity(@RequestParam(value = "id", defaultValue = "-1") String id, Model model) {
+	public void bindingEntity(@RequestParam(value = "id", defaultValue = "-1") PK id, Model model) {
 		if (!id.equals("-1")) {
-			model.addAttribute("entity", service.getEntity(id));
+			model.addAttribute("entity", service.selectById(id));
 		}
 	}
 }

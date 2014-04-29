@@ -19,13 +19,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.tx.framework.web.common.controller.BaseControllerNew;
+import com.tx.framework.web.common.controller.BaseController;
 import com.tx.framework.web.modules.sys.entity.Menu;
 import com.tx.framework.web.modules.sys.service.MenuService;
 
 @Controller
 @RequestMapping(value = "/sys/menu")
-public class MenuController extends BaseControllerNew<Menu, String> {
+public class MenuController extends BaseController<Menu, String> {
 
 	private MenuService menuService;
 
@@ -35,6 +35,11 @@ public class MenuController extends BaseControllerNew<Menu, String> {
 		this.menuService = menuService;
 	}
 
+	/**
+	 * 菜单列表页
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping
 	public String view(Model model) {
 		List<Menu> sourcelist = menuService.findAllMenuBySort(null);
@@ -70,6 +75,12 @@ public class MenuController extends BaseControllerNew<Menu, String> {
 		}
 	}
 
+	/**
+	 * 新增菜单页面
+	 * @param menu
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value = "create", method = RequestMethod.GET)
 	public String createForm(Menu menu, Model model) {
 		// 如果没有传入父菜单id，则默认父菜单是顶级菜单
@@ -90,6 +101,9 @@ public class MenuController extends BaseControllerNew<Menu, String> {
 		return getCreateFormPage();
 	}
 
+	/**
+	 * 新增菜单
+	 */
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	@Override
 	public String create(@Valid Menu entity,
@@ -99,6 +113,9 @@ public class MenuController extends BaseControllerNew<Menu, String> {
 		return "redirect:/" + getControllerContext();
 	}
 
+	/**
+	 * 更新菜单页面
+	 */
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	@Override
 	public String updateForm(@PathVariable("id") String id, Model model) {
@@ -115,6 +132,9 @@ public class MenuController extends BaseControllerNew<Menu, String> {
 		return getUpdateFormPage();
 	}
 
+	/**
+	 * 更新菜单
+	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@Override
 	public String update(@Valid @ModelAttribute("entity") Menu entity,
@@ -124,6 +144,9 @@ public class MenuController extends BaseControllerNew<Menu, String> {
 		return "redirect:/" + getControllerContext();
 	}
 
+	/**
+	 * 删除菜单
+	 */
 	@RequestMapping("delete/{id}")
 	@Override
 	public String delete(@PathVariable("id") String id,
@@ -133,6 +156,11 @@ public class MenuController extends BaseControllerNew<Menu, String> {
 		return "redirect:/" + getControllerContext();
 	}
 
+	/**
+	 * 获取树形菜单数据
+	 * @param extId
+	 * @return
+	 */
 	@RequestMapping(value = "treeData")
 	@ResponseBody
 	public List<Map<String, Object>> treeData(

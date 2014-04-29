@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import com.google.common.collect.Maps;
-import com.tx.framework.web.common.persistence.dao.BaseDaoNew;
+import com.tx.framework.web.common.persistence.dao.BaseDao;
 import com.tx.framework.web.common.persistence.entity.BaseEntity;
 
 public class PersistenceUtil {
@@ -118,7 +118,7 @@ public class PersistenceUtil {
 	 * @return
 	 */
 	public static boolean isBaseDaoSelectMethod(String methodName){
-		Method[] methods = BaseDaoNew.class.getDeclaredMethods();
+		Method[] methods = BaseDao.class.getDeclaredMethods();
 		for (Method method : methods) {
 			if(method.getName().startsWith("select") && methodName.equals(method.getName())){
 				return true;

@@ -51,7 +51,7 @@
 		{
 			id : '${menu.id}',
 			pId : '${menu.parentId}',
-			name : "${menu.parentId ne 0?menu.name:'所有权限'}"
+			name : "${menu.parentId != '0'?menu.name:'所有权限'}"
 		},
 		//</c:forEach>
 		];

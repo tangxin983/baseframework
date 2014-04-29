@@ -8,7 +8,7 @@ import org.apache.ibatis.jdbc.SQL;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.tx.framework.web.common.persistence.dao.BaseDaoNew;
+import com.tx.framework.web.common.persistence.dao.BaseDao;
 
 /**
  * 增删改查模板
@@ -31,10 +31,10 @@ public class CrudProvider<T> {
 	public String selectById(final Map<String, Object> parameter) {
 		return new SQL() {
 			{
-				Class<T> clazz = (Class<T>) parameter.get(BaseDaoNew.CLASS_KEY);
+				Class<T> clazz = (Class<T>) parameter.get(BaseDao.CLASS_KEY);
 				SELECT("*");
 				FROM(PersistenceUtil.getTableName(clazz));
-				WHERE(PersistenceUtil.getIdColumnName(clazz) + " = '" + parameter.get(BaseDaoNew.ID_KEY) + "'");
+				WHERE(PersistenceUtil.getIdColumnName(clazz) + " = '" + parameter.get(BaseDao.ID_KEY) + "'");
 			}
 		}.toString();
 	}
@@ -43,21 +43,21 @@ public class CrudProvider<T> {
 	public String complicatedSelect(final Map<String, Object> parameter) {
 		return new SQL() {
 			{
-				Class<T> clazz = (Class<T>) parameter.get(BaseDaoNew.CLASS_KEY);
+				Class<T> clazz = (Class<T>) parameter.get(BaseDao.CLASS_KEY);
 				// 相等查询条件（key=value）
 				Map<String, Object> paramMap = Maps.newHashMap();
-				if(parameter.containsKey(BaseDaoNew.PARA_KEY)){
-					paramMap = (Map<String, Object>) parameter.get(BaseDaoNew.PARA_KEY);
+				if(parameter.containsKey(BaseDao.PARA_KEY)){
+					paramMap = (Map<String, Object>) parameter.get(BaseDao.PARA_KEY);
 				}
 				// like查询条件（key like '%value%'）
 				Map<String, Object> likeMap = Maps.newHashMap();
-				if(parameter.containsKey(BaseDaoNew.LIKE_KEY)){
-					likeMap = (Map<String, Object>) parameter.get(BaseDaoNew.LIKE_KEY);
+				if(parameter.containsKey(BaseDao.LIKE_KEY)){
+					likeMap = (Map<String, Object>) parameter.get(BaseDao.LIKE_KEY);
 				}
 				// 排序条件
 				List<String> orders = Lists.newArrayList();
-				if(parameter.containsKey(BaseDaoNew.ORDER_KEY)){
-					orders = (List<String>) parameter.get(BaseDaoNew.ORDER_KEY);
+				if(parameter.containsKey(BaseDao.ORDER_KEY)){
+					orders = (List<String>) parameter.get(BaseDao.ORDER_KEY);
 				}
 				String orderBy = StringUtils.join(orders, ",");
 				SELECT("*");
@@ -70,7 +70,7 @@ public class CrudProvider<T> {
 							columnName = key;
 						}
 						if(paramMap.get(key) != null && (StringUtils.isNotBlank(paramMap.get(key).toString()))){
-							WHERE(columnName + "= #{ " + BaseDaoNew.PARA_KEY + "." + key + "}");
+							WHERE(columnName + "= #{ " + BaseDao.PARA_KEY + "." + key + "}");
 						}
 					}
 				}
@@ -82,7 +82,7 @@ public class CrudProvider<T> {
 							columnName = key;
 						}
 						if(likeMap.get(key) != null && (StringUtils.isNotBlank(likeMap.get(key).toString()))){
-							WHERE(columnName + " like CONCAT('%',#{" + BaseDaoNew.LIKE_KEY + "." + key + "},'%')");
+							WHERE(columnName + " like CONCAT('%',#{" + BaseDao.LIKE_KEY + "." + key + "},'%')");
 						}
 					}
 				}
@@ -95,7 +95,7 @@ public class CrudProvider<T> {
 	
 	@SuppressWarnings("unchecked")
 	public String selectByPage(final Map<String, Object> parameter) {
-		Class<T> clazz = (Class<T>) parameter.get(BaseDaoNew.CLASS_KEY);
+		Class<T> clazz = (Class<T>) parameter.get(BaseDao.CLASS_KEY);
 		return select(clazz);
 	}
 	
@@ -112,10 +112,10 @@ public class CrudProvider<T> {
 	public String countByCondition(final Map<String, Object> parameter) {
 		return new SQL() {
 			{
-				Class<T> clazz = (Class<T>) parameter.get(BaseDaoNew.CLASS_KEY);
+				Class<T> clazz = (Class<T>) parameter.get(BaseDao.CLASS_KEY);
 				Map<String, Object> paramMap = Maps.newHashMap();
-				if(parameter.containsKey(BaseDaoNew.PARA_KEY)){
-					paramMap = (Map<String, Object>) parameter.get(BaseDaoNew.PARA_KEY);
+				if(parameter.containsKey(BaseDao.PARA_KEY)){
+					paramMap = (Map<String, Object>) parameter.get(BaseDao.PARA_KEY);
 				}
 				SELECT("count(*)");
 				FROM(PersistenceUtil.getTableName(clazz));
@@ -127,7 +127,7 @@ public class CrudProvider<T> {
 							columnName = key;
 						}
 						if(paramMap.get(key) != null && (StringUtils.isNotBlank(paramMap.get(key).toString()))){
-							WHERE(columnName + "= #{ " + BaseDaoNew.PARA_KEY + "." + key + "}");
+							WHERE(columnName + "= #{ " + BaseDao.PARA_KEY + "." + key + "}");
 						}
 					}
 				}
@@ -169,9 +169,9 @@ public class CrudProvider<T> {
 	public String deleteById(final Map<String, Object> parameter) {
 		return new SQL() {
 			{
-				Class<T> clazz = (Class<T>) parameter.get(BaseDaoNew.CLASS_KEY);
+				Class<T> clazz = (Class<T>) parameter.get(BaseDao.CLASS_KEY);
 				DELETE_FROM(PersistenceUtil.getTableName(clazz));
-				WHERE(PersistenceUtil.getIdColumnName(clazz) + " = '" + parameter.get(BaseDaoNew.ID_KEY) + "'");
+				WHERE(PersistenceUtil.getIdColumnName(clazz) + " = '" + parameter.get(BaseDao.ID_KEY) + "'");
 			}
 		}.toString();
 	}
@@ -180,10 +180,10 @@ public class CrudProvider<T> {
 	public String deleteByCondition(final Map<String, Object> parameter) {
 		return new SQL() {
 			{
-				Class<T> clazz = (Class<T>) parameter.get(BaseDaoNew.CLASS_KEY);
+				Class<T> clazz = (Class<T>) parameter.get(BaseDao.CLASS_KEY);
 				Map<String, Object> paramMap = Maps.newHashMap();
-				if(parameter.containsKey(BaseDaoNew.PARA_KEY)){
-					paramMap = (Map<String, Object>) parameter.get(BaseDaoNew.PARA_KEY);
+				if(parameter.containsKey(BaseDao.PARA_KEY)){
+					paramMap = (Map<String, Object>) parameter.get(BaseDao.PARA_KEY);
 				}
 				DELETE_FROM(PersistenceUtil.getTableName(clazz));
 				if(paramMap != null) {
@@ -194,7 +194,7 @@ public class CrudProvider<T> {
 							columnName = key;
 						}
 						if(paramMap.get(key) != null && (StringUtils.isNotBlank(paramMap.get(key).toString()))){
-							WHERE(columnName + "= #{ " + BaseDaoNew.PARA_KEY + "." + key + "}");
+							WHERE(columnName + "= #{ " + BaseDao.PARA_KEY + "." + key + "}");
 						}
 					}
 				}
