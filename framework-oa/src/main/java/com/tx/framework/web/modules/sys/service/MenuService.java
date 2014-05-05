@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tx.framework.common.util.CollectionUtils;
+import com.tx.framework.web.common.persistence.entity.Menu;
+import com.tx.framework.web.common.persistence.entity.RoleMenu;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.modules.sys.dao.MenuDao;
 import com.tx.framework.web.modules.sys.dao.RoleMenuDao;
-import com.tx.framework.web.modules.sys.entity.Menu;
-import com.tx.framework.web.modules.sys.entity.RoleMenu;
 import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
 
 @Service
@@ -42,8 +42,17 @@ public class MenuService extends BaseService<Menu, String> {
 	 * @param id
 	 * @return
 	 */
-	public List<Menu> getAuthByUserId(String id) {
-		return menuDao.findByUserId(id);
+	public List<Menu> getResourceByUserId(String id) {
+		List<Menu> menus = menuDao.findByUserId(id);
+		List<Menu> result = Lists.newArrayList();
+		if(menus != null){
+			for(Menu menu : menus){
+				setParent(menus, menu);
+				setChildren(menus, menu);
+				result.add(menu);
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -54,9 +63,19 @@ public class MenuService extends BaseService<Menu, String> {
 	public List<Menu> getSidebarMenus(List<Menu> list) {
 		List<Menu> result = Lists.newArrayList();
 		for (Menu menu : list) {
-			// 选出一级菜单
+			// 选出一级菜单项
 			if (menu.getParentId().equals("1") && menu.getIsShow().equals("1")) {
-				getSubMenus(list, menu);
+				// 获取一级菜单下的二级可见菜单项
+				List<Menu> children = menu.getChildren();
+				List<Menu> visible = Lists.newArrayList();
+				if(children != null && !children.isEmpty()){
+					for(Menu child : children){
+						if(child.getIsShow().equals("1")){
+							visible.add(child);
+						}
+					}
+				}
+				menu.setChildren(visible);
 				result.add(menu);
 			}
 		}
@@ -79,20 +98,48 @@ public class MenuService extends BaseService<Menu, String> {
 	}
 	
 	/**
-	 * 递归获取次级菜单
+	 * 获取可点击的菜单列表
 	 * 
-	 * @param list 用户权限集合
+	 * @param list 用户资源集合
 	 */
-	private void getSubMenus(List<Menu> list, Menu parent) {
+	public List<Menu> getNavs(List<Menu> list) {
+		List<Menu> result = Lists.newArrayList();
+		for (Menu menu : list) {
+			if (StringUtils.isNotBlank(menu.getHref())) {
+				result.add(menu);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * 递归设置子菜单
+	 * @param list 用户资源集合
+	 * @param parent 父菜单
+	 */
+	private void setChildren(List<Menu> list, Menu parent) {
 		parent.setChildren(new ArrayList<Menu>());
 		for (Menu menu : list) {
-			if (menu.getIsShow().equals("1") && menu.getParentId().equals(parent.getId())) {
-				getSubMenus(list, menu);
+			if (menu.getParentId().equals(parent.getId())) {
+				setChildren(list, menu);
 				parent.getChildren().add(menu);
 			}
 		}
 	}
-
+	
+	/**
+	 * 设置父菜单属性
+	 * @param list 用户资源集合
+	 * @param child 要设置属性的子菜单
+	 */
+	private void setParent(List<Menu> list, Menu child) {
+		for (Menu menu : list) {
+			if (child.getParentId().equals(menu.getId())) {
+				child.setParent(menu);
+			}
+		}
+	}
+	
 	/**
 	 * 按照排序获取菜单列表
 	 * 

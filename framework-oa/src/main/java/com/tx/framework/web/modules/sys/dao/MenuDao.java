@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.tx.framework.web.common.persistence.annotation.MyBatisDao;
 import com.tx.framework.web.common.persistence.dao.BaseDao;
-import com.tx.framework.web.modules.sys.entity.Menu;
+import com.tx.framework.web.common.persistence.entity.Menu;
 
 
 @MyBatisDao

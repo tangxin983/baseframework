@@ -10,13 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.tx.framework.common.util.CollectionUtils;
+import com.tx.framework.web.common.persistence.entity.Role;
+import com.tx.framework.web.common.persistence.entity.RoleMenu;
+import com.tx.framework.web.common.persistence.entity.UserRole;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.modules.sys.dao.RoleMenuDao;
 import com.tx.framework.web.modules.sys.dao.RoleDao;
 import com.tx.framework.web.modules.sys.dao.UserRoleDao;
-import com.tx.framework.web.modules.sys.entity.Role;
-import com.tx.framework.web.modules.sys.entity.RoleMenu;
-import com.tx.framework.web.modules.sys.entity.UserRole;
 import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
 
 @Service

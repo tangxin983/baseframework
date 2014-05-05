@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Maps;
 import com.tx.framework.web.common.controller.BaseController;
-import com.tx.framework.web.modules.sys.entity.User;
+import com.tx.framework.web.common.persistence.entity.User;
 import com.tx.framework.web.modules.sys.service.RoleService;
 import com.tx.framework.web.modules.sys.service.UserService;
 

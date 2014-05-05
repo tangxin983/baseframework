@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.shiro.SecurityUtils;
 
+import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.common.persistence.entity.ShiroEntity;
-import com.tx.framework.web.modules.sys.entity.Menu;
 
 public class ShiroUtil {
 
@@ -86,7 +86,7 @@ public class ShiroUtil {
 	}
 
 	/**
-	 * 取出当前用户菜单
+	 * 取出当前用户侧边栏
 	 */
 	public static List<Menu> getMenus() {
 		ShiroEntity entity = (ShiroEntity) SecurityUtils.getSubject().getPrincipal();
@@ -99,5 +99,21 @@ public class ShiroUtil {
 	public static List<Menu> getPerms() {
 		ShiroEntity entity = (ShiroEntity) SecurityUtils.getSubject().getPrincipal();
 		return entity != null ? entity.getPerms() : null;
+	}
+	
+	/**
+	 * 取出当前用户可见菜单
+	 */
+	public static List<Menu> getNavs() {
+		ShiroEntity entity = (ShiroEntity) SecurityUtils.getSubject().getPrincipal();
+		return entity != null ? entity.getNavs() : null;
+	}
+	
+	/**
+	 * 取出当前用户所有资源
+	 */
+	public static List<Menu> getResources() {
+		ShiroEntity entity = (ShiroEntity) SecurityUtils.getSubject().getPrincipal();
+		return entity != null ? entity.getResources() : null;
 	}
 }

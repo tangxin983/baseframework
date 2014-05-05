@@ -32,11 +32,11 @@ import org.springframework.stereotype.Service;
 
 import com.tx.framework.common.util.CollectionUtils;
 import com.tx.framework.common.util.Encodes;
+import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.common.persistence.entity.ShiroEntity;
+import com.tx.framework.web.common.persistence.entity.User;
 import com.tx.framework.web.common.utils.ShiroUtil;
 import com.tx.framework.web.exception.ServiceException;
-import com.tx.framework.web.modules.sys.entity.Menu;
-import com.tx.framework.web.modules.sys.entity.User;
 import com.tx.framework.web.modules.sys.service.MenuService;
 import com.tx.framework.web.modules.sys.service.UserService;
 
@@ -111,11 +111,13 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(
 			PrincipalCollection principals) {
 		ShiroEntity shiroEntity = (ShiroEntity) principals.getPrimaryPrincipal();
-		List<Menu> resources = menuService.getAuthByUserId(shiroEntity.getUser().getId().toString());//总资源
+		List<Menu> resources = menuService.getResourceByUserId(shiroEntity.getUser().getId().toString());//总资源
 		List<Menu> menus = menuService.getSidebarMenus(resources);// 侧边栏
+		List<Menu> navs = menuService.getNavs(resources);// 可点击菜单
 		List<Menu> perms = menuService.getPerms(resources);// 权限
 		shiroEntity.setPerms(perms);
 		shiroEntity.setMenus(menus);
+		shiroEntity.setNavs(navs);
 		// 添加permission
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		addPermissions(info, perms);

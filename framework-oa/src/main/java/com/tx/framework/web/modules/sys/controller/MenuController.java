@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tx.framework.web.common.controller.BaseController;
-import com.tx.framework.web.modules.sys.entity.Menu;
+import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.modules.sys.service.MenuService;
 
 @Controller
