@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-<meta name="decorator" content="default1" />
+<meta name="decorator" content="default" />
 <title>首页</title>
 <script type="text/javascript">
 	$(document).ready(function() {

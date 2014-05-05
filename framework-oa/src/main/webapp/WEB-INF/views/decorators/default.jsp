@@ -8,28 +8,54 @@
 <sitemesh:head />
 </head>
 <body>
-	<div class="main-container">
-		<div class="panel panel-primary">
+	<shiro:user>
+		<!-- navbar begin -->
+		<%@ include file="/WEB-INF/views/include/navbar.jsp"%>
+		<!-- navbar end -->
+	</shiro:user>
+
+	<div class="container">
+		<div class="row">
 			<shiro:user>
-				<!-- 导航 -->
-				<%@ include file="/WEB-INF/views/include/navbar.jsp"%>
+				<!-- sidebar begin -->
+				<div class="col-md-2 bootstrap-admin-col-left" id="sidebar">
+					<%@ include file="/WEB-INF/views/include/sidebar.jsp"%>
+				</div>
+				<!-- sidebar end -->
+				<!-- content begin -->
+				<div class="col-md-10" id="mainContent">
+					<ol class="breadcrumb" id="breadcrumb">
+						<a href="#"> <span
+							class="glyphicon glyphicon-chevron-left hide-sidebar"
+							title="隐藏侧边栏"></span>
+						</a>
+						<a href="#"> <span
+							class="glyphicon glyphicon-chevron-right show-sidebar"
+							title="显示侧边栏" style="display: none;"></span>
+						</a>
+					</ol>
+					<sitemesh:body />
+				</div>
+				<!-- content end -->
 			</shiro:user>
-			<sitemesh:body />
+			<shiro:guest>
+   				<sitemesh:body />	
+			</shiro:guest>
 		</div>
 	</div>
-	<!-- 页脚 -->
+
+	<!-- footer -->
 	<%@ include file="/WEB-INF/views/include/footer.jsp"%>
 </body>
 <script type="text/javascript">
-	var currentLocation = window.location.pathname.split("/")[window.location.pathname
-			.split("/").length - 1];
-	if (currentLocation != "" && typeof (currentLocation) != "undefined") {
-		$.get("${ctx}/resource/breadcrumb?path=" + currentLocation, function(
-				resp) {
-			if (resp && resp != "") {
-				$('.data-content').prepend(resp);
-			}
-		});
-	}
+	$(document).ready(function() {
+		if (localStorage.menuId) {
+			$.get("${ctx}/breadcrumb?id=" + localStorage.menuId,function(resp) {
+				if (resp && resp != "") {
+					$("#breadcrumb").append(resp);
+				}
+			});
+		}
+	});
 </script>
 </html>

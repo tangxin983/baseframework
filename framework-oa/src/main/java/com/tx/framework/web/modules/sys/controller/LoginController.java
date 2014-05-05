@@ -2,6 +2,7 @@ package com.tx.framework.web.modules.sys.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tx.framework.common.util.CaptchaUtils;
+import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.common.utils.ShiroUtil;
 import com.tx.framework.web.modules.sys.security.CaptchaAuthenticationFilter;
 
@@ -67,6 +69,36 @@ public class LoginController {
 		ShiroUtil.setAttribute(CaptchaAuthenticationFilter.DEFAULT_CAPTCHA_PARAM, captcha);
 		return outputStream.toByteArray();
 	}
+	
+	/**
+	 * 生成面包屑导航
+	 * @param id 被选中的菜单id
+	 * @return
+	 */
+	@RequestMapping("/breadcrumb")
+    @ResponseBody
+    public String breadcrumb(@RequestParam("id") String id){
+		StringBuilder sb = new StringBuilder();
+		List<Menu> menus = ShiroUtil.getNavs();
+		Menu selected = null;
+		if (menus != null) {
+			for (Menu menu : menus) {
+				if (menu.getId().equals(id)) {
+					selected = menu;
+				}
+			}
+			if (selected != null) {
+				sb.append("<li><a href=\"#\">");
+				Menu parent = selected.getParent();
+				sb.append(parent.getName());
+				sb.append("</a></li>");
+				sb.append("<li class=\"active\">");
+				sb.append(selected.getName());
+				sb.append("</li>");
+			}
+		}
+		return sb.toString();
+    }
 
 	/**
 	 * 首页

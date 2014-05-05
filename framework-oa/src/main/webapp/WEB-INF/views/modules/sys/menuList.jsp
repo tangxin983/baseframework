@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-<meta name="decorator" content="default1" />
+<meta name="decorator" content="default" />
 <title>菜单管理</title>
 <%@include file="/WEB-INF/views/include/treetable.jsp"%>
 <script type="text/javascript">

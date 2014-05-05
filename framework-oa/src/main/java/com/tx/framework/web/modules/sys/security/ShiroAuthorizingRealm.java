@@ -118,6 +118,7 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 		shiroEntity.setPerms(perms);
 		shiroEntity.setMenus(menus);
 		shiroEntity.setNavs(navs);
+		shiroEntity.setResources(resources);
 		// 添加permission
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		addPermissions(info, perms);

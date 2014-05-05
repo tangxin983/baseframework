@@ -12,7 +12,7 @@
 	<function>
 		<description>判断对象是否在集合中</description>
 		<name>contains</name>
-		<function-class>com.tx.framework.common.util.JstlFunction</function-class>
+		<function-class>com.tx.framework.web.common.utils.JstlFunction</function-class>
 		<function-signature>boolean contains(java.util.Collection,java.lang.Object)</function-signature>
 		<example>${fns:contains(collection, obj)}</example>  
 	</function>
@@ -20,7 +20,7 @@
 	<function>
 		<description>将数组转换成字符串</description>
 		<name>join</name>
-		<function-class>com.tx.framework.common.util.JstlFunction</function-class>
+		<function-class>com.tx.framework.web.common.utils.JstlFunction</function-class>
 		<function-signature>String join(java.util.List,java.lang.String)</function-signature>
 		<example>${fns:join(list, str)}</example>  
 	</function>

@@ -10,10 +10,11 @@
 <script src="${ctxStatic}/script/html5shiv.js"></script>
 <script src="${ctxStatic}/script/respond.min.js"></script>
 <![endif]-->
+<!-- <link rel="stylesheet" type="text/css" href="${ctxStatic}/css/layout.min.css" />  -->
 <!-- jasny must before bootstrap -->
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/css/jasny-bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="${ctxStatic}/css/layout.min.css" />
+<link rel="stylesheet" type="text/css" href="${ctxStatic}/css/bootstrap-admin-theme.css" />
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/css/bootstrap-select.min.css" />
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/css/bootstrap-datetimepicker.min.css" />
 <!-- jquery -->

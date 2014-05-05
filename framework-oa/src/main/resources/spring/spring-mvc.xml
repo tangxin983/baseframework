@@ -18,7 +18,7 @@
 	<!-- BeanPostProcessor用于去掉MVC URL匹配后缀  -->
 	<bean class="com.tx.framework.web.common.config.SuffixPostProcessor" />
 	
-	<!-- 用于定位边栏菜单及面包屑导航 --> 
+	<!-- 
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
@@ -27,7 +27,8 @@
 			<bean class="com.tx.framework.web.common.interceptor.NavInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
-
+	 -->
+	 
 	<!-- 启用Spring MVC 注解驱动 -->
 	<mvc:annotation-driven>
 		<mvc:message-converters>

@@ -1,84 +1,60 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="ctx" value="${pageContext.request.contextPath}" />
-
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-<meta name="decorator" content="default"/>
+<meta name="decorator" content="default" />
 <title>登录页</title>
+<script type="text/javascript">
+	function reloadCaptcha() {
+		$("#captchaImg").attr("src", "getCaptcha");
+	}
+</script>
 </head>
 
 <body>
-	<div class="data-content">
-		<div class="login-container">
-			<div class="panel panel-default">
-			
-				<div class="panel-heading">
-					<h3 class="panel-title"><sapn class="glyphicon glyphicon-lock"></sapn> 用户登录</h3>
-				</div>
-				<form id="login-form" action="${ctx}/login" method="post">
-
-					<div class="panel-body">
-						
-						<c:if test="${!empty shiroLoginFailure}">
-							<div class="alert alert-danger fade in">
-								<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-								<span class="glyphicon glyphicon-remove"></span>${shiroLoginFailure}
-							</div>
-						</c:if>
-						
-						<div class="form-group">
-							<label for="username">帐号:</label> 
-							<input type="text" class="form-control required" name="username" id="username" value="${username}">
-						</div>
-						<div class="form-group">
-							<label for="password">密码:</label> 
-							<input type="password" class="form-control required" name="password" id="password">
-						</div>
-						<div class="form-group">
-							<label for="rememberMe">有效期:</label> 
-							<select class="form-control" name="rememberMe" id="rememberMe">
-								<option value="">无</option>
-								<option value="25200">一周</option>
-								<option value="2592000">一个月</option>
-								<option value="31536000">一年</option>
-							</select>
-						</div>
-						<c:if test="${!empty showCaptcha and showCaptcha}">
-							<div class="form-group">
-								<label for="captcha">验证码:</label>
-								<div class="row">
-									<div class="col-xs-8">
-									<input type="text" class="form-control required" name="captcha" id="captcha" >
-									</div>
-									<div class="col-xs-2">
-										<img id="captchaImg" src="getCaptcha" onclick="javascript:reloadCaptcha();"/>
-									</div>
-									<div class="col-xs-2">
-										<a class="btn btn-link" href="javascript:reloadCaptcha();">看不清?</a>
-									</div>
-								</div>
-							</div>
-						</c:if>
-					</div>
-					
-					
-					<div class="panel-footer">
-						<button type="submit" class="btn btn-primary">登录</button>
-					</div>
-					
-					
-					
-				</form>
-				
+	<form action="${ctx}/login" method="post"
+		class="bootstrap-admin-login-form">
+		<c:if test="${!empty shiroLoginFailure}">
+			<div class="alert alert-danger fade in">
+				<a class="close" data-dismiss="alert">&times;</a>
+				${shiroLoginFailure}
 			</div>
+		</c:if>
+		<legend>
+			<span style="color: #08c;">系统登陆</span>
+		</legend>
+		<div class="form-group">
+			<input class="form-control required" placeholder="登录名"
+				name="username" value="${username}">
 		</div>
-	</div>
-	<script type="text/javascript">
-		function reloadCaptcha() {
-			$("#captchaImg").attr("src", "getCaptcha");
-		}
-	</script>
+		<div class="form-group">
+			<input type="password" class="form-control required" placeholder="密码"
+				name="password">
+		</div>
+		<div class="form-group">
+			<select class="form-control" name="rememberMe">
+				<option value="">无</option>
+				<option value="25200">记住一周</option>
+				<option value="2592000">记住一个月</option>
+				<option value="31536000">记住一年</option>
+			</select>
+		</div>
+		<c:if test="${!empty showCaptcha and showCaptcha}">
+			<div class="form-group">
+				<div class="row">
+					<div class="col-md-8">
+						<input class="form-control required" name="captcha"
+							placeholder="请输入验证码" id="captcha">
+					</div>
+					<div class="col-md-2">
+						<img id="captchaImg" src="getCaptcha"
+							onclick="javascript:reloadCaptcha();" />
+					</div>
+				</div>
+			</div>
+		</c:if>
+		<button class="btn btn-lg btn-primary" type="submit">登录</button>
+	</form>
 </body>
 </html>
 
