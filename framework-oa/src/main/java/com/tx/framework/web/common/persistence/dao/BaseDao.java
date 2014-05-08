@@ -74,7 +74,7 @@ public interface BaseDao<T, PK> {
 	public List<T> selectByCondition(@Param(CLASS_KEY)Class<T> clazz, @Param(PARA_KEY)Map<String, Object> paramMap);  
 	
 	/**
-	 * 根据条件查找记录(where key1 like '%value1%' and key2 like '%value2%')
+	 * 根据模糊条件查找记录(where key1 like '%value1%' and key2 like '%value2%')
 	 * @param paramMap 参数Map(如果传null则忽略条件)
 	 * @return
 	 */
@@ -108,7 +108,17 @@ public interface BaseDao<T, PK> {
 	 * @return
 	 */
 	@SelectProvider(type = CrudProvider.class, method = "complicatedSelect")
-	public List<T> selectByPageAndCondition(@Param(CLASS_KEY)Class<T> clazz, @Param(PAGE_KEY)Page<T> page, @Param(PARA_KEY)Map<String, Object> paramMap);  
+	public List<T> selectByPageAndCondition(@Param(CLASS_KEY)Class<T> clazz, @Param(PAGE_KEY)Page<T> page, @Param(PARA_KEY)Map<String, Object> paramMap); 
+	
+	/**
+	 * 根据模糊条件分页查找记录(where key1 like '%value1%' and key2 like '%value2%')
+	 * @param clazz 实体class
+	 * @param page 分页对象
+	 * @param paramMap 参数Map(如果传null则忽略条件)
+	 * @return
+	 */
+	@SelectProvider(type = CrudProvider.class, method = "complicatedSelect")
+	public List<T> selectByPageAndLikeCondition(@Param(CLASS_KEY)Class<T> clazz, @Param(PAGE_KEY)Page<T> page, @Param(LIKE_KEY)Map<String, Object> paramMap); 
 	
 	/**
 	 * 获取表记录个数

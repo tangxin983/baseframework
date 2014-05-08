@@ -48,7 +48,7 @@ public abstract class BaseService<T, PK> {
 	}
 	
 	/**
-	 * 根据查询参数获取记录集(where key1 like '%value1%' and key2 like '%value2%')
+	 * 根据查询参数获取记录集(模糊查询)
 	 * @param searchParams
 	 * @return
 	 */
@@ -74,7 +74,7 @@ public abstract class BaseService<T, PK> {
 	}
 	
 	/**
-	 * 根据查询参数获取记录集(where key1=value1 and key2=value2)
+	 * 根据查询参数获取记录集(精确查询)
 	 * @param searchParams
 	 * @return
 	 */
@@ -83,7 +83,7 @@ public abstract class BaseService<T, PK> {
 	}
 	
 	/**
-	 * 根据查询参数获取记录集并排序(where key1=value1 and key2=value2 order by order1,order2..)
+	 * 根据查询参数获取记录集并排序(精确查询)
 	 * @param searchParams
 	 * @param orders 要排序的字段列表
 	 * @return
@@ -101,7 +101,7 @@ public abstract class BaseService<T, PK> {
 	}
 	
 	/**
-	 * 根据查询参数获取表记录数(where key1=value1 and key2=value2)
+	 * 根据查询参数获取表记录数(精确查询)
 	 * @param searchParams
 	 * @return
 	 */
@@ -144,7 +144,7 @@ public abstract class BaseService<T, PK> {
 	}
 	
 	/**
-	 * 根据查询参数进行分页查询
+	 * 根据查询参数进行分页查询(模糊查询)
 	 * @param searchParams 查询参数
 	 * @param pageNumber 当前页
 	 * @param pageSize 每页数量
@@ -152,7 +152,7 @@ public abstract class BaseService<T, PK> {
 	 */
 	public Page<T> selectByPage(Map<String, Object> searchParams, int pageNumber, int pageSize) {
 		Page<T> p = buildPage(pageNumber, pageSize);
-		p.setResult(dao.selectByPageAndCondition(genericType, p, searchParams));
+		p.setResult(dao.selectByPageAndLikeCondition(genericType, p, searchParams));
 		return p;
 	}
 	

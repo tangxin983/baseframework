@@ -56,7 +56,7 @@
 	</appender>
 	
 	<!-- 打印com.tx.framework.web.manage日志 -->
- 	<logger name="com.tx.framework.web.manage" level="DEBUG" additivity="false">
+ 	<logger name="com.tx.framework.web" level="INFO" additivity="false">
  		<appender-ref ref="manage" />
 		<appender-ref ref="console" />
 	</logger>

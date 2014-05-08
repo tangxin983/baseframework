@@ -56,17 +56,6 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	}
 	
 	/**
-	 * 模型公共属性设置
-	 * @param model
-	 */
-	protected void setModelAttr(Model model){
-		model.addAttribute("module", getControllerContext());
-		model.addAttribute("moduleb", getControllerContext() + "/b");
-		model.addAttribute("ctxModule", servletContext.getContextPath() + "/" + getControllerContext());
-		model.addAttribute("ctxModuleb", servletContext.getContextPath() + "/" + getControllerContext() + "/b");
-	}
-	
-	/**
 	 * 通过反射取得requestMapping value（头尾的'/'会被去掉）
 	 * @return
 	 */
@@ -138,13 +127,12 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	public String list(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model, ServletRequest request) {
-		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "search_");
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
 		setExtraSearchParam(searchParams);
 		Page<T> entitys = service.selectByPage(searchParams, pageNumber, pageSize);
 		model.addAttribute("page", entitys);
 		// 将搜索条件编码成字符串，用于分页的URL
-		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "search_"));
-		setModelAttr(model);
+		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
 		return getListPage();
 	}
 	
@@ -157,10 +145,9 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	 */
 	@RequestMapping("b/view")
 	public String view(Model model, ServletRequest request) {
-		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "search_");
-		List<T> entitys = service.select(searchParams);
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
+		List<T> entitys = service.selectByLikeCondition(searchParams);
 		model.addAttribute("entitys", entitys);
-		setModelAttr(model);
 		return getListPage();
 	}
 	
@@ -173,7 +160,6 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	@RequestMapping(value = "b/create", method = RequestMethod.GET)
 	public String createForm(Model model) {
 		model.addAttribute("action", "create");
-		setModelAttr(model);
 		return getCreateFormPage();
 	}
 
@@ -202,7 +188,6 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	public String updateForm(@PathVariable("id") PK id, Model model) {
 		model.addAttribute("entity", service.selectById(id));
 		model.addAttribute("action", "update");
-		setModelAttr(model);
 		return getUpdateFormPage();
 	}
 
@@ -271,5 +256,9 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 		if (!id.equals("-1")) {
 			model.addAttribute("entity", service.selectById(id));
 		}
+		model.addAttribute("module", getControllerContext());
+		model.addAttribute("moduleb", getControllerContext() + "/b");
+		model.addAttribute("ctxModule", servletContext.getContextPath() + "/" + getControllerContext());
+		model.addAttribute("ctxModuleb", servletContext.getContextPath() + "/" + getControllerContext() + "/b");
 	}
 }

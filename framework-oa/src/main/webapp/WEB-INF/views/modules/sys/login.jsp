@@ -12,8 +12,7 @@
 </head>
 
 <body>
-	<form action="${ctx}/login" method="post"
-		class="bootstrap-admin-login-form">
+	<form action="${ctx}/login" method="post" class="bootstrap-admin-login-form">
 		<c:if test="${!empty shiroLoginFailure}">
 			<div class="alert alert-danger fade in">
 				<a class="close" data-dismiss="alert">&times;</a>

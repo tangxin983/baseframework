@@ -9,6 +9,8 @@ public class JodaTimeUtil {
 	
 	public static final String defaultPattern = "yyyy-MM-dd HH:mm:ss";
 	
+	public static final String simplePattern = "yyyy-MM-dd";
+	
 	/**
 	 * 日期转字符串<br>
 	 * 默认格式:yyyy-MM-dd HH:mm:ss
@@ -56,23 +58,33 @@ public class JodaTimeUtil {
 	}
 	
 	/**
-	 * 当前日期转字符串
+	 * 获取当前日期
 	 * @param pattern
 	 * @return
 	 */
-	public static String convertCurtimeToString(String pattern) {
+	public static String getCurrentTime(String pattern) {
 		DateTime dt = new DateTime(new Date());
 		return dt.toString(pattern);
 	}
 	
 	/**
-	 * 当前日期转字符串<br>
+	 * 获取当前日期<br>
 	 * 默认格式:yyyy-MM-dd HH:mm:ss
 	 * @return
 	 */
-	public static String convertCurtimeToString() {
+	public static String getCurrentTime() {
 		DateTime dt = new DateTime(new Date());
 		return dt.toString(defaultPattern);
+	}
+	
+	/**
+	 * 获取当前日期<br>
+	 * 默认格式:yyyy-MM-dd
+	 * @return
+	 */
+	public static String getCurrentDate() {
+		DateTime dt = new DateTime(new Date());
+		return dt.toString(simplePattern);
 	}
 	
 	/**

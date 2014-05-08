@@ -22,7 +22,7 @@ import com.tx.framework.web.modules.sys.service.MenuService;
 import com.tx.framework.web.modules.sys.service.RoleService;
 
 @Controller
-@RequestMapping(value = "/sys/role")
+@RequestMapping(value = "sys/role")
 public class RoleController extends BaseController<Role, String> {
 
 	@Autowired
@@ -66,7 +66,6 @@ public class RoleController extends BaseController<Role, String> {
 		role.setMenuIds(roleService.findRoleMenu(id));
 		model.addAttribute("entity", role);
 		model.addAttribute("action", "update");
-		setModelAttr(model);
 		return getUpdateFormPage();
 	}
 	

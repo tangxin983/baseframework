@@ -125,7 +125,7 @@ public class BillRestService {
 		bill.setConsumeAmount(consumeAmount);
 		bill.setResultAmount(resultAmount);
 		bill.setDiscountAmount(discountAmount);
-		bill.setCurrDate(JodaTimeUtil.convertCurtimeToString("yyyyMMdd"));
+		bill.setCurrDate(JodaTimeUtil.getCurrentTime("yyyyMMdd"));
 		bill.setOperateTime(System.currentTimeMillis());
 		if(card != null){
 			bill.setCardId(card.getId());

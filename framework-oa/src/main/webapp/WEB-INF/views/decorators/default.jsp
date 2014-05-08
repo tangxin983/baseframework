@@ -8,12 +8,9 @@
 <sitemesh:head />
 </head>
 <body>
-	<shiro:user>
-		<!-- navbar begin -->
-		<%@ include file="/WEB-INF/views/include/navbar.jsp"%>
-		<!-- navbar end -->
-	</shiro:user>
-
+	<!-- navbar begin -->
+	<%@ include file="/WEB-INF/views/include/navbar.jsp"%>
+	<!-- navbar end -->
 	<div class="container">
 		<div class="row">
 			<shiro:user>
@@ -39,11 +36,11 @@
 				<!-- content end -->
 			</shiro:user>
 			<shiro:guest>
-   				<sitemesh:body />	
+		   		<sitemesh:body />	
 			</shiro:guest>
 		</div>
 	</div>
-
+	 
 	<!-- footer -->
 	<%@ include file="/WEB-INF/views/include/footer.jsp"%>
 </body>

@@ -26,7 +26,7 @@
 			<div class="text-muted bootstrap-admin-box-title">用户列表</div>
 		</div>
 		<div class="panel-body">
-			<table id="treeTable" class="table table-striped table-hover">
+			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
 						<th>登录名</th>

@@ -22,7 +22,7 @@ import com.tx.framework.web.modules.sys.service.RoleService;
 import com.tx.framework.web.modules.sys.service.UserService;
 
 @Controller
-@RequestMapping(value = "/sys/user")
+@RequestMapping(value = "sys/user")
 public class UserController extends BaseController<User, String> {
 	
 	@Autowired
@@ -66,7 +66,6 @@ public class UserController extends BaseController<User, String> {
 		user.setRoleIds(userService.findUserRole(id));
 		model.addAttribute("entity", user);
 		model.addAttribute("action", "update");
-		setModelAttr(model);
 		return getUpdateFormPage();
 	}
 	

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *
  */
 @Controller
-@RequestMapping(value = "/sys/tag")
+@RequestMapping(value = "sys/tag")
 public class TagController {
 	
 	/**

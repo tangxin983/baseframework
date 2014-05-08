@@ -27,13 +27,15 @@
                 return "?page=" + page + "&${searchParams}";
             }
 		};
-		var html = "<li class='disabled'><a>第${page.currentResult + 1} - ${page.currentEndResult}条记录 / 共${page.total}条</a></li>";
 		if(<%=page.getTotalPage()%> > 1){
 			$('#pagination').bootstrapPaginator(options);
-			$('#pagination').append(html);
+			$('#pagination').append("<li class='disabled'><a>第${page.currentResult + 1} - ${page.currentEndResult}条记录 / 共${page.total}条</a></li>");
+		}else if(<%=page.getTotalPage()%> == 1){
+			$('#pagination').addClass('pagination');
+			$('#pagination').append("<li class='disabled'><a>第${page.currentResult + 1} - ${page.currentEndResult}条记录 / 共${page.total}条</a></li>");
 		}else{
 			$('#pagination').addClass('pagination');
-			$('#pagination').append(html);
+			$('#pagination').append("<li class='disabled'><a>共${page.total}条记录</a></li>");
 		}
 	});
 	

@@ -24,7 +24,7 @@ import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.modules.sys.service.MenuService;
 
 @Controller
-@RequestMapping(value = "/sys/menu")
+@RequestMapping(value = "sys/menu")
 public class MenuController extends BaseController<Menu, String> {
 
 	private MenuService menuService;
@@ -46,7 +46,6 @@ public class MenuController extends BaseController<Menu, String> {
 		List<Menu> list = Lists.newArrayList();
 		sortMenuList(list, sourcelist, "1");
 		model.addAttribute("entitys", list);
-		setModelAttr(model);
 		return getListPage();
 	}
 
@@ -97,7 +96,6 @@ public class MenuController extends BaseController<Menu, String> {
 		}
 		model.addAttribute("entity", menu);
 		model.addAttribute("action", "create");
-		setModelAttr(model);
 		return getCreateFormPage();
 	}
 
@@ -128,7 +126,6 @@ public class MenuController extends BaseController<Menu, String> {
 		}
 		model.addAttribute("entity", menu);
 		model.addAttribute("action", "update");
-		setModelAttr(model);
 		return getUpdateFormPage();
 	}
 
