@@ -90,6 +90,17 @@ public class UserService extends BaseService<User, String> {
 		para.put("userId", id);
 		userRoleDao.deleteByCondition(UserRole.class, para);
 	}
+	
+	/**
+	 * 批量删除用户及用户角色关系
+	 * 
+	 * @param ids
+	 */
+	public void deleteUser(List<String> ids) {
+		for(String id : ids){
+			deleteUser(id);
+		}
+	}
 
 	/**
 	 * 查询用户对应的角色列表

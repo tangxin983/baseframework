@@ -183,5 +183,15 @@ public class User extends BaseEntity {
 	public static boolean isAdmin(String id){
 		return id != null && id.equals("1");
 	}
+	
+	@Transient
+	public static boolean isAdmin(List<String> ids){
+		for(String id : ids){
+			if(isAdmin(id)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

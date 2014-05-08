@@ -99,10 +99,22 @@ public class RoleService extends BaseService<Role, String> {
 		roleMenuDao.deleteByCondition(RoleMenu.class, para);
 	}
 	
+	/**
+	 * 批量删除角色（涉及到权限变更将清除权限缓存以便重新加载）
+	 * 
+	 * @param ids
+	 */
+	@CacheEvict(value = ShiroAuthorizingRealm.CACHE_NAME, allEntries = true)
+	public void deleteRole(List<String> ids) {
+		for(String id : ids){
+			deleteRole(id);
+		}
+	}
+	
 
 	/**
 	 * 判断是否能够删除角色（已关联用户则不能删除）
-	 * @param ids
+	 * @param id
 	 * @return 可以删除true不能删除false
 	 */
 	public boolean isDelete(String id) {
@@ -110,6 +122,20 @@ public class RoleService extends BaseService<Role, String> {
 		para.put("roleId", id);
 		if(userRoleDao.countByCondition(UserRole.class, para) > 0){
 			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * 判断是否能够删除角色（已关联用户则不能删除）
+	 * @param ids
+	 * @return 可以删除true不能删除false
+	 */
+	public boolean isDelete(List<String> ids) {
+		for(String id : ids){
+			if(!isDelete(id)){
+				return false;
+			}
 		}
 		return true;
 	}

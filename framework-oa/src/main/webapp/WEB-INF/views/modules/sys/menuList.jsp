@@ -17,16 +17,16 @@
 <body>
 
 	<tags:message content="${message}" />
-
-	<!-- button -->	
-	<div class="btn-toolbar">
-		<div class="btn-group">
+	 
+	<shiro:hasPermission name="sys:menu:create">
+	<nav class="navbar navbar-default">
+		<form class="navbar-form navbar-left" valid="false">
 			<a href="${ctxModule}/create" class="btn btn-primary">
-				<span class="glyphicon glyphicon-plus"></span> 新增
+				<span class="glyphicon glyphicon-plus"></span> 添加一级菜单
 			</a>
-		</div>
-	</div>
-	<br/>
+		</form>
+	</nav>
+	</shiro:hasPermission>
 	
 	<!-- table -->
 	<div class="panel panel-default">
@@ -52,23 +52,31 @@
 								<c:if test="${not empty menu.icon}">
 									<span class="glyphicon glyphicon-${menu.icon}"></span>
 								</c:if>
-								<a href="${ctxModule}/update/${menu.id}">${menu.name}</a>
+								<shiro:hasPermission name="sys:menu:edit">
+		    					<a href="${ctxModule}/update/${menu.id}" title="修改">
+									${menu.name}
+								</a>
+								</shiro:hasPermission>
+								<shiro:lacksPermission name="sys:menu:edit">
+								${menu.name}
+								</shiro:lacksPermission>
 							</td>
 							<td>${menu.href}</td>
 							<td>${menu.sort}</td>
 							<td>${menu.isShow eq '1'?'显示':'隐藏'}</td>
 							<td>${menu.permission}</td>
 							<td>
-								<a href="${ctxModule}/update/${menu.id}" class="btn btn-default" title="修改">
-									<span class="glyphicon glyphicon-edit"></span>
-								</a>
+								<shiro:hasPermission name="sys:menu:delete">
 							    <a href="${ctxModule}/delete/${menu.id}" class="btn btn-danger" title="删除"
 							    	onclick="return confirmx('要删除该菜单及所有子菜单项吗?', this.href)">
 							    	<span class="glyphicon glyphicon-remove"></span>
 							    </a> 
+							    </shiro:hasPermission>
+							    <shiro:hasPermission name="sys:menu:create">
 							    <a href="${ctxModule}/create?parentId=${menu.id}" class="btn btn-primary" title="添加子菜单"> 
 							    	<span class="glyphicon glyphicon-plus"></span>
 								</a>
+								</shiro:hasPermission>
 							</td>
 						</tr>
 					</c:forEach>

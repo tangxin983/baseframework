@@ -2,8 +2,17 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-<meta name="decorator" content="default" />
-<title>角色管理</title>
+	<meta name="decorator" content="default" />
+	<title>角色管理</title>
+	<script type="text/javascript">
+		function multiDel(){
+			$("[name='ids']").each(function(){
+				if($(this).is(":checked")){
+					return confirmx_func('确定要删除选中的记录吗?', function(){$("#viewForm").submit();})
+				}
+			});
+		}
+	</script>
 </head>
 
 <body>
@@ -19,9 +28,16 @@
 			<button type="submit" class="btn btn-primary">
 				<span class="glyphicon glyphicon-search"></span> 查询
 			</button>
+			<shiro:hasPermission name="sys:role:create">
 			<a href="${ctxModule}/create" class="btn btn-primary"> 
 				<span class="glyphicon glyphicon-plus"></span> 添加角色
 			</a>
+			</shiro:hasPermission>
+			<shiro:hasPermission name="sys:role:delete">
+			<a onclick="multiDel()" class="btn btn-danger">
+				<span class="glyphicon glyphicon-remove"></span> 删除
+			</a>
+			</shiro:hasPermission>
 		</form>
 	</nav>
 
@@ -31,29 +47,33 @@
 			<div class="text-muted bootstrap-admin-box-title">角色列表</div>
 		</div>
 		<div class="panel-body">
-			<table id="treeTable" class="table table-striped table-hover">
-				<thead>
-					<tr>
-						<th>角色名称</th>
-						<th>操作</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach items="${page.result}" var="entity">
+			<form id="viewForm" action="${ctxModule}/delete" valid="false" method="post">
+				<table id="treeTable" class="table table-striped table-hover">
+					<thead>
 						<tr>
-							<td>${entity.name}</td>
-							<td><a href="${ctxModule}/update/${entity.id}"
-								class="btn btn-default" title="修改"> <span
-									class="glyphicon glyphicon-edit"></span>
-							</a> <a href="${ctxModule}/delete/${entity.id}"
-								class="btn btn-danger" title="删除"
-								onclick="return confirmx('要删除该角色吗?', this.href)"> <span
-									class="glyphicon glyphicon-remove"></span>
-							</a></td>
+							<th><input type="checkbox" id="selectAll"></th>
+							<th>角色名称</th>
 						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						<c:forEach items="${page.result}" var="entity">
+							<tr>
+								<td><input type="checkbox" name="ids" value="${entity.id}"></td>
+								<td>
+									<shiro:hasPermission name="sys:role:edit">
+		    						<a href="${ctxModule}/update/${entity.id}" title="修改">
+										${entity.name}
+									</a>
+									</shiro:hasPermission>
+									<shiro:lacksPermission name="sys:role:edit">
+									${entity.name}
+									</shiro:lacksPermission>
+								</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</form>
 			<tags:pagination page="${page}" />
 		</div>
 	</div>

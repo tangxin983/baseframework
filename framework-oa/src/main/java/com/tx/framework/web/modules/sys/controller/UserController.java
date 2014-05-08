@@ -1,7 +1,9 @@
 package com.tx.framework.web.modules.sys.controller;
 
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Maps;
+import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.controller.BaseController;
 import com.tx.framework.web.common.persistence.entity.User;
 import com.tx.framework.web.modules.sys.service.RoleService;
@@ -37,6 +40,16 @@ public class UserController extends BaseController<User, String> {
 	}
 	
 	/**
+	 * 跳转用户列表页（分页）
+	 */
+	@RequestMapping
+	public String list(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
+			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
+			Model model, HttpServletRequest request) {
+		return super.list(pageNumber, pageSize, model, request);
+	}
+	
+	/**
 	 * 跳转到用户新增页面
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.GET)
@@ -53,7 +66,7 @@ public class UserController extends BaseController<User, String> {
 			RedirectAttributes redirectAttributes) {
 		userService.saveUser(entity);
 		addMessage(redirectAttributes, "添加用户" + entity.getName() + "成功");
-		return "redirect:/" + getControllerContext() + "/b";
+		return "redirect:/" + getControllerContext();
 	}
 	
 	/**
@@ -76,7 +89,7 @@ public class UserController extends BaseController<User, String> {
 	public String update(@Valid @ModelAttribute("entity")User entity, RedirectAttributes redirectAttributes) {
 		userService.updateUser(entity);
 		addMessage(redirectAttributes, "更新用户" + entity.getName() + "成功");
-		return "redirect:/" + getControllerContext() + "/b";
+		return "redirect:/" + getControllerContext();
 	}
 	
 	/**
@@ -90,7 +103,21 @@ public class UserController extends BaseController<User, String> {
 		}else{
 			addMessage(redirectAttributes, "无法删除管理员账号");
 		}
-		return "redirect:/" + getControllerContext() + "/b";
+		return "redirect:/" + getControllerContext();
+	}
+	
+	/**
+	 * 批量删除用户
+	 */
+	@RequestMapping("delete")
+	public String multiDelete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
+		if(!User.isAdmin(ids)){
+			userService.deleteUser(ids);
+			addMessage(redirectAttributes, "删除" + ids.size() + "条记录 成功");
+		}else{
+			addMessage(redirectAttributes, "无法删除管理员账号");
+		}
+		return "redirect:/" + getControllerContext();
 	}
 	
 	/**
