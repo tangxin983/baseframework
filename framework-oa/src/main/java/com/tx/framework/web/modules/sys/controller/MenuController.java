@@ -176,5 +176,27 @@ public class MenuController extends BaseController<Menu, String> {
 		}
 		return mapList;
 	}
+	
+	/**
+	 * 检查菜单链接是否已经存在
+	 * @param oldHref
+	 * @param href
+	 * @return
+	 */
+	@RequestMapping(value = "checkHref")
+	@ResponseBody
+	public Map<String, String> checkHref(@RequestParam("old") String oldHref,
+			@RequestParam("href") String href) {
+		Map<String, String> msg = Maps.newHashMap();
+		if (href != null && href.equals(oldHref)) {
+			msg.put("success", "true");
+		} else if (href != null && menuService.countByHref(href) == 0) {
+			msg.put("success", "true");
+		} else {
+			msg.put("success", "false");
+			msg.put("msg", "此链接已存在");
+		}
+		return msg;
+	}
 
 }

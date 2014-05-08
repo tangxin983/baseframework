@@ -133,7 +133,7 @@ public class RoleController extends BaseController<Role, String> {
 		Map<String, String> msg = Maps.newHashMap();
 		if (name != null && name.equals(oldName)) {
 			msg.put("success", "true");
-		} else if (name != null && roleService.findRoleByName(name).isEmpty()) {
+		} else if (name != null && roleService.countRoleByName(name) == 0) {
 			msg.put("success", "true");
 		} else {
 			msg.put("success", "false");

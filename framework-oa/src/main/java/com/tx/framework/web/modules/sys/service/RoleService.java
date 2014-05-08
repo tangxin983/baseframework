@@ -38,15 +38,15 @@ public class RoleService extends BaseService<Role, String> {
 	}
 
 	/**
-	 * 根据角色名称查询角色
+	 * 根据角色名称查询记录条数
 	 * 
 	 * @param roleName
 	 * @return
 	 */
-	public List<Role> findRoleByName(String roleName) {
+	public long countRoleByName(String roleName) {
 		Map<String, Object> searchParams = Maps.newHashMap();
 		searchParams.put("name", roleName);
-		return dao.selectByCondition(genericType, searchParams);
+		return dao.countByCondition(genericType, searchParams);
 	}
 
 	/**

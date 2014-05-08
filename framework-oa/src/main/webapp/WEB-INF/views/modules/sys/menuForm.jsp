@@ -15,6 +15,13 @@
 		//<c:if test="${not empty entity.isActiviti}">
 		$('#isActiviti').selectpicker('val', "${entity.isActiviti}");
 		//</c:if>
+		$("[name='href']").rules("add", {
+			remote : {
+				url : "${ctxModule}/checkHref",
+				type : "POST",
+				data : {old : "${entity.href}"}
+			}
+		});
 	});
 </script>
 </head>

@@ -12,6 +12,23 @@
 	<%@ include file="/WEB-INF/views/include/navbar.jsp"%>
 	<!-- navbar end -->
 	<div class="container">
+		<!--[if lt IE 9]>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="alert alert-warning alert-dismissable">
+				  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				  <strong>温馨提示：</strong>
+				  <p>
+					您使用的浏览器可能会导致页面显示异常。为了获得更好的浏览体验，强烈建议您升级到最新版本的
+					<a href="http://windows.microsoft.com/ie" target="_blank">IE</a>，
+					<a href="https://chrome.google.com" target="_blank">Chrome</a>或者
+					<a href="https://mozilla.org/firefox" target="_blank">Firefox</a>。
+					IE9以上版本请关闭“兼容性视图”。      
+				  </p>
+				</div>
+			</div>
+		</div>
+		<![endif]-->
 		<div class="row">
 			<shiro:user>
 				<!-- sidebar begin -->

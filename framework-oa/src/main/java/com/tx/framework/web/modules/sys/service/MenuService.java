@@ -215,5 +215,17 @@ public class MenuService extends BaseService<Menu, String> {
 		searchParams.put("parentIds", "," + id + ",");
 		return selectByLikeCondition(searchParams);
 	}
+	
+	/**
+	 * 根据链接查询记录条数以判断链接是否重复
+	 * 
+	 * @param roleName
+	 * @return
+	 */
+	public long countByHref(String href) {
+		Map<String, Object> searchParams = Maps.newHashMap();
+		searchParams.put("href", href);
+		return dao.countByCondition(genericType, searchParams);
+	}
 
 }
