@@ -21,7 +21,7 @@
  
 	<!-- search form -->
 	<nav class="navbar navbar-default">
-		<form class="navbar-form navbar-left">
+		<form class="navbar-form navbar-left" valid="false">
 			<div class="form-group">
 				<input name="s_name" value="${param.s_name}" class="form-control" placeholder="角色名称">
 			</div>

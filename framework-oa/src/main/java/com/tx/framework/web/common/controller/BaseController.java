@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.ServletContextAware;
@@ -123,7 +122,6 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping("b")
 	public String list(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model, ServletRequest request) {
@@ -138,12 +136,10 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	
 	/**
 	 * 不分页展示所有记录
-	 * URL:/view
 	 * @param model
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping("b/view")
 	public String view(Model model, ServletRequest request) {
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
 		List<T> entitys = service.selectByLikeCondition(searchParams);
@@ -153,11 +149,9 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	
 	/**
 	 * 跳转新增页面 
-	 * URL:/create(method=get)
 	 * @param model
 	 * @return 新增页面
 	 */
-	@RequestMapping(value = "b/create", method = RequestMethod.GET)
 	public String createForm(Model model) {
 		model.addAttribute("action", "create");
 		return getCreateFormPage();
@@ -165,26 +159,22 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 
 	/**
 	 * 新增操作
-	 * URL:/create(method=post)
 	 * @param entity
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	@RequestMapping(value = "b/create", method = RequestMethod.POST)
 	public String create(@Valid T entity, RedirectAttributes redirectAttributes) {
 		service.insert(entity);
 		addMessage(redirectAttributes, "添加成功");
-		return "redirect:/" + getControllerContext() + "/b";
+		return "redirect:/" + getControllerContext();
 	}
 
 	/**
 	 * 跳转更新页面
-	 * URL:/update/{id}(method=get)
 	 * @param id
 	 * @param model
 	 * @return 更新页面
 	 */
-	@RequestMapping(value = "b/update/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable("id") PK id, Model model) {
 		model.addAttribute("entity", service.selectById(id));
 		model.addAttribute("action", "update");
@@ -193,44 +183,38 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 
 	/**
 	 * 更新操作
-	 * URL:/update(method=post)
 	 * @param entity
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	@RequestMapping(value = "b/update", method = RequestMethod.POST)
 	public String update(@Valid @ModelAttribute("entity")T entity, RedirectAttributes redirectAttributes) {
 		service.update(entity);
 		addMessage(redirectAttributes, "更新成功");
-		return "redirect:/" + getControllerContext() + "/b";
+		return "redirect:/" + getControllerContext();
 	}
 
 	/**
 	 * 删除操作
-	 * URL:/delete/{id}
 	 * @param id
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	@RequestMapping("b/delete/{id}")
 	public String delete(@PathVariable("id") PK id, RedirectAttributes redirectAttributes) {
 		service.deleteById(id);
 		addMessage(redirectAttributes, "删除成功");
-		return "redirect:/" + getControllerContext() + "/b";
+		return "redirect:/" + getControllerContext();
 	}
 	
 	/**
 	 * 批量删除操作
-	 * URL:/delete
 	 * @param ids
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	@RequestMapping("b/delete")
 	public String multiDelete(@RequestParam("ids")List<PK> ids,RedirectAttributes redirectAttributes) {
 		service.deleteByIds(ids);
 		addMessage(redirectAttributes, "删除" + ids.size() + "条记录 成功");
-		return "redirect:/" + getControllerContext() + "/b";
+		return "redirect:/" + getControllerContext();
 	}
 	
 	/**
@@ -238,7 +222,6 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	 * @param id
 	 * @return json对象
 	 */
-	@RequestMapping(value = "b/get/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public T get(@PathVariable("id") PK id) {
 		return service.selectById(id);
@@ -257,8 +240,6 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 			model.addAttribute("entity", service.selectById(id));
 		}
 		model.addAttribute("module", getControllerContext());
-		model.addAttribute("moduleb", getControllerContext() + "/b");
 		model.addAttribute("ctxModule", servletContext.getContextPath() + "/" + getControllerContext());
-		model.addAttribute("ctxModuleb", servletContext.getContextPath() + "/" + getControllerContext() + "/b");
 	}
 }

@@ -108,7 +108,7 @@
 				<div class="form-group">
 					<div class="col-md-offset-2 col-md-10">
 						<a onclick="formSubmit();" class="btn btn-primary">保存</a>
-						<a href="${ctxModuleb}" class="btn btn-default">返 回</a>
+						<a href="${ctxModule}" class="btn btn-default">返 回</a>
 					</div>
 				</div>
 			</form>
