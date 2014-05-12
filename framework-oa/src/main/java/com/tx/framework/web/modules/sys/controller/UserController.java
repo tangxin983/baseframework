@@ -75,8 +75,7 @@ public class UserController extends BaseController<User, String> {
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable("id") String id, Model model) {
 		model.addAttribute("roles", roleService.select());
-		User user = service.selectById(id);
-		user.setRoleIds(userService.findUserRole(id));
+		User user = userService.findUserById(id);
 		model.addAttribute("entity", user);
 		model.addAttribute("action", "update");
 		return getUpdateFormPage();
@@ -90,6 +89,16 @@ public class UserController extends BaseController<User, String> {
 		userService.updateUser(entity);
 		addMessage(redirectAttributes, "更新用户" + entity.getName() + "成功");
 		return "redirect:/" + getControllerContext();
+	}
+	
+	/**
+	 * 首页更新个人信息
+	 */
+	@RequestMapping(value = "updateInfo", method = RequestMethod.POST)
+	public String updateInfo(@Valid @ModelAttribute("entity")User entity, RedirectAttributes redirectAttributes) {
+		userService.updateInfo(entity);
+		addMessage(redirectAttributes, "更新个人信息成功");
+		return "redirect:/index";
 	}
 	
 	/**

@@ -11,10 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.tx.framework.common.util.CollectionUtils;
+import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.persistence.entity.User;
 import com.tx.framework.web.common.persistence.entity.UserRole;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.common.utils.DigestUtil;
+import com.tx.framework.web.common.utils.ShiroUtil;
 import com.tx.framework.web.modules.sys.dao.UserDao;
 import com.tx.framework.web.modules.sys.dao.UserRoleDao;
 import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
@@ -33,6 +35,16 @@ public class UserService extends BaseService<User, String> {
 		super.setDao(userDao);
 		this.userDao = userDao;
 	}
+	
+	/**
+	 * 列表页分页查询(覆盖BaseService)
+	 */
+	@Override
+	public Page<User> selectByPage(Map<String, Object> searchParams, int pageNumber, int pageSize) {
+		Page<User> p = buildPage(pageNumber, pageSize);
+		p.setResult(userDao.findUserByPageAndLikeCondition(p, searchParams));
+		return p;
+	}
 
 	/**
 	 * 根据登录名查找用户
@@ -41,13 +53,22 @@ public class UserService extends BaseService<User, String> {
 	 * @return
 	 */
 	public User findUserByLoginName(String loginName) {
-		Map<String, Object> para = Maps.newHashMap();
-		para.put("loginName", loginName);
-		List<User> users = userDao.selectByCondition(genericType, para);
-		if (users != null && !users.isEmpty()) {
-			return users.get(0);
+		return userDao.findUserByLoginName(loginName);
+	}
+	
+	/**
+	 * 根据id查找用户
+	 * 
+	 * @param id 用户id
+	 * @return
+	 */
+	public User findUserById(String id) {
+		User user = userDao.findUserById(id);
+		if(user != null) {
+			List<String> roleIds = CollectionUtils.extractToList(user.getRoles(), "id", true);
+			user.setRoleIds(roleIds);
 		}
-		return null;
+		return user;
 	}
 
 	/**
@@ -78,6 +99,21 @@ public class UserService extends BaseService<User, String> {
 		userDao.update(user);
 		saveUserRole(user);
 	}
+	
+	/**
+	 * 首页更新个人信息
+	 * @param user
+	 */
+	public void updateInfo(User user) {
+		if (StringUtils.isNotBlank(user.getPlainPassword())) {
+			user.setSalt(DigestUtil.generateSalt());
+			user.setPassword(DigestUtil.generateHash(user.getPlainPassword(),
+					user.getSalt()));
+		}
+		userDao.update(user);
+		user.setRoles(ShiroUtil.getCurrentUser().getRoles());
+		ShiroUtil.updateCurrentUser(user);
+	}
 
 	/**
 	 * 删除用户及用户角色关系
@@ -101,22 +137,7 @@ public class UserService extends BaseService<User, String> {
 			deleteUser(id);
 		}
 	}
-
-	/**
-	 * 查询用户对应的角色列表
-	 * 
-	 * @param id
-	 *            用户id
-	 * @return
-	 */
-	public List<String> findUserRole(String id) {
-		Map<String, Object> searchParams = Maps.newHashMap();
-		searchParams.put("userId", id);
-		List<UserRole> userRoles = userRoleDao.selectByCondition(
-				UserRole.class, searchParams);
-		return CollectionUtils.extractToList(userRoles, "roleId", true);
-	}
-
+	
 	/**
 	 * 保存用户角色对应关系
 	 * 

@@ -6,8 +6,17 @@ import org.apache.shiro.SecurityUtils;
 
 import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.common.persistence.entity.ShiroEntity;
+import com.tx.framework.web.common.persistence.entity.User;
 
 public class ShiroUtil {
+	
+	/**
+	 * 取出Shiro中的当前用户对象.
+	 */
+	public static User getCurrentUser() {
+		ShiroEntity entity = (ShiroEntity) SecurityUtils.getSubject().getPrincipal();
+		return entity != null ? entity.getUser(): null;
+	}
 
 	/**
 	 * 取出Shiro中的当前用户Id.
@@ -26,12 +35,12 @@ public class ShiroUtil {
 	}
 
 	/**
-	 * 更新Shiro中当前用户的用户名.
+	 * 更新Shiro中当前用户对象.
 	 */
-	public static void updateCurrentUserName(String userName) {
+	public static void updateCurrentUser(User user) {
 		ShiroEntity entity = (ShiroEntity) SecurityUtils.getSubject().getPrincipal();
 		if (entity != null) {
-			entity.getUser().setName(userName);
+			entity.setUser(user);
 		}
 	}
 

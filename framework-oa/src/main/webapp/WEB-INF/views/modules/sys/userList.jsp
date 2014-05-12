@@ -57,7 +57,8 @@
 							<th><input type="checkbox" id="selectAll"></th>
 							<th>姓名</th>
 							<th>登录名</th>
-							<th>电话</th>
+							<th>角色</th>
+							<th>邮箱</th>
 							<th>手机</th>
 						</tr>
 					</thead>
@@ -76,7 +77,8 @@
 									</shiro:lacksPermission>
 								</td>
 								<td>${entity.loginName}</td>
-								<td>${entity.phone}</td>
+								<td>${fns:extractProperty(entity.roles, "name", true)}</td>
+								<td>${entity.email}</td>
 								<td>${entity.mobile}</td>
 							</tr>
 						</c:forEach>

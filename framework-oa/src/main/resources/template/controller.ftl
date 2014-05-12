@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.tx.framework.web.common.controller.BaseController;
 import com.tx.framework.web.common.config.Constant;
@@ -73,9 +74,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}, String>
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	public String create(@Valid ${ClassName} entity,
 			RedirectAttributes redirectAttributes) {
-		${className}Service.insert(entity);
-		addMessage(redirectAttributes, "添加${functionName}成功");
-		return "redirect:/" + getControllerContext();
+		return super.create(entity, redirectAttributes);
 	}
 	
 	/**
@@ -93,9 +92,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}, String>
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	public String update(@Valid @ModelAttribute("entity")${ClassName} entity, RedirectAttributes redirectAttributes) {
-		${className}Service.update(entity);
-		addMessage(redirectAttributes, "更新${functionName}成功");
-		return "redirect:/" + getControllerContext();
+		return super.update(entity, redirectAttributes);
 	}
 	
 	/**
@@ -104,9 +101,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}, String>
 	 */
 	@RequestMapping("delete/{id}")
 	public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
-		${className}Service.deleteById(id);
-		addMessage(redirectAttributes, "删除${functionName}成功");
-		return "redirect:/" + getControllerContext();
+		return super.delete(id, redirectAttributes);
 	}
 	
 	/**
@@ -115,9 +110,17 @@ public class ${ClassName}Controller extends BaseController<${ClassName}, String>
 	 */
 	@RequestMapping("delete")
 	public String multiDelete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
-		${className}Service.deleteByIds(ids);
-		addMessage(redirectAttributes, "删除" + ids.size() + "条记录 成功");
-		return "redirect:/" + getControllerContext();
+		return super.multiDelete(ids, redirectAttributes);
+	}
+	
+	/**
+	 * 根据id查找实体（json）<br>
+	 * URL:${urlPrefix}/get/{id}
+	 */
+	@RequestMapping("get/{id}")
+	@ResponseBody
+	public ${ClassName} get(@PathVariable("id") String id) {
+		return super.get(id);
 	}
 
 }

@@ -1,19 +1,23 @@
 package com.tx.framework.web.modules.sys.controller;
 
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import org.springframework.web.bind.annotation.ModelAttribute;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import com.tx.framework.web.common.controller.BaseController;
+
 import com.tx.framework.web.common.config.Constant;
+import com.tx.framework.web.common.controller.BaseController;
 import com.tx.framework.web.common.persistence.entity.Area;
 import com.tx.framework.web.modules.sys.service.AreaService;
 
@@ -62,9 +66,7 @@ public class AreaController extends BaseController<Area, String> {
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	public String create(@Valid Area entity,
 			RedirectAttributes redirectAttributes) {
-		areaService.insert(entity);
-		addMessage(redirectAttributes, "添加区域成功");
-		return "redirect:/" + getControllerContext();
+		return super.create(entity, redirectAttributes);
 	}
 	
 	/**
@@ -82,9 +84,7 @@ public class AreaController extends BaseController<Area, String> {
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	public String update(@Valid @ModelAttribute("entity")Area entity, RedirectAttributes redirectAttributes) {
-		areaService.update(entity);
-		addMessage(redirectAttributes, "更新区域成功");
-		return "redirect:/" + getControllerContext();
+		return super.update(entity, redirectAttributes);
 	}
 	
 	/**
@@ -93,9 +93,7 @@ public class AreaController extends BaseController<Area, String> {
 	 */
 	@RequestMapping("delete/{id}")
 	public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
-		areaService.deleteById(id);
-		addMessage(redirectAttributes, "删除区域成功");
-		return "redirect:/" + getControllerContext();
+		return super.delete(id, redirectAttributes);
 	}
 	
 	/**
@@ -104,9 +102,17 @@ public class AreaController extends BaseController<Area, String> {
 	 */
 	@RequestMapping("delete")
 	public String multiDelete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
-		areaService.deleteByIds(ids);
-		addMessage(redirectAttributes, "删除" + ids.size() + "条记录 成功");
-		return "redirect:/" + getControllerContext();
+		return super.multiDelete(ids, redirectAttributes);
+	}
+	
+	/**
+	 * 根据id查找实体（json）<br>
+	 * URL:sys/area/get/{id}
+	 */
+	@RequestMapping("get/{id}")
+	@ResponseBody
+	public Area get(@PathVariable("id") String id) {
+		return super.get(id);
 	}
 
 }

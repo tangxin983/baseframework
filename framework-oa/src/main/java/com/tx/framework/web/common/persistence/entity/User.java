@@ -50,9 +50,19 @@ public class User extends BaseEntity {
 	@Column(name = "login_time")
 	private Date loginTime;
 
+	private List<Role> roles;
+
 	private String plainPassword;
 
 	private List<String> roleIds;
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
 
 	public List<String> getRoleIds() {
 		return roleIds;
@@ -173,21 +183,21 @@ public class User extends BaseEntity {
 	public void setLoginTime(Date loginTime) {
 		this.loginTime = loginTime;
 	}
-	
+
 	@Transient
-	public boolean isAdmin(){
+	public boolean isAdmin() {
 		return isAdmin(this.id);
 	}
-	
+
 	@Transient
-	public static boolean isAdmin(String id){
+	public static boolean isAdmin(String id) {
 		return id != null && id.equals("1");
 	}
-	
+
 	@Transient
-	public static boolean isAdmin(List<String> ids){
-		for(String id : ids){
-			if(isAdmin(id)){
+	public static boolean isAdmin(List<String> ids) {
+		for (String id : ids) {
+			if (isAdmin(id)) {
 				return true;
 			}
 		}

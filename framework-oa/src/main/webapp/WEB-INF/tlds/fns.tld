@@ -24,4 +24,12 @@
 		<function-signature>String join(java.util.List,java.lang.String)</function-signature>
 		<example>${fns:join(list, str)}</example>  
 	</function>
+	
+	<function>
+		<description>提取集合中对象的属性，组成以","分隔的字符串</description>
+		<name>extractProperty</name>
+		<function-class>com.tx.framework.web.common.utils.JstlFunction</function-class>
+		<function-signature>String extractProperty(java.util.Collection,java.lang.String,boolean)</function-signature>
+		<example>${fns:extractProperty(collection, property, true)}</example>  
+	</function>
 </taglib>

@@ -63,7 +63,13 @@
 </body>
 <script type="text/javascript">
 	$(document).ready(function() {
-		if (localStorage.menuId) {
+		if(window.location.pathname.split("/")[window.location.pathname.split("/").length -1] == "index"){
+			$("#breadcrumb").append("<li class=\"active\">我的首页</li>");
+		}else if(localStorage.menuId){
+			// 保持边栏状态
+			var pMenuId = $("#" + localStorage.menuId).parent().parent().attr("id");
+			$("[href='#" + pMenuId + "']").click();
+			$("#" + localStorage.menuId).click();
 			$.get("${ctx}/breadcrumb?id=" + localStorage.menuId,function(resp) {
 				if (resp && resp != "") {
 					$("#breadcrumb").append(resp);
