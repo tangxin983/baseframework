@@ -3,13 +3,14 @@ package com.tx.framework.web.modules.sys.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,35 +21,37 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tx.framework.web.common.controller.BaseController;
+import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.persistence.entity.Area;
-import com.tx.framework.web.modules.sys.service.AreaService;
+import com.tx.framework.web.common.persistence.entity.Org;
+import com.tx.framework.web.modules.sys.service.OrgService;
 
 /**
- * 区域Controller
+ * 机构Controller
  * @author tangx
- * @version 2014-05-12
+ * @version 2014-05-15
  */
 @Controller
-@RequestMapping(value = "sys/area")
-public class AreaController extends BaseController<Area, String> {
+@RequestMapping(value = "sys/org")
+public class OrgController extends BaseController<Org, String> {
 
-	private AreaService areaService;
+	private OrgService orgService;
 
 	@Autowired
-	public void setAreaService(AreaService areaService) {
-		super.setService(areaService);
-		this.areaService = areaService;
+	public void setOrgService(OrgService orgService) {
+		super.setService(orgService);
+		this.orgService = orgService;
 	}
 	
 	/**
 	 * 跳转列表页<br>
-	 * url:sys/area
+	 * url:sys/org
 	 */
 	@RequestMapping
 	public String view(Model model) {
-		List<Area> sourcelist = areaService.findAreaOrderByCode();
-		List<Area> list = Lists.newArrayList();
-		sortAreaList(list, sourcelist, "1");
+		List<Org> sourcelist = orgService.findOrgOrderByCode();
+		List<Org> list = Lists.newArrayList();
+		sortList(list, sourcelist, "1");
 		model.addAttribute("entitys", list);
 		return getListPage();
 	}
@@ -60,15 +63,15 @@ public class AreaController extends BaseController<Area, String> {
 	 * @param sourcelist
 	 * @param parentId
 	 */
-	private void sortAreaList(List<Area> list, List<Area> sourcelist,
+	private void sortList(List<Org> list, List<Org> sourcelist,
 			String parentId) {
-		for (Area e : sourcelist) {
+		for (Org e : sourcelist) {
 			if (e.getParentId().equals(parentId)) {
 				list.add(e);
 				// 判断是否还有子节点, 有则继续获取子节点
-				for (Area child : sourcelist) {
+				for (Org child : sourcelist) {
 					if (child.getParentId().equals(e.getId())) {
-						sortAreaList(list, sourcelist, e.getId());
+						sortList(list, sourcelist, e.getId());
 						break;
 					}
 				}
@@ -78,79 +81,73 @@ public class AreaController extends BaseController<Area, String> {
 	
 	/**
 	 * 跳转新增页面<br>
-	 * url:sys/area/create
+	 * url:sys/org/create
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.GET)
-	public String createForm(Area area, Model model) {
-		// 如果没有传入父菜单id，则默认父菜单是顶级菜单
-		if (area == null) {
-			area = new Area();
+	public String createForm(Org org, Model model) {
+		// 如果没有传入父id，则默认父节点是顶级机构
+		if (org == null) {
+			org = new Org();
 		}
-		if (StringUtils.isBlank(area.getParentId())) {
-			area.setParentId("1");
+		if (StringUtils.isBlank(org.getParentId())) {
+			org.setParentId("1");
 		}
-		// 设置父菜单名称
-		Area parent = areaService.selectById(area.getParentId());
+		// 设置父机构名称
+		Org parent = orgService.selectById(org.getParentId());
 		if (parent != null) {
-			area.setParentName(parent.getName());
+			org.setParentName(parent.getName());
 		}
-		model.addAttribute("entity", area);
+		model.addAttribute("entity", org);
 		model.addAttribute("action", "create");
 		return getCreateFormPage();
 	}
 
 	/**
 	 * 新增操作<br>
-	 * url:sys/area/create
+	 * url:sys/org/create
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public String create(@Valid Area entity,
+	public String create(@Valid Org entity,
 			RedirectAttributes redirectAttributes) {
-		areaService.saveArea(entity);
-		addMessage(redirectAttributes, "保存区域'" + entity.getName() + "'成功");
-		return "redirect:/" + getControllerContext();
+		return super.create(entity, redirectAttributes);
 	}
 	
 	/**
 	 * 跳转更新页面<br>
-	 * URL:sys/area/update/{id}
+	 * URL:sys/org/update/{id}
 	 */
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable("id") String id, Model model) {
-		Area area = areaService.selectById(id);
-		if (area != null) {
-			Area parent = areaService.selectById(area.getParentId());
+		Org org = orgService.selectById(id);
+		if (org != null) {
+			Org parent = orgService.selectById(org.getParentId());
 			if (parent != null) {
-				area.setParentName(parent.getName());
+				org.setParentName(parent.getName());
 			}
 		}
-		model.addAttribute("entity", area);
+		model.addAttribute("entity", org);
 		model.addAttribute("action", "update");
 		return getUpdateFormPage();
 	}
 	
 	/**
 	 * 更新操作<br>
-	 * URL:sys/area/update
+	 * URL:sys/org/update
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute("entity")Area entity, RedirectAttributes redirectAttributes) {
-		areaService.updateArea(entity);
-		addMessage(redirectAttributes, "更新区域'" + entity.getName() + "'成功");
-		return "redirect:/" + getControllerContext();
+	public String update(@Valid @ModelAttribute("entity")Org entity, RedirectAttributes redirectAttributes) {
+		return super.update(entity, redirectAttributes);
 	}
 	
 	/**
 	 * 删除操作<br>
-	 * URL:sys/area/delete/{id}
+	 * URL:sys/org/delete/{id}
 	 */
 	@RequestMapping("delete/{id}")
 	public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
-		areaService.deleteArea(id);
-		addMessage(redirectAttributes, "删除成功");
-		return "redirect:/" + getControllerContext();
+		return super.delete(id, redirectAttributes);
 	}
-
+	
 	/**
 	 * 获取树形菜单数据
 	 * @param extId
@@ -161,8 +158,8 @@ public class AreaController extends BaseController<Area, String> {
 	public List<Map<String, Object>> treeData(
 			@RequestParam(required = false) String extId) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<Area> list = areaService.findAreaOrderByCode();
-		for (Area e : list) {
+		List<Org> list = orgService.findOrgOrderByCode();
+		for (Org e : list) {
 			// 排除extId及其子菜单
 			if (extId == null || (extId != null && !extId.equals(e.getId()) && e.getParentIds().indexOf("," + extId + ",") == -1)) {
 				Map<String, Object> map = Maps.newHashMap();

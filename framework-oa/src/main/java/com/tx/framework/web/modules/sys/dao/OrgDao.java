@@ -2,14 +2,14 @@ package com.tx.framework.web.modules.sys.dao;
 
 import com.tx.framework.web.common.persistence.annotation.MyBatisDao;
 import com.tx.framework.web.common.persistence.dao.BaseDao;
-import com.tx.framework.web.common.persistence.entity.Area;
+import com.tx.framework.web.common.persistence.entity.Org;
 
 /**
- * 区域Dao
+ * 机构Dao
  * @author tangx
- * @since 2014-05-12
+ * @since 2014-05-15
  */
 @MyBatisDao
-public interface AreaDao extends BaseDao<Area, String> {
+public interface OrgDao extends BaseDao<Org, String> {
 	
 }

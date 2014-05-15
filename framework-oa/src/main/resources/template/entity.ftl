@@ -25,7 +25,7 @@ public class ${ClassName} extends BaseEntity {
 		return ${field.name};
 	}
 
-	public void set${field.Name}(String ${field.name}) {
+	public void set${field.Name}(${field.type} ${field.name}) {
 		this.${field.name} = ${field.name};
 	}
 	

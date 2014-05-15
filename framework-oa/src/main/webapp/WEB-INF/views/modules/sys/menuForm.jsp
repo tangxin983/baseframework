@@ -39,7 +39,7 @@
 					<div class="col-md-6">
 						<tags:treeselect id="menu" name="parentId"
 							value="${entity.parentId}" labelName="parentName"
-							labelValue="${entity.parentName}" allowClear="true" title="菜单"
+							labelValue="${entity.parentName}" allowClear="false" title="菜单"
 							url="/sys/menu/treeData" extId="${entity.id}" cssClass="required" />
 					</div>
 				</div>

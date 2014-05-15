@@ -1,6 +1,7 @@
 package com.tx.framework.web.common.persistence.entity;
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Table;
 
@@ -8,17 +9,20 @@ import javax.persistence.Table;
  * 区域实体
  * 
  * @author tangx
- * @since 2014-05-12
+ * @since 2014-05-15
  */
 @SuppressWarnings("serial")
-@Table(name = "sys_area")
-public class Area extends BaseEntity {
+@Table(name = "sys_org")
+public class Org extends BaseEntity {
 
 	@Column(name = "parent_id")
 	private String parentId;
 
 	@Column(name = "parent_ids")
 	private String parentIds;
+
+	@Column(name = "area_id")
+	private String areaId;
 
 	@Column(name = "code")
 	private String code;
@@ -29,17 +33,38 @@ public class Area extends BaseEntity {
 	@Column(name = "type")
 	private String type;
 
+	@Column(name = "grade")
+	private String grade;
+
+	@Column(name = "address")
+	private String address;
+
+	@Column(name = "zip_code")
+	private String zipCode;
+
+	@Column(name = "master")
+	private String master;
+
+	@Column(name = "phone")
+	private String phone;
+
+	@Column(name = "fax")
+	private String fax;
+
+	@Column(name = "email")
+	private String email;
+
 	@Column(name = "create_by")
 	private String createBy;
 
-	@Column(name = "create_time")
-	private Date createTime;
+	@Column(name = "create_date")
+	private Date createDate;
 
 	@Column(name = "update_by")
 	private String updateBy;
 
-	@Column(name = "update_time")
-	private Date updateTime;
+	@Column(name = "update_date")
+	private Date updateDate;
 
 	@Column(name = "remarks")
 	private String remarks;
@@ -48,6 +73,16 @@ public class Area extends BaseEntity {
 	private String delFlag;
 
 	private String parentName;
+
+	private String areaName;
+
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
 
 	public String getParentName() {
 		return parentName;
@@ -71,6 +106,14 @@ public class Area extends BaseEntity {
 
 	public void setParentIds(String parentIds) {
 		this.parentIds = parentIds;
+	}
+
+	public String getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(String areaId) {
+		this.areaId = areaId;
 	}
 
 	public String getCode() {
@@ -97,6 +140,62 @@ public class Area extends BaseEntity {
 		this.type = type;
 	}
 
+	public String getGrade() {
+		return grade;
+	}
+
+	public void setGrade(String grade) {
+		this.grade = grade;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getZipCode() {
+		return zipCode;
+	}
+
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+
+	public String getMaster() {
+		return master;
+	}
+
+	public void setMaster(String master) {
+		this.master = master;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getFax() {
+		return fax;
+	}
+
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public String getCreateBy() {
 		return createBy;
 	}
@@ -105,12 +204,12 @@ public class Area extends BaseEntity {
 		this.createBy = createBy;
 	}
 
-	public Date getCreateTime() {
-		return createTime;
+	public Date getCreateDate() {
+		return createDate;
 	}
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
 
 	public String getUpdateBy() {
@@ -121,12 +220,12 @@ public class Area extends BaseEntity {
 		this.updateBy = updateBy;
 	}
 
-	public Date getUpdateTime() {
-		return updateTime;
+	public Date getUpdateDate() {
+		return updateDate;
 	}
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
 	}
 
 	public String getRemarks() {

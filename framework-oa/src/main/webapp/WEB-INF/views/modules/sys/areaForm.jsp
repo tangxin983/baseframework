@@ -22,17 +22,33 @@
 			<form class="form-horizontal" action="${ctxModule}/${action}" method="post">
 				<input type="hidden" name="id" value="${entity.id}">
 				<div class="form-group">
-					<label class="col-md-2 control-label">name:</label>
+					<label class="col-md-2 control-label">上级区域:</label>
+					<div class="col-md-6">
+						<tags:treeselect id="area" name="parentId"
+							value="${entity.parentId}" labelName="parentName"
+							labelValue="${entity.parentName}" allowClear="false" title="区域"
+							url="/sys/area/treeData" extId="${entity.id}" cssClass="required" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2 control-label">区域名称:</label>
 					<div class="col-md-6">
 						<input name="name" maxlength="50" class="form-control required"
 							value="${entity.name}" />
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-md-2 control-label">officeId:</label>
+					<label class="col-md-2 control-label">区域编码:</label>
 					<div class="col-md-6">
-						<input name="officeId" maxlength="50" class="form-control required"
-							value="${entity.officeId}" />
+						<input name="code" maxlength="50" class="form-control required"
+							value="${entity.code}" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2 control-label">区域类型:</label>
+					<div class="col-md-6">
+						<input name="type" maxlength="50" class="form-control required"
+							value="${entity.type}" />
 					</div>
 				</div>
 				<div class="form-group">
