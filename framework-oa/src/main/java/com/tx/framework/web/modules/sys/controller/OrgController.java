@@ -3,14 +3,13 @@ package com.tx.framework.web.modules.sys.controller;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,9 +20,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tx.framework.web.common.controller.BaseController;
-import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.persistence.entity.Area;
 import com.tx.framework.web.common.persistence.entity.Org;
+import com.tx.framework.web.modules.sys.service.AreaService;
 import com.tx.framework.web.modules.sys.service.OrgService;
 
 /**
@@ -36,6 +35,9 @@ import com.tx.framework.web.modules.sys.service.OrgService;
 public class OrgController extends BaseController<Org, String> {
 
 	private OrgService orgService;
+	
+	@Autowired
+	private AreaService areaService;
 
 	@Autowired
 	public void setOrgService(OrgService orgService) {
@@ -85,17 +87,23 @@ public class OrgController extends BaseController<Org, String> {
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.GET)
 	public String createForm(Org org, Model model) {
-		// 如果没有传入父id，则默认父节点是顶级机构
+		// 如果没有传入父id，则默认上级机构是总公司，默认归属区域是中国
 		if (org == null) {
 			org = new Org();
 		}
 		if (StringUtils.isBlank(org.getParentId())) {
 			org.setParentId("1");
+			org.setAreaId("1");
 		}
 		// 设置父机构名称
 		Org parent = orgService.selectById(org.getParentId());
 		if (parent != null) {
 			org.setParentName(parent.getName());
+		}
+		// 设置归属区域名称
+		Area area = areaService.selectById(org.getAreaId());
+		if(area != null){
+			org.setAreaName(area.getName());
 		}
 		model.addAttribute("entity", org);
 		model.addAttribute("action", "create");
@@ -109,7 +117,9 @@ public class OrgController extends BaseController<Org, String> {
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	public String create(@Valid Org entity,
 			RedirectAttributes redirectAttributes) {
-		return super.create(entity, redirectAttributes);
+		orgService.saveOrg(entity);
+		addMessage(redirectAttributes, "保存机构'" + entity.getName() + "'成功");
+		return "redirect:/" + getControllerContext();
 	}
 	
 	/**
@@ -120,9 +130,15 @@ public class OrgController extends BaseController<Org, String> {
 	public String updateForm(@PathVariable("id") String id, Model model) {
 		Org org = orgService.selectById(id);
 		if (org != null) {
+			// 设置父机构名称
 			Org parent = orgService.selectById(org.getParentId());
 			if (parent != null) {
 				org.setParentName(parent.getName());
+			}
+			// 设置归属区域名称
+			Area area = areaService.selectById(org.getAreaId());
+			if(area != null){
+				org.setAreaName(area.getName());
 			}
 		}
 		model.addAttribute("entity", org);
@@ -136,7 +152,9 @@ public class OrgController extends BaseController<Org, String> {
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	public String update(@Valid @ModelAttribute("entity")Org entity, RedirectAttributes redirectAttributes) {
-		return super.update(entity, redirectAttributes);
+		orgService.updateOrg(entity);
+		addMessage(redirectAttributes, "更新机构'" + entity.getName() + "'成功");
+		return "redirect:/" + getControllerContext();
 	}
 	
 	/**
@@ -145,7 +163,9 @@ public class OrgController extends BaseController<Org, String> {
 	 */
 	@RequestMapping("delete/{id}")
 	public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
-		return super.delete(id, redirectAttributes);
+		orgService.deleteOrg(id);
+		addMessage(redirectAttributes, "删除成功");
+		return "redirect:/" + getControllerContext();
 	}
 	
 	/**

@@ -31,7 +31,7 @@
 	$(document).ready(function(){
 		$.get("${ctx}${url}${fn:indexOf(url,'?')==-1?'?':'&'}extId=${extId}&t="+new Date().getTime(), function(zNodes){
 			// 初始化树结构
-			tree = $.fn.zTree.init($("#tree"), setting, zNodes);
+			tree = $.fn.zTree.init($("#${id}Tree"), setting, zNodes);
 			
 			// 默认展开一级节点
 			var nodes = tree.getNodesByParam("level", 0);
@@ -54,7 +54,7 @@
   
 	function searchNode() {
 		// 取得输入的关键字的值
-		var value = $.trim($("#key").val());
+		var value = $.trim($("#${id}Key").val());
 		
 		// 如果要查空字串，就退出不查了。
 		if (value === "") {
@@ -74,11 +74,11 @@
 	}
 </script>
 <div class="input-group">
-    <input class="form-control" id="key" name="key" maxlength="50" placeholder="关键字">
+    <input class="form-control" id="${id}Key" name="key" maxlength="50" placeholder="关键字">
     <span class="input-group-btn">
 		<a class="btn btn-default" onclick="searchNode();">
 			<span class="glyphicon glyphicon-search">
 		</a>
 	</span>
 </div>
-<div id="tree" class="ztree" style="padding:15px 20px;"></div>
+<div id="${id}Tree" class="ztree" style="padding:15px 20px;"></div>

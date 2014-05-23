@@ -25,6 +25,7 @@ public class TagController {
 		model.addAttribute("extId", StringUtils.defaultString(request.getParameter("extId"))); // 排除的编号ID
 		model.addAttribute("checked", StringUtils.defaultString(request.getParameter("checked"))); // 是否可复选
 		model.addAttribute("selectIds", StringUtils.defaultString(request.getParameter("selectIds"))); // 指定默认选中的ID
+		model.addAttribute("id", StringUtils.defaultString(request.getParameter("id"))); // 模块id
 		return "modules/sys/tagTreeselect";
 	}
 	

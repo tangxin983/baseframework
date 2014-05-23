@@ -43,6 +43,18 @@ public class AreaService extends BaseService<Area, String> {
 		orders.add("code");
 		return select(orders);
 	}
+	
+	/**
+	 * 根据名称获取区域列表
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public List<Area> findAreaByName(String name) {
+		Map<String, Object> para = Maps.newHashMap();
+		para.put("name", name);
+		return select(para);
+	}
 	 
 	/**
 	 * 保存区域

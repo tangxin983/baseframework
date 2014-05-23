@@ -56,14 +56,14 @@
 								<td>${org.code}</td>
 								<td>${org.type}</td>
 								<td>
-									<shiro:hasPermission name="sys:area:delete">
-								    <a href="${ctxModule}/delete/${area.id}" class="btn btn-danger" title="删除"
+									<shiro:hasPermission name="sys:org:delete">
+								    <a href="${ctxModule}/delete/${org.id}" class="btn btn-danger" title="删除"
 								    	onclick="return confirmx('要删除该机构及所有子机构项吗?', this.href)">
 								    	<span class="glyphicon glyphicon-remove"></span>
 								    </a> 
 								    </shiro:hasPermission>
-								    <shiro:hasPermission name="sys:area:create">
-								    <a href="${ctxModule}/create?parentId=${area.id}" class="btn btn-primary" title="添加子机构"> 
+								    <shiro:hasPermission name="sys:org:create">
+								    <a href="${ctxModule}/create?parentId=${org.id}&areaId=${org.areaId}" class="btn btn-primary" title="添加子机构"> 
 								    	<span class="glyphicon glyphicon-plus"></span>
 									</a>
 									</shiro:hasPermission>	 

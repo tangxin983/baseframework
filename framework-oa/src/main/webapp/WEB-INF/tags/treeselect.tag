@@ -14,7 +14,7 @@
 <%@ attribute name="allowClear" type="java.lang.Boolean" required="false" description="是否允许清除"%>
 <%@ attribute name="cssClass" type="java.lang.String" required="false" description="css样式"%>
 <%@ attribute name="disabled" type="java.lang.String" required="false" description="是否限制选择，如果限制，设置为disabled"%>
-<div class="modal fade" id="treeModal" aria-hidden="true">
+<div class="modal fade" id="${id}Modal" aria-hidden="true">
 	<div class="modal-dialog" style="width:320px;height:400px;">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -25,11 +25,11 @@
 			</div>
 			<div class="modal-body"></div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" onclick="confirm()">确定</button>
+				<button type="button" class="btn btn-primary" id="${id}Confirm">确定</button>
 				<c:if test="${allowClear}">
-				<button type="button" class="btn btn-danger" onclick="clean()">清除</button>
+				<button type="button" class="btn btn-danger" id="${id}Clean">清除</button>
 				</c:if>
-				<button type="button" class="btn btn-default" data-dismiss="modal" id="canBtn">关闭</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal" id="${id}Close">关闭</button>
 			</div>
 		</div>
 	</div>
@@ -52,15 +52,15 @@
 			return false;
 		}
 		var url = "${ctx}/sys/tag/treeselect?url="+encodeURIComponent("${url}")
-			+"&checked=${checked}&extId=${extId}&selectIds="+$("#${id}Id").val();
-        var modal = $('#treeModal'), modalBody = $('#treeModal .modal-body');
+			+"&checked=${checked}&extId=${extId}&id=${id}&selectIds="+$("#${id}Id").val();
+        var modal = $('#${id}Modal'), modalBody = $('#${id}Modal .modal-body');
         modal.on('show.bs.modal', function () {
         	modalBody.load(url);
         }).modal();
 	});
 	
-	function confirm(){
-		var tree = $.fn.zTree.getZTreeObj("tree");
+	$("#${id}Confirm").click(function(){
+		var tree = $.fn.zTree.getZTreeObj("${id}Tree");
 		var ids = [], names = [], nodes = [];
 		if ("${checked}" == "true"){
 			nodes = tree.getCheckedNodes(true);
@@ -93,14 +93,14 @@
 		}
 		$("#${id}Id").val(ids);
 		$("#${id}Name").val(names);
-		$('#canBtn').click();
-	}
+		$('#${id}Close').click();
+	});
 	
 	//<c:if test="${allowClear}">
-	function clean(){
+	$("#${id}Clean").click(function(){
 		$("#${id}Id").val("");
 		$("#${id}Name").val("");
-		$('#canBtn').click();
-	}
+		$('#${id}Close').click();
+	});
 	//</c:if>
 </script>
