@@ -32,11 +32,11 @@ import org.springframework.stereotype.Service;
 
 import com.tx.framework.common.util.CollectionUtils;
 import com.tx.framework.common.util.Encodes;
+import com.tx.framework.web.common.exception.ServiceException;
 import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.common.persistence.entity.ShiroEntity;
 import com.tx.framework.web.common.persistence.entity.User;
 import com.tx.framework.web.common.utils.ShiroUtil;
-import com.tx.framework.web.exception.ServiceException;
 import com.tx.framework.web.modules.sys.service.MenuService;
 import com.tx.framework.web.modules.sys.service.UserService;
 
