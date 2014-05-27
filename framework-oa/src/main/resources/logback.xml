@@ -34,7 +34,7 @@
 	</appender>
 	
 	<!-- 打印com.tx.framework.web包下的日志 -->
- 	<logger name="com.tx.framework.web" level="DEBUG" additivity="false">
+ 	<logger name="com.tx.framework.web" level="INFO" additivity="false">
  		<appender-ref ref="rollingFile" />
 		<appender-ref ref="console" />
 	</logger>

@@ -12,7 +12,7 @@
 
 	<description>Spring Context Configuration</description>
 	
-	<!-- 属性文件 -->
+	<!-- 配置文件 -->
 	<context:property-placeholder ignore-unresolvable="true" location="classpath*:/config.properties" />	
 
 	<!-- 使用annotation 自动注册bean, 并保证@Required、@Autowired的属性被注入 -->

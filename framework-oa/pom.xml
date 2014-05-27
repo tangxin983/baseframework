@@ -139,6 +139,18 @@
 		</dependency>
 		<!-- TEST end -->
 		
+		<!-- workflow begin -->
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-engine</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-spring</artifactId>
+		</dependency>
+		<!-- workflow end -->
+		
 		<!-- j2ee web spec from common -->
 
 		<!-- JSR303 BeanValidator from common -->
