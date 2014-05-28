@@ -10,10 +10,42 @@ Target Server Type    : MYSQL
 Target Server Version : 50022
 File Encoding         : 65001
 
-Date: 2014-05-23 10:09:32
+Date: 2014-05-28 18:49:04
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for `oa_leave`
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_leave`;
+CREATE TABLE `oa_leave` (
+  `id` varchar(32) NOT NULL COMMENT '编号',
+  `process_instance_id` varchar(32) default NULL COMMENT '流程实例编号',
+  `start_time` datetime default NULL COMMENT '开始时间',
+  `end_time` datetime default NULL COMMENT '结束时间',
+  `leave_type` varchar(20) default NULL COMMENT '请假类型',
+  `reason` varchar(255) default NULL COMMENT '请假理由',
+  `apply_time` datetime default NULL COMMENT '申请时间',
+  `reality_start_time` datetime default NULL COMMENT '实际开始时间',
+  `reality_end_time` datetime default NULL COMMENT '实际结束时间',
+  `process_status` varchar(50) default NULL COMMENT '流程状态',
+  `create_by` varchar(64) default NULL COMMENT '创建者',
+  `create_date` datetime default NULL COMMENT '创建时间',
+  `update_by` varchar(64) default NULL COMMENT '更新者',
+  `update_date` datetime default NULL COMMENT '更新时间',
+  `remarks` varchar(255) default NULL COMMENT '备注信息',
+  `del_flag` char(1) NOT NULL default '0' COMMENT '删除标记',
+  PRIMARY KEY  (`id`),
+  KEY `oa_leave_create_by` (`create_by`),
+  KEY `oa_leave_process_instance_id` (`process_instance_id`),
+  KEY `oa_leave_del_flag` (`del_flag`),
+  KEY `oa_leave_id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='请假流程表';
+
+-- ----------------------------
+-- Records of oa_leave
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `sys_area`
@@ -94,9 +126,11 @@ INSERT INTO `sys_menu` VALUES ('14a4b5ce27b3103295b177fb85a9c0c5', 'e321c6662652
 INSERT INTO `sys_menu` VALUES ('1774038220d410328a0479b72cb403f0', 'b7dff5e820d310328a0479b72cb403f0', '0,1,b7dff5e820d310328a0479b72cb403f0,', '菜单管理', '/sys/menu', '', 'list', '20', '1', '1', 'sys:menu:view', null, null, null, null, null, '0');
 INSERT INTO `sys_menu` VALUES ('248aac5227ca103295b177fb85a9c0c5', '586d873e20d010328a0479b72cb403f0', '0,1,44f3448920d010328a0479b72cb403f0,586d873e20d010328a0479b72cb403f0,', '删除', '/sys/user/delete', '', '', '300', '0', '1', 'sys:user:delete', null, null, null, null, null, '0');
 INSERT INTO `sys_menu` VALUES ('302cc2e32d47103295b177fb85a9c0c5', '44f3448920d010328a0479b72cb403f0', '0,1,44f3448920d010328a0479b72cb403f0,', '机构管理', '/sys/org', '', 'th-large', '20', '1', '1', 'sys:org:view', null, null, null, null, null, '0');
-INSERT INTO `sys_menu` VALUES ('44f3448920d010328a0479b72cb403f0', '1', '0,1,', '机构用户', '', '', '', '1', '1', '1', '', null, null, null, null, null, '0');
+INSERT INTO `sys_menu` VALUES ('44f3448920d010328a0479b72cb403f0', '1', '0,1,', '机构用户', '', '', '', '2', '1', '1', '', null, null, null, null, null, '0');
+INSERT INTO `sys_menu` VALUES ('46b0b6cd37831032a742ebdf985f1138', '1', '0,1,', '在线办公', '', '', '', '1', '1', '1', '', null, null, null, null, null, '0');
 INSERT INTO `sys_menu` VALUES ('586d873e20d010328a0479b72cb403f0', '44f3448920d010328a0479b72cb403f0', '0,1,44f3448920d010328a0479b72cb403f0,', '用户管理', '/sys/user', '', 'user', '10', '1', '1', 'sys:user:view', null, null, null, null, null, '0');
 INSERT INTO `sys_menu` VALUES ('5c4ad12a27ca103295b177fb85a9c0c5', '1774038220d410328a0479b72cb403f0', '0,1,b7dff5e820d310328a0479b72cb403f0,1774038220d410328a0479b72cb403f0,', '添加', '/sys/menu/create', '', '', '100', '0', '1', 'sys:menu:create', null, null, null, null, null, '0');
+INSERT INTO `sys_menu` VALUES ('78e2582a37831032a742ebdf985f1138', '46b0b6cd37831032a742ebdf985f1138', '0,1,46b0b6cd37831032a742ebdf985f1138,', '请假申请', '/oa/leave', '', 'arrow-right', '10', '1', '1', 'oa:leave:view', null, null, null, null, null, '0');
 INSERT INTO `sys_menu` VALUES ('7b67019827ca103295b177fb85a9c0c5', '1774038220d410328a0479b72cb403f0', '0,1,b7dff5e820d310328a0479b72cb403f0,1774038220d410328a0479b72cb403f0,', '修改', '/sys/menu/update/**', '', '', '200', '0', '1', 'sys:menu:edit', null, null, null, null, null, '0');
 INSERT INTO `sys_menu` VALUES ('937931692d58103295b177fb85a9c0c5', '302cc2e32d47103295b177fb85a9c0c5', '0,1,44f3448920d010328a0479b72cb403f0,302cc2e32d47103295b177fb85a9c0c5,', '添加', '/sys/org/create', '', '', '100', '0', '1', 'sys:org:create', null, null, null, null, null, '0');
 INSERT INTO `sys_menu` VALUES ('a96e04ca2d58103295b177fb85a9c0c5', '302cc2e32d47103295b177fb85a9c0c5', '0,1,44f3448920d010328a0479b72cb403f0,302cc2e32d47103295b177fb85a9c0c5,', '更新', '/sys/org/update/**', '', '', '200', '0', '1', 'sys:org:edit', null, null, null, null, null, '0');
@@ -218,8 +252,10 @@ INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', '1774038
 INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', '248aac5227ca103295b177fb85a9c0c5');
 INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', '302cc2e32d47103295b177fb85a9c0c5');
 INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', '44f3448920d010328a0479b72cb403f0');
+INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', '46b0b6cd37831032a742ebdf985f1138');
 INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', '586d873e20d010328a0479b72cb403f0');
 INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', '5c4ad12a27ca103295b177fb85a9c0c5');
+INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', '78e2582a37831032a742ebdf985f1138');
 INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', '7b67019827ca103295b177fb85a9c0c5');
 INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', '937931692d58103295b177fb85a9c0c5');
 INSERT INTO `sys_role_menu` VALUES ('59bc0b3d1ce710328a0479b72cb403f0', 'a96e04ca2d58103295b177fb85a9c0c5');
