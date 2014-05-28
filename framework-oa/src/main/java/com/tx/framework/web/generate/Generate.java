@@ -44,18 +44,18 @@ public class Generate {
 
 		// 以下参数必填
 		String packageName = "com.tx.framework.web.modules";// dao,service,controller所在包
-		String moduleName = "sys"; // 模块名，例：sys
+		String moduleName = "oa"; // 模块名，例：sys
 		String entityPackageName = "com.tx.framework.web.common.persistence.entity";// entity所在包（勿改）
-		String className = "org"; // 功能英文名，例：user
-		String functionName = "机构"; // 功能中文名，例：用户
+		String className = "leave"; // 功能英文名，例：user
+		String functionName = "请假"; // 功能中文名，例：用户
 		String tpl = "/src/main/resources/template";// 模板目录
 		String view = "/src/main/webapp/WEB-INF/views";// 视图目录
 		
 		// 以下参数可选
 		String subModuleName = ""; // 子模块名
-		String tableName = "sys_org"; // 功能对应的数据库表名（若为空则默认与className一致）例如:sys_user
+		String tableName = "oa_leave"; // 功能对应的数据库表名（若为空则默认与className一致）例如:sys_user
 		String author = "tangx"; // 作者
-		Boolean isPagination = false;// 列表页是否分页 true分页false不分页
+		Boolean isPagination = true;// 列表页是否分页 true分页false不分页
 
 		// ========== ↑↑↑↑↑↑ 执行前请修改参数，谨慎执行。↑↑↑↑↑↑ ====================
 		 

@@ -15,8 +15,6 @@
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/css/bootstrap-admin-theme.css" />
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/css/bootstrap-select.min.css" />
-<link rel="stylesheet" type="text/css" href="${ctxStatic}/css/bootstrap-datetimepicker.min.css" />
-<!-- jquery -->
 <script type="text/javascript" src="${ctxStatic}/script/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="${ctxStatic}/script/jquery-migrate-1.2.1.min.js"></script>
 <script type="text/javascript" src="${ctxStatic}/script/jquery.form.min.js"></script>
@@ -25,15 +23,13 @@
 <script type="text/javascript" src="${ctxStatic}/script/jquery.extends.min.js"></script>
 <script type="text/javascript" src="${ctxStatic}/script/jquery.populate.pack.js"></script>
 <script type="text/javascript" src="${ctxStatic}/script/jquery.transit.min.js"></script>
-<!-- bootstrap -->
 <script type="text/javascript" src="${ctxStatic}/script/bootstrap.min.js"></script>
 <script type="text/javascript" src="${ctxStatic}/script/jasny-bootstrap.min.js"></script>
 <script type="text/javascript" src="${ctxStatic}/script/bootstrap-paginator.js"></script>
-<script type="text/javascript" src="${ctxStatic}/script/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="${ctxStatic}/script/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript" src="${ctxStatic}/script/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="${ctxStatic}/script/bootbox.min.js"></script>
 <script type="text/javascript" src="${ctxStatic}/script/holder.js"></script>
+<script type="text/javascript" src="${ctxStatic}/My97DatePicker/WdatePicker.js"></script>
 <script type="text/javascript" src="${ctxStatic}/script/default.config.min.js"></script>
 <!-- 提示框 -->
 <link rel="stylesheet" href="${ctxStatic}/jquery-jbox/2.3/Skins/Bootstrap/jbox.css" />

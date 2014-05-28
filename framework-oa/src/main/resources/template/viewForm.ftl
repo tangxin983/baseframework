@@ -23,7 +23,7 @@
 				<input type="hidden" name="id" value="${r"${entity.id}"}">
 				<#list entityFields as field>
 				<div class="form-group">
-					<label class="col-md-2 control-label">${field.name}:</label>
+					<label class="col-md-2 control-label">${field.name}：</label>
 					<div class="col-md-6">
 						<input name="${field.name}" maxlength="50" class="form-control required"
 							value="${r"${entity."}${field.name}}" />
