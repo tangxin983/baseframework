@@ -72,19 +72,19 @@
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis-spring</artifactId>
 		</dependency>
-		
+
 		<!-- hibernate -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 		</dependency>
-		
+
 		<!-- JSR303 Bean Validator -->
 		<dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-validator</artifactId>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
 		</dependency>
- 
+
 		<!-- connection pool -->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
@@ -124,21 +124,21 @@
 			<artifactId>ehcache-core</artifactId>
 		</dependency>
 		<!-- SECURITY end -->
-		
+
 		<!-- TEST begin -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
- 
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<!-- TEST end -->
-		
+
 		<!-- workflow begin -->
 		<dependency>
 			<groupId>org.activiti</groupId>
@@ -150,7 +150,13 @@
 			<artifactId>activiti-spring</artifactId>
 		</dependency>
 		<!-- workflow end -->
-		
+
+		<!-- h2 -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+
 		<!-- j2ee web spec from common -->
 
 		<!-- JSR303 BeanValidator from common -->
@@ -158,25 +164,18 @@
 		<!-- JSON from common -->
 
 		<!-- LOGGING from common -->
-		 
+
 		<!-- UTILS from common -->
-		 
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>framework-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-	
+
 	<profiles>
-		<!-- 开发环境 -->
-		<profile>
-			<id>development</id>
-			<properties>
-				<portableConfig.path>src/main/resources/portable/development.xml</portableConfig.path>
-			</properties>
-		</profile>
-		<!-- 生产环境 -->
+		<!-- 生产环境(mvn package) -->
 		<profile>
 			<id>production</id>
 			<properties>
@@ -186,6 +185,50 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+		</profile>
+		<!-- 开发环境(mvn package -Pdevelopment) -->
+		<profile>
+			<id>development</id>
+			<properties>
+				<portableConfig.path>src/main/resources/portable/development.xml</portableConfig.path>
+			</properties>
+		</profile>
+		<!-- 重建数据库(mvn antrun:run -Prefresh-db) -->
+		<profile>
+			<id>refresh-db</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<configuration>
+							<target>
+								<property file="src/main/resources/config.properties" />
+								<sql driver="${jdbc.driver}" url="${jdbc.url}" userid="${jdbc.username}"
+									password="${jdbc.password}" onerror="continue"
+									encoding="${project.build.sourceEncoding}">
+									<classpath refid="maven.test.classpath" />
+									<transaction
+										src="db/activiti/drop/activiti.${jdbc.type}.drop.engine.sql" />
+									<transaction
+										src="db/activiti/drop/activiti.${jdbc.type}.drop.history.sql" />
+									<transaction
+										src="db/activiti/drop/activiti.${jdbc.type}.drop.identity.sql" />
+									<transaction
+										src="db/activiti/create/activiti.${jdbc.type}.create.engine.sql" />
+									<transaction
+										src="db/activiti/create/activiti.${jdbc.type}.create.history.sql" />
+									<transaction
+										src="db/activiti/create/activiti.${jdbc.type}.create.identity.sql" />
+									<transaction src="db/sys/${jdbc.type}.sql" />
+									<transaction src="db/oa/${jdbc.type}.sql" />
+								</sql>
+							</target>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 
@@ -204,10 +247,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-			    	<archive>
-			        	<addMavenDescriptor>false</addMavenDescriptor>
-			        </archive>
-			    </configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
 			</plugin>
 			<!-- 按照不同环境替换prop文件属性 -->
 			<plugin>
