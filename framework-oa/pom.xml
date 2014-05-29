@@ -7,9 +7,9 @@
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>framework-oa</artifactId>
-	<name>framework-oa</name>
+	<name>oa</name>
 	<packaging>war</packaging>
-	<description>web oa</description>
+	<description>oa application</description>
 
 	<!-- 依赖项定义 -->
 	<dependencies>
@@ -97,6 +97,11 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<!-- PERSISTENCE end -->
 
 		<!-- WEB begin -->
@@ -150,12 +155,6 @@
 			<artifactId>activiti-spring</artifactId>
 		</dependency>
 		<!-- workflow end -->
-
-		<!-- h2 -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-		</dependency>
 
 		<!-- j2ee web spec from common -->
 
@@ -233,7 +232,7 @@
 	</profiles>
 
 	<build>
-		<finalName>dining</finalName>
+		<finalName>oa</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -251,6 +250,11 @@
 						<addMavenDescriptor>false</addMavenDescriptor>
 					</archive>
 				</configuration>
+			</plugin>
+			<!-- jetty插件 -->
+			<plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
 			</plugin>
 			<!-- 按照不同环境替换prop文件属性 -->
 			<plugin>
