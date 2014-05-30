@@ -89,7 +89,7 @@ public class CaptchaAuthenticationFilter extends FormAuthenticationFilter{
 		if (ae instanceof IncorrectCredentialsException) {
 			request.setAttribute(getFailureKeyAttribute(), "密码不正确");
 		} else {
-			request.setAttribute(getFailureKeyAttribute(), ae.getMessage());
+			request.setAttribute(getFailureKeyAttribute(), "服务异常");
 		}
 	}
 	
