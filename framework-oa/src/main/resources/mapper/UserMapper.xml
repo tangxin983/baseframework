@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tx.framework.web.modules.sys.dao.UserDao">
+	<resultMap id="BaseResultMap" type="User">
+		<collection property="roles" ofType="Role">
+			<id property="id" column="r_id" />
+			<result property="name" column="r_name" />
+		</collection>
+	</resultMap>
+	
+	<sql id="selectSql">
+		select
+		sys_user.*, sys_role.id as r_id, sys_role.name as r_name
+		from
+		sys_user
+		left join sys_user_role on sys_user.id = sys_user_role.user_id
+		left join sys_role on sys_user_role.role_id = sys_role.id 
+	</sql>
+	
+	<!-- 分页查询 -->
+	<select id="findUserByPageAndLikeCondition" resultMap="BaseResultMap">
+		<include refid="selectSql" />
+		<where>
+			<if test="para.name != null and para.name != ''">
+				and sys_user.name like CONCAT('%',#{para.name},'%')
+			</if>
+			<if test="para.loginName != null and para.loginName != ''">
+				and sys_user.login_name like CONCAT('%',#{para.loginName},'%')
+			</if>
+		</where>
+	</select>
+
+	<!-- 根据id查找用户 -->
+	<select id="findUserById" parameterType="String" resultMap="BaseResultMap">
+		<include refid="selectSql" />
+		where
+		sys_user.id=#{id}
+	</select>
+	
+	<!-- 根据登录名查找用户 -->
+	<select id="findUserByLoginName" parameterType="String" resultMap="BaseResultMap">
+		<include refid="selectSql" />
+		where
+		sys_user.login_name=#{loginName}
+	</select>
+</mapper>
