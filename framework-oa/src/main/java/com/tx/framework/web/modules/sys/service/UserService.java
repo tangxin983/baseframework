@@ -3,7 +3,10 @@ package com.tx.framework.web.modules.sys.service;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.IdentityService;
+import org.activiti.engine.identity.Group;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.tx.framework.common.util.CollectionUtils;
+import com.tx.framework.web.common.exception.ServiceException;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.persistence.entity.User;
 import com.tx.framework.web.common.persistence.entity.UserRole;
@@ -24,6 +28,9 @@ import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
 @Service
 @Transactional
 public class UserService extends BaseService<User, String> {
+	
+	@Autowired
+	private IdentityService identityService;
 
 	@Autowired
 	private UserRoleDao userRoleDao;
@@ -82,6 +89,7 @@ public class UserService extends BaseService<User, String> {
 				user.getSalt()));
 		userDao.insert(user);
 		saveUserRole(user);
+		syncActiviti(user);
 	}
 
 	/**
@@ -158,5 +166,64 @@ public class UserService extends BaseService<User, String> {
 			}
 		}
 	}
+	
+	/**
+	 * 将用户数据同步到Activiti
+	 * @param user
+	 */
+	private void syncActiviti(User user) {
+		if (user != null) {
+			String userId = user.getId();
+			List<org.activiti.engine.identity.User> activitiUserList = identityService
+					.createUserQuery().userId(userId).list();
+			if (activitiUserList.size() == 1) {
+				// 更新Activiti用户数据
+				cloneAndSaveActivitiUser(user, activitiUserList.get(0));
+				saveActivitiMembership(user);
+            } else if (activitiUserList.size() > 1) {
+            	// 用户重复
+                String errorMsg = "duplicate activiti user：id=" + userId;
+                logger.error(errorMsg);
+                throw new ServiceException(errorMsg);
+            } else {
+            	// 添加Activiti用户数据
+            	org.activiti.engine.identity.User newUser = identityService.newUser(userId);
+            	cloneAndSaveActivitiUser(user, newUser);
+            	saveActivitiMembership(user);
+                logger.debug("add activiti user: {}", ToStringBuilder.reflectionToString(newUser));
+            }
+		}
+	}
+	
+	/**
+	 * 拷贝系统用户属性到activiti用户并保存
+	 * @param user 系统用户
+	 * @param activitiUser activiti用户
+	 */
+	private void cloneAndSaveActivitiUser(User user, org.activiti.engine.identity.User activitiUser) {
+        activitiUser.setFirstName(user.getName());
+        activitiUser.setLastName(StringUtils.EMPTY);
+        activitiUser.setPassword(StringUtils.EMPTY);
+        activitiUser.setEmail(user.getEmail());
+        identityService.saveUser(activitiUser);
+    }
+	
+	/**
+	 * 保存Activiti用户与组的关系
+	 * @param user 系统用户
+	 */
+    private void saveActivitiMembership(User user) {
+    	// 删除旧的membership
+        List<Group> activitiGroups = identityService.createGroupQuery().groupMember(user.getId()).list();
+        for (Group group : activitiGroups) {
+            identityService.deleteMembership(user.getId(), group.getId());
+        }
+        // 添加新的membership
+    	if (user.getRoleIds() != null && !user.getRoleIds().isEmpty()) {
+    		for (String roleId : user.getRoleIds()) {
+    			identityService.createMembership(user.getId(), roleId);
+    		}
+    	}
+    }
 
 }

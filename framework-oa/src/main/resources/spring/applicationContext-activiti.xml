@@ -40,7 +40,7 @@
 	<bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />
 	<!-- 表单 -->
 	<bean id="formService" factory-bean="processEngine" factory-method="getFormService" />
-	<!-- 表单 -->
+	<!-- 用户及用户组 -->
 	<bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" />
 	<!-- 任务 -->
 	<bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />
