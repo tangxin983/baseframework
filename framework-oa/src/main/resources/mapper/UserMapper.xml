@@ -27,12 +27,13 @@
 		<collection property="roles" ofType="Role">
 			<id property="id" column="r_id" />
 			<result property="name" column="r_name" />
+			<result property="enName" column="en_name" />
 		</collection>
 	</resultMap>
 	
 	<sql id="selectSql">
 		select
-		sys_user.*, sys_role.id as r_id, sys_role.name as r_name
+		sys_user.*, sys_role.id as r_id, sys_role.name as r_name, sys_role.en_name
 		from
 		sys_user
 		left join sys_user_role on sys_user.id = sys_user_role.user_id

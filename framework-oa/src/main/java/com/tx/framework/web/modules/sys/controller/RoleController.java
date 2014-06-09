@@ -141,5 +141,27 @@ public class RoleController extends BaseController<Role, String> {
 		}
 		return msg;
 	}
+	
+	/**
+	 * 检查角色英文名是否已经存在
+	 * @param oldName
+	 * @param name
+	 * @return
+	 */
+	@RequestMapping(value = "checkEnName")
+	@ResponseBody
+	public Map<String, String> checkEnName(@RequestParam("oldName") String oldName,
+			@RequestParam("enName") String name) {
+		Map<String, String> msg = Maps.newHashMap();
+		if (name != null && name.equals(oldName)) {
+			msg.put("success", "true");
+		} else if (name != null && roleService.countRoleByEnName(name) == 0) {
+			msg.put("success", "true");
+		} else {
+			msg.put("success", "false");
+			msg.put("msg", "角色英文名已存在");
+		}
+		return msg;
+	}
 
 }

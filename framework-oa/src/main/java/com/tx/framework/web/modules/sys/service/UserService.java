@@ -6,7 +6,6 @@ import java.util.Map;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -21,6 +20,7 @@ import com.tx.framework.web.common.persistence.entity.UserRole;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.common.utils.DigestUtil;
 import com.tx.framework.web.common.utils.ShiroUtil;
+import com.tx.framework.web.modules.sys.dao.RoleDao;
 import com.tx.framework.web.modules.sys.dao.UserDao;
 import com.tx.framework.web.modules.sys.dao.UserRoleDao;
 import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
@@ -34,6 +34,9 @@ public class UserService extends BaseService<User, String> {
 
 	@Autowired
 	private UserRoleDao userRoleDao;
+	
+	@Autowired
+	private RoleDao roleDao;
 
 	private UserDao userDao;
 
@@ -89,7 +92,7 @@ public class UserService extends BaseService<User, String> {
 				user.getSalt()));
 		userDao.insert(user);
 		saveUserRole(user);
-		syncActiviti(user);
+		saveActiviti(user);
 	}
 
 	/**
@@ -106,6 +109,7 @@ public class UserService extends BaseService<User, String> {
 		}
 		userDao.update(user);
 		saveUserRole(user);
+		saveActiviti(user);
 	}
 	
 	/**
@@ -132,6 +136,8 @@ public class UserService extends BaseService<User, String> {
 		userDao.deleteById(genericType, id);
 		Map<String, Object> para = Maps.newHashMap();
 		para.put("userId", id);
+		List<UserRole> userRoles = userRoleDao.selectByCondition(UserRole.class, para);
+		deleteActiviti(id, userRoles);
 		userRoleDao.deleteByCondition(UserRole.class, para);
 	}
 	
@@ -168,10 +174,10 @@ public class UserService extends BaseService<User, String> {
 	}
 	
 	/**
-	 * 将用户数据同步到Activiti
+	 * 将用户数据同步到activiti
 	 * @param user
 	 */
-	private void syncActiviti(User user) {
+	private void saveActiviti(User user) {
 		if (user != null) {
 			String userId = user.getId();
 			List<org.activiti.engine.identity.User> activitiUserList = identityService
@@ -190,7 +196,6 @@ public class UserService extends BaseService<User, String> {
             	org.activiti.engine.identity.User newUser = identityService.newUser(userId);
             	cloneAndSaveActivitiUser(user, newUser);
             	saveActivitiMembership(user);
-                logger.debug("add activiti user: {}", ToStringBuilder.reflectionToString(newUser));
             }
 		}
 	}
@@ -209,7 +214,7 @@ public class UserService extends BaseService<User, String> {
     }
 	
 	/**
-	 * 保存Activiti用户与组的关系
+	 * 保存activiti用户与组的关系
 	 * @param user 系统用户
 	 */
     private void saveActivitiMembership(User user) {
@@ -225,5 +230,19 @@ public class UserService extends BaseService<User, String> {
     		}
     	}
     }
+    
+   /**
+    * 删除activiti用户、删除activiti用户与组的关系
+    * @param userId
+    * @param userRoles
+    */
+	private void deleteActiviti(String userId, List<UserRole> userRoles) {
+		if (!userRoles.isEmpty()) {
+    		for (UserRole userRole : userRoles) {
+    			identityService.deleteMembership(userId, userRole.getRoleId());
+    		}
+    	}
+		identityService.deleteUser(userId);
+	}
 
 }

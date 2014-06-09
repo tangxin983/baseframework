@@ -3,6 +3,8 @@ package com.tx.framework.web.modules.sys.service;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.IdentityService;
+import org.activiti.engine.identity.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -10,12 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.tx.framework.common.util.CollectionUtils;
+import com.tx.framework.web.common.exception.ServiceException;
 import com.tx.framework.web.common.persistence.entity.Role;
 import com.tx.framework.web.common.persistence.entity.RoleMenu;
 import com.tx.framework.web.common.persistence.entity.UserRole;
 import com.tx.framework.web.common.service.BaseService;
-import com.tx.framework.web.modules.sys.dao.RoleMenuDao;
 import com.tx.framework.web.modules.sys.dao.RoleDao;
+import com.tx.framework.web.modules.sys.dao.RoleMenuDao;
 import com.tx.framework.web.modules.sys.dao.UserRoleDao;
 import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
 
@@ -30,6 +33,9 @@ public class RoleService extends BaseService<Role, String> {
 	
 	@Autowired
 	private UserRoleDao userRoleDao;
+	
+	@Autowired
+	private IdentityService identityService;
 
 	@Autowired
 	public void setRoleDao(RoleDao roleDao) {
@@ -38,7 +44,7 @@ public class RoleService extends BaseService<Role, String> {
 	}
 
 	/**
-	 * 根据角色名称查询记录条数
+	 * 根据角色名称查询记录数
 	 * 
 	 * @param roleName
 	 * @return
@@ -46,6 +52,18 @@ public class RoleService extends BaseService<Role, String> {
 	public long countRoleByName(String roleName) {
 		Map<String, Object> searchParams = Maps.newHashMap();
 		searchParams.put("name", roleName);
+		return dao.countByCondition(genericType, searchParams);
+	}
+	
+	/**
+	 * 根据角色英文名查询记录数
+	 * 
+	 * @param enName
+	 * @return
+	 */
+	public long countRoleByEnName(String enName) {
+		Map<String, Object> searchParams = Maps.newHashMap();
+		searchParams.put("enName", enName);
 		return dao.countByCondition(genericType, searchParams);
 	}
 
@@ -72,6 +90,7 @@ public class RoleService extends BaseService<Role, String> {
 	public void saveRole(Role entity) {
 		dao.insert(entity);
 		saveRoleMenu(entity);
+		saveActiviti(entity);
 	}
 
 	/**
@@ -83,6 +102,7 @@ public class RoleService extends BaseService<Role, String> {
 	public void updateRole(Role entity) {
 		dao.update(entity);
 		saveRoleMenu(entity);
+		saveActiviti(entity);
 	}
 
 	/**
@@ -97,6 +117,7 @@ public class RoleService extends BaseService<Role, String> {
 		Map<String, Object> para = Maps.newHashMap();
 		para.put("roleId", id);
 		roleMenuDao.deleteByCondition(RoleMenu.class, para);
+		deleteActiviti(id);
 	}
 	
 	/**
@@ -160,4 +181,41 @@ public class RoleService extends BaseService<Role, String> {
 			}
 		}
 	}
+	
+	/**
+	 * 将用户组数据同步到activiti
+	 * @param role
+	 */
+	private void saveActiviti(Role role) {
+		if (role != null) {
+			String groupId = role.getId();
+			List<Group> activitiGroupList = identityService.createGroupQuery().groupId(groupId).list();
+			if (activitiGroupList.size() == 1) {
+				// 更新activiti用户组数据
+				Group group = activitiGroupList.get(0);
+				group.setName(role.getName());
+				identityService.saveGroup(group);
+            } else if (activitiGroupList.size() > 1) {
+            	// 角色重复
+                String errorMsg = "duplicate activiti group：id=" + groupId;
+                logger.error(errorMsg);
+                throw new ServiceException(errorMsg);
+            } else {
+            	// 添加activiti用户组数据
+            	Group newGroup = identityService.newGroup(groupId);
+            	newGroup.setName(role.getName());
+            	identityService.saveGroup(newGroup);
+            }
+		}
+	}
+	
+	/**
+     * 删除activiti用户组
+     * @param roleId 
+     */
+	private void deleteActiviti(String roleId) {
+		identityService.deleteGroup(roleId);
+	}
+	
+	 
 }

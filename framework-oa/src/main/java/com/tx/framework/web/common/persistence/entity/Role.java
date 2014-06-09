@@ -16,6 +16,9 @@ public class Role extends BaseEntity {
 	@Column
 	private String name;
 
+	@Column(name = "en_name")
+	private String enName;
+
 	@Column(name = "data_scope")
 	private String dataScope;
 
@@ -52,6 +55,14 @@ public class Role extends BaseEntity {
 
 	public void setDataScope(String dataScope) {
 		this.dataScope = dataScope;
+	}
+
+	public String getEnName() {
+		return enName;
+	}
+
+	public void setEnName(String enName) {
+		this.enName = enName;
 	}
 
 }

@@ -53,6 +53,7 @@
 						<tr>
 							<th><input type="checkbox" id="selectAll"></th>
 							<th>角色名称</th>
+							<th>角色英文</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -69,6 +70,7 @@
 									${entity.name}
 									</shiro:lacksPermission>
 								</td>
+								<td>${entity.enName}</td>
 							</tr>
 						</c:forEach>
 					</tbody>

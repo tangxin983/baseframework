@@ -25,6 +25,13 @@
 				data : {oldName : "${entity.name}"}
 			}
 		});
+		$("#roleEnName").rules("add", {
+			remote : {
+				url : "${ctxModule}/checkEnName",
+				type : "POST",
+				data : {oldName : "${entity.enName}"}
+			}
+		});
 		var setting = {
 			check : {
 				enable : true,
@@ -84,6 +91,13 @@
 					<div class="col-md-6">
 						<input id="roleName" name="name" maxlength="50" class="form-control required"
 							value="${entity.name}" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2 control-label">角色英文:</label>
+					<div class="col-md-6">
+						<input id="roleEnName" name="enName" maxlength="50" class="form-control required"
+							value="${entity.enName}" />
 					</div>
 				</div>
 				<div class="form-group">
