@@ -2,7 +2,6 @@ package com.tx.framework.web.common.persistence.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.Column;
@@ -134,8 +133,18 @@ public class PersistenceUtil {
 		if (columnMap.containsKey(clazz)) {
 			return;
 		}
+		Map<String, String> columnDefs = Maps.newHashMap();
 		Field[] fields = clazz.getDeclaredFields();
-		Map<String, String> columnDefs = new HashMap<String, String>();
+		for (Field field : fields) {
+			if (field.isAnnotationPresent(Column.class)) {
+				if (field.isAnnotationPresent(Id.class)) {
+					continue;
+				}
+				columnDefs.put(field.getName(), getColumnName(field));
+			}
+		}
+		// 获取父类属性
+		fields = clazz.getSuperclass().getDeclaredFields();
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(Column.class)) {
 				if (field.isAnnotationPresent(Id.class)) {

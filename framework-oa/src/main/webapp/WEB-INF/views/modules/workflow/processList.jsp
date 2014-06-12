@@ -2,26 +2,14 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>请假管理</title>
+	<title>流程列表</title>
 	<meta name="decorator" content="default"/>
-	<!-- 这里引入额外的css和js 
-	<link rel="stylesheet" type="text/css" href="" />
-	<script type="text/javascript" src=""></script>
-	-->
-	<script type="text/javascript">
-		function multiDel(){
-			$("[name='ids']").each(function(){
-				if($(this).is(":checked")){
-					return confirmx_func('确定要删除选中的记录吗?', function(){$("#viewForm").submit();})
-				}
-			});
-		}
-	</script>
 </head>
 <body>
 	<tags:message content="${message}" />
 
 	<!-- search form -->
+	<!-- 
 	<nav class="navbar navbar-default">
 		<form class="navbar-form navbar-left" valid="false">
 			<div class="form-group">
@@ -82,75 +70,49 @@
 			</shiro:hasPermission>
 		</form>
 	</nav>
-	
+	 -->
 	<!-- table -->
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<div class="text-muted bootstrap-admin-box-title">请假列表</div>
+			<div class="text-muted bootstrap-admin-box-title">流程列表</div>
 		</div>
 		<div class="panel-body">
 			<form id="viewForm" action="${ctxModule}/delete" valid="false" method="post">
 				<table class="table table-striped table-hover">
 					<thead>
 						<tr>
-							<th>processInstanceId</th>
-							<th>startTime</th>
-							<th>endTime</th>
-							<th>leaveType</th>
-							<th>reason</th>
-							<th>applyTime</th>
-							<th>realityStartTime</th>
-							<th>realityEndTime</th>
-							<th>processStatus</th>
-							<th>createBy</th>
-							<th>createDate</th>
-							<th>updateBy</th>
-							<th>updateDate</th>
-							<th>remarks</th>
-							<th>delFlag</th>
-							<!--
+							<th>名称</th>
+							<th>键值</th>
+							<th>版本</th>
+							<th>XML</th>
+							<th>图片</th>
+							<th>部署时间</th>
+							<th>是否挂起</th>
 							<th>操作</th>
-							-->
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${page.result}" var="entity">
+						<c:forEach items="${page.result}" var="object">
+							<c:set var="process" value="${object[0]}" />
+							<c:set var="deployment" value="${object[1]}" />
 							<tr>
-		    					<td>
-		    						<shiro:hasPermission name="oa:leave:edit">
-		    						<a href="${ctxModule}/update/${entity.id}" title="修改">
-										${entity.processInstanceId}
-									</a>
-									</shiro:hasPermission>
-									<shiro:lacksPermission name="oa:leave:edit">
-									${entity.processInstanceId}
-									</shiro:lacksPermission>
-		    					</td>
-							  	<td>${entity.startTime}</td>
-							  	<td>${entity.endTime}</td>
-							  	<td>${entity.leaveType}</td>
-							  	<td>${entity.reason}</td>
-							  	<td>${entity.applyTime}</td>
-							  	<td>${entity.realityStartTime}</td>
-							  	<td>${entity.realityEndTime}</td>
-							  	<td>${entity.processStatus}</td>
-							  	<td>${entity.createBy}</td>
-							  	<td>${entity.createDate}</td>
-							  	<td>${entity.updateBy}</td>
-							  	<td>${entity.updateDate}</td>
-							  	<td>${entity.remarks}</td>
-							  	<td>${entity.delFlag}</td>
-								<!--
-								<td>
-									<a href="${ctxModule}/update/${entity.id}" class="btn btn-default" title="修改">
-										<span class="glyphicon glyphicon-edit"></span>
-									</a>
-								    <a href="${ctxModule}/delete/${entity.id}" class="btn btn-danger" title="删除"
-								    	onclick="return confirmx('确定要删除吗?', this.href)">
-								    	<span class="glyphicon glyphicon-remove"></span>
-								    </a> 
+								<td>${process.name}</td>
+								<td>${process.key}</td>
+								<td>${process.version}</td>
+								<td><a target="_blank" href='${ctx}/workflow/resource/read?processId=${process.id}&type=xml'>${process.resourceName}</a></td>
+								<td><a target="_blank" href='${ctx}/workflow/resource/read?processId=${process.id}&type=image'>${process.diagramResourceName}</a></td>
+								<td><fmt:formatDate value="${deployment.deploymentTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+								<td>${process.suspended} |
+									<c:if test="${process.suspended}">
+										<a href="${ctx}/workflow/process/active/${process.id}">激活</a>
+									</c:if>
+									<c:if test="${!process.suspended}">
+										<a href="${ctx}/workflow/process/suspend/${process.id}">挂起</a>
+									</c:if>
 								</td>
-								-->
+								<td>
+			                        <a href='${ctx}/workflow/process/delete/${process.deploymentId}'>删除</a>
+			                    </td>
 							</tr>
 						</c:forEach>
 					</tbody>

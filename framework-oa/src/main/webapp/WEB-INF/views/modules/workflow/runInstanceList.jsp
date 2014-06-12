@@ -2,26 +2,14 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>请假管理</title>
+	<title>运行流程</title>
 	<meta name="decorator" content="default"/>
-	<!-- 这里引入额外的css和js 
-	<link rel="stylesheet" type="text/css" href="" />
-	<script type="text/javascript" src=""></script>
-	-->
-	<script type="text/javascript">
-		function multiDel(){
-			$("[name='ids']").each(function(){
-				if($(this).is(":checked")){
-					return confirmx_func('确定要删除选中的记录吗?', function(){$("#viewForm").submit();})
-				}
-			});
-		}
-	</script>
 </head>
 <body>
 	<tags:message content="${message}" />
 
 	<!-- search form -->
+	<!-- 
 	<nav class="navbar navbar-default">
 		<form class="navbar-form navbar-left" valid="false">
 			<div class="form-group">
@@ -82,75 +70,39 @@
 			</shiro:hasPermission>
 		</form>
 	</nav>
-	
+	 -->
 	<!-- table -->
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<div class="text-muted bootstrap-admin-box-title">请假列表</div>
+			<div class="text-muted bootstrap-admin-box-title">运行流程</div>
 		</div>
 		<div class="panel-body">
 			<form id="viewForm" action="${ctxModule}/delete" valid="false" method="post">
 				<table class="table table-striped table-hover">
 					<thead>
 						<tr>
-							<th>processInstanceId</th>
-							<th>startTime</th>
-							<th>endTime</th>
-							<th>leaveType</th>
-							<th>reason</th>
-							<th>applyTime</th>
-							<th>realityStartTime</th>
-							<th>realityEndTime</th>
-							<th>processStatus</th>
-							<th>createBy</th>
-							<th>createDate</th>
-							<th>updateBy</th>
-							<th>updateDate</th>
-							<th>remarks</th>
-							<th>delFlag</th>
-							<!--
+							<th>流程实例ID</th>
+							<th>流程定义ID</th>
+							<th>当前节点</th>
+							<th>是否挂起</th>
 							<th>操作</th>
-							-->
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${page.result}" var="entity">
+						<c:forEach items="${page.result}" var="instance">
 							<tr>
-		    					<td>
-		    						<shiro:hasPermission name="oa:leave:edit">
-		    						<a href="${ctxModule}/update/${entity.id}" title="修改">
-										${entity.processInstanceId}
-									</a>
-									</shiro:hasPermission>
-									<shiro:lacksPermission name="oa:leave:edit">
-									${entity.processInstanceId}
-									</shiro:lacksPermission>
-		    					</td>
-							  	<td>${entity.startTime}</td>
-							  	<td>${entity.endTime}</td>
-							  	<td>${entity.leaveType}</td>
-							  	<td>${entity.reason}</td>
-							  	<td>${entity.applyTime}</td>
-							  	<td>${entity.realityStartTime}</td>
-							  	<td>${entity.realityEndTime}</td>
-							  	<td>${entity.processStatus}</td>
-							  	<td>${entity.createBy}</td>
-							  	<td>${entity.createDate}</td>
-							  	<td>${entity.updateBy}</td>
-							  	<td>${entity.updateDate}</td>
-							  	<td>${entity.remarks}</td>
-							  	<td>${entity.delFlag}</td>
-								<!--
+								<td>${instance.processInstanceId}</td>
+								<td>${instance.processDefinitionId}</td>
+								<td></td>
+								<td>${instance.suspended}</td>
 								<td>
-									<a href="${ctxModule}/update/${entity.id}" class="btn btn-default" title="修改">
-										<span class="glyphicon glyphicon-edit"></span>
-									</a>
-								    <a href="${ctxModule}/delete/${entity.id}" class="btn btn-danger" title="删除"
-								    	onclick="return confirmx('确定要删除吗?', this.href)">
-								    	<span class="glyphicon glyphicon-remove"></span>
-								    </a> 
+									<c:if test="${instance.suspended}">
+										<a href="update/active/${instance.processInstanceId}">激活</a>
+									</c:if>
+									<c:if test="${!instance.suspended}">
+										<a href="update/suspend/${instance.processInstanceId}">挂起</a>
+									</c:if>
 								</td>
-								-->
 							</tr>
 						</c:forEach>
 					</tbody>

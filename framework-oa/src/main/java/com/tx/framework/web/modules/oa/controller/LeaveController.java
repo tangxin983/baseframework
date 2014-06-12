@@ -1,8 +1,12 @@
 package com.tx.framework.web.modules.oa.controller;
 
 import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import org.activiti.engine.runtime.ProcessInstance;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,15 +17,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.tx.framework.common.util.Servlets;
 import com.tx.framework.web.common.controller.BaseController;
 import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.persistence.entity.Leave;
+import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.modules.oa.service.LeaveService;
 
 /**
  * 请假Controller
  * @author tangx
- * @version 2014-05-28
+ * @since 2014-05-28
  */
 @Controller
 @RequestMapping(value = "oa/leave")
@@ -35,7 +42,6 @@ public class LeaveController extends BaseController<Leave, String> {
 		this.leaveService = leaveService;
 	}
 	
-	// ========== 以下为简单crud示例。注意：一旦修改url，对应生成的视图url也需手动修改 ===========
 	/**
 	 * 跳转列表页（分页）<br>
 	 * url:oa/leave
@@ -44,7 +50,13 @@ public class LeaveController extends BaseController<Leave, String> {
 	public String list(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model, HttpServletRequest request) {
-		return super.list(pageNumber, pageSize, model, request);
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
+		setExtraSearchParam(searchParams);
+		Page<Leave> entitys = leaveService.selectByPage(searchParams, pageNumber, pageSize);
+		model.addAttribute("page", entitys);
+		// 将搜索条件编码成字符串，用于分页的URL
+		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
+		return getListPage();
 	}
 	
 	/**
@@ -63,7 +75,9 @@ public class LeaveController extends BaseController<Leave, String> {
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	public String create(@Valid Leave entity,
 			RedirectAttributes redirectAttributes) {
-		return super.create(entity, redirectAttributes);
+		ProcessInstance processInstance = leaveService.saveLeave(entity);
+		addMessage(redirectAttributes, "流程已启动，流程ID：" + processInstance.getId());
+		return "redirect:/" + getControllerContext();
 	}
 	
 	/**

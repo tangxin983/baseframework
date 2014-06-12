@@ -1,73 +1,65 @@
 package com.tx.framework.web.common.persistence.entity;
 
 import java.util.Date;
-import java.sql.*;
+
 import javax.persistence.Column;
 import javax.persistence.Table;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 /**
  * 请假实体
+ * 
  * @author tangx
  * @since 2014-05-28
  */
 @SuppressWarnings("serial")
 @Table(name = "oa_leave")
-public class Leave extends BaseEntity {
+public class Leave extends WorkFlowEntity {
 
-	@Column(name = "process_instance_id")
-	private String processInstanceId;
-	
 	@Column(name = "start_time")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date startTime;
-	
+
 	@Column(name = "end_time")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date endTime;
-	
+
 	@Column(name = "leave_type")
 	private String leaveType;
-	
+
 	@Column(name = "reason")
 	private String reason;
-	
+
 	@Column(name = "apply_time")
 	private Date applyTime;
-	
+
 	@Column(name = "reality_start_time")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date realityStartTime;
-	
+
 	@Column(name = "reality_end_time")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date realityEndTime;
-	
-	@Column(name = "process_status")
-	private String processStatus;
-	
+
 	@Column(name = "create_by")
 	private String createBy;
-	
+
 	@Column(name = "create_date")
 	private Date createDate;
-	
+
 	@Column(name = "update_by")
 	private String updateBy;
-	
+
 	@Column(name = "update_date")
 	private Date updateDate;
-	
+
 	@Column(name = "remarks")
 	private String remarks;
-	
+
 	@Column(name = "del_flag")
 	private String delFlag;
-	
-	
-	public String getProcessInstanceId() {
-		return processInstanceId;
-	}
 
-	public void setProcessInstanceId(String processInstanceId) {
-		this.processInstanceId = processInstanceId;
-	}
-	
 	public Date getStartTime() {
 		return startTime;
 	}
@@ -75,7 +67,7 @@ public class Leave extends BaseEntity {
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
-	
+
 	public Date getEndTime() {
 		return endTime;
 	}
@@ -83,7 +75,7 @@ public class Leave extends BaseEntity {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
-	
+
 	public String getLeaveType() {
 		return leaveType;
 	}
@@ -91,7 +83,7 @@ public class Leave extends BaseEntity {
 	public void setLeaveType(String leaveType) {
 		this.leaveType = leaveType;
 	}
-	
+
 	public String getReason() {
 		return reason;
 	}
@@ -99,7 +91,7 @@ public class Leave extends BaseEntity {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-	
+
 	public Date getApplyTime() {
 		return applyTime;
 	}
@@ -107,7 +99,7 @@ public class Leave extends BaseEntity {
 	public void setApplyTime(Date applyTime) {
 		this.applyTime = applyTime;
 	}
-	
+
 	public Date getRealityStartTime() {
 		return realityStartTime;
 	}
@@ -115,7 +107,7 @@ public class Leave extends BaseEntity {
 	public void setRealityStartTime(Date realityStartTime) {
 		this.realityStartTime = realityStartTime;
 	}
-	
+
 	public Date getRealityEndTime() {
 		return realityEndTime;
 	}
@@ -123,15 +115,7 @@ public class Leave extends BaseEntity {
 	public void setRealityEndTime(Date realityEndTime) {
 		this.realityEndTime = realityEndTime;
 	}
-	
-	public String getProcessStatus() {
-		return processStatus;
-	}
 
-	public void setProcessStatus(String processStatus) {
-		this.processStatus = processStatus;
-	}
-	
 	public String getCreateBy() {
 		return createBy;
 	}
@@ -139,7 +123,7 @@ public class Leave extends BaseEntity {
 	public void setCreateBy(String createBy) {
 		this.createBy = createBy;
 	}
-	
+
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -147,7 +131,7 @@ public class Leave extends BaseEntity {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
-	
+
 	public String getUpdateBy() {
 		return updateBy;
 	}
@@ -155,7 +139,7 @@ public class Leave extends BaseEntity {
 	public void setUpdateBy(String updateBy) {
 		this.updateBy = updateBy;
 	}
-	
+
 	public Date getUpdateDate() {
 		return updateDate;
 	}
@@ -163,7 +147,7 @@ public class Leave extends BaseEntity {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-	
+
 	public String getRemarks() {
 		return remarks;
 	}
@@ -171,7 +155,7 @@ public class Leave extends BaseEntity {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
-	
+
 	public String getDelFlag() {
 		return delFlag;
 	}
@@ -179,7 +163,5 @@ public class Leave extends BaseEntity {
 	public void setDelFlag(String delFlag) {
 		this.delFlag = delFlag;
 	}
-	
+
 }
-
-

@@ -20,14 +20,12 @@
 		<property name="history" value="full" />
 		<!-- UUID作为主键生成策略 -->
 		<!-- <property name="idGenerator" ref="idGen" />  -->
-		<!-- 自动部署 -->
-		<!-- 
+		<!-- 自动部署流程 -->
 		<property name="deploymentResources">
 			<list>
-				<value>classpath*:/deployments/*</value>
+				<value>classpath*:/deployment/*</value>
 			</list>
 		</property>
-		 -->
 	</bean>
 
 	<!-- 引擎 -->

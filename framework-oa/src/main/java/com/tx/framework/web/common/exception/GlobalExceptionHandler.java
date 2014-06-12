@@ -22,7 +22,7 @@ import com.tx.framework.web.common.enums.ServiceCode;
 /**
  * 全局异常处理（只处理方法未处理的异常，如果方法try catch了所有异常则不会进入）
  * 
- * 一般来说，异常应在service中进行处理。根据类型转换为ServiceException或RestException抛出
+ * 一般来说，异常应在service或controller中进行处理。根据类型转换为ServiceException或RestException抛出
  * 
  * @author tangx
  * 
