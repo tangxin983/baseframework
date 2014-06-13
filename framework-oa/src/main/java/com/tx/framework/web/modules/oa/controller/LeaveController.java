@@ -52,7 +52,7 @@ public class LeaveController extends BaseController<Leave, String> {
 			Model model, HttpServletRequest request) {
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
 		setExtraSearchParam(searchParams);
-		Page<Leave> entitys = leaveService.selectByPage(searchParams, pageNumber, pageSize);
+		Page<Leave> entitys = leaveService.findLeaveFlowByPage(searchParams, pageNumber, pageSize, false);
 		model.addAttribute("page", entitys);
 		// 将搜索条件编码成字符串，用于分页的URL
 		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));

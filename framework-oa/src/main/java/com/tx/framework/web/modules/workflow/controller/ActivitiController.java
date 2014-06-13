@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.tx.framework.web.modules.workflow.service.ActivitiService;
 
 @Controller
-@RequestMapping(value = "sys/act")
+@RequestMapping(value = "act")
 public class ActivitiController {
 
 	@Autowired

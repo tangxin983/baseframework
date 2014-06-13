@@ -1,11 +1,12 @@
 DROP TABLE IF EXISTS oa_leave;
 CREATE TABLE oa_leave (
-  id varchar(32) NOT NULL COMMENT '编号',
+  id char(32) NOT NULL COMMENT '编号',
   process_instance_id varchar(32) default NULL COMMENT '流程实例编号',
   start_time datetime default NULL COMMENT '开始时间',
   end_time datetime default NULL COMMENT '结束时间',
   leave_type varchar(20) default NULL COMMENT '请假类型',
   reason varchar(255) default NULL COMMENT '请假理由',
+  apply_user char(32) NOT NULL COMMENT '申请人',
   apply_time datetime default NULL COMMENT '申请时间',
   reality_start_time datetime default NULL COMMENT '实际开始时间',
   reality_end_time datetime default NULL COMMENT '实际结束时间',

@@ -63,7 +63,7 @@ public class WorkFlowController {
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model) {
 		model.addAttribute("page",
-				workFlowListService.getProcessListByPage(pageNumber, pageSize));
+				workFlowListService.getPaginationProcess(pageNumber, pageSize));
 		return "modules/workflow/processList";
 	}
 
@@ -137,7 +137,7 @@ public class WorkFlowController {
 	 * @param deploymentId
 	 *            流程部署ID
 	 */
-	@RequestMapping(value = "process/delete/{deploymentId}")
+	@RequestMapping("process/delete/{deploymentId}")
 	public String delete(@PathVariable("deploymentId") String deploymentId,
 			RedirectAttributes redirectAttributes) {
 		repositoryService.deleteDeployment(deploymentId, true);
@@ -153,13 +153,41 @@ public class WorkFlowController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "instance/running")
+	@RequestMapping("instance/running")
 	public String running(
 			@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model) {
 		model.addAttribute("page",
-				workFlowListService.getInstanceListByPage(pageNumber, pageSize));
+				workFlowListService.getPaginationInstance(pageNumber, pageSize));
 		return "modules/workflow/runInstanceList";
 	}
+	
+	/**
+	 * 激活流程实例
+	 * @param processInstanceId
+	 * @param redirectAttributes
+	 * @return
+	 */
+    @RequestMapping("instance/active/{processInstanceId}")
+    public String activeInstance(@PathVariable("processInstanceId") String processInstanceId,
+                              RedirectAttributes redirectAttributes) {
+        runtimeService.activateProcessInstanceById(processInstanceId);
+        redirectAttributes.addFlashAttribute("message", "已激活ID为[" + processInstanceId + "]的流程实例。");
+        return "redirect:/workflow/instance/running";
+    }
+    
+    /**
+	 * 挂起流程实例
+	 * @param processInstanceId
+	 * @param redirectAttributes
+	 * @return
+	 */
+    @RequestMapping("instance/suspend/{processInstanceId}")
+    public String suspendInstance(@PathVariable("processInstanceId") String processInstanceId,
+                              RedirectAttributes redirectAttributes) {
+        runtimeService.suspendProcessInstanceById(processInstanceId);
+        redirectAttributes.addFlashAttribute("message", "已挂起ID为[" + processInstanceId + "]的流程实例。");
+        return "redirect:/workflow/instance/running";
+    }
 }

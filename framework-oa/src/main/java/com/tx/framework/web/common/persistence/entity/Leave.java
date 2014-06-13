@@ -31,9 +31,6 @@ public class Leave extends WorkFlowEntity {
 	@Column(name = "reason")
 	private String reason;
 
-	@Column(name = "apply_time")
-	private Date applyTime;
-
 	@Column(name = "reality_start_time")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date realityStartTime;
@@ -90,14 +87,6 @@ public class Leave extends WorkFlowEntity {
 
 	public void setReason(String reason) {
 		this.reason = reason;
-	}
-
-	public Date getApplyTime() {
-		return applyTime;
-	}
-
-	public void setApplyTime(Date applyTime) {
-		this.applyTime = applyTime;
 	}
 
 	public Date getRealityStartTime() {

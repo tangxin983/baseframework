@@ -1,6 +1,13 @@
 package com.tx.framework.web.common.persistence.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
+
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 
 /**
  * 工作流业务实体需继承此类
@@ -11,11 +18,33 @@ import javax.persistence.Column;
 @SuppressWarnings("serial")
 public class WorkFlowEntity extends BaseEntity {
 
+	// 流程发起人
+	@Column(name = "apply_user")
+	protected String applyUser;
+
+	// 流程发起时间
+	@Column(name = "apply_time")
+	protected Date applyTime;
+
+	// 流程实例ID
 	@Column(name = "process_instance_id")
 	protected String processInstanceId;
-	
+
+	// 当前节点名
 	@Column(name = "process_status")
-	private String processStatus;
+	protected String processStatus;
+
+	// 流程任务
+	protected Task task;
+
+	// 运行中的流程实例
+	protected ProcessInstance processInstance;
+
+	// 历史的流程实例
+	protected HistoricProcessInstance historicProcessInstance;
+
+	// 流程定义
+	protected ProcessDefinition processDefinition;
 
 	public String getProcessInstanceId() {
 		return processInstanceId;
@@ -32,6 +61,54 @@ public class WorkFlowEntity extends BaseEntity {
 	public void setProcessStatus(String processStatus) {
 		this.processStatus = processStatus;
 	}
-	
-	
+
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
+	}
+
+	public ProcessInstance getProcessInstance() {
+		return processInstance;
+	}
+
+	public void setProcessInstance(ProcessInstance processInstance) {
+		this.processInstance = processInstance;
+	}
+
+	public HistoricProcessInstance getHistoricProcessInstance() {
+		return historicProcessInstance;
+	}
+
+	public void setHistoricProcessInstance(
+			HistoricProcessInstance historicProcessInstance) {
+		this.historicProcessInstance = historicProcessInstance;
+	}
+
+	public ProcessDefinition getProcessDefinition() {
+		return processDefinition;
+	}
+
+	public void setProcessDefinition(ProcessDefinition processDefinition) {
+		this.processDefinition = processDefinition;
+	}
+
+	public String getApplyUser() {
+		return applyUser;
+	}
+
+	public void setApplyUser(String applyUser) {
+		this.applyUser = applyUser;
+	}
+
+	public Date getApplyTime() {
+		return applyTime;
+	}
+
+	public void setApplyTime(Date applyTime) {
+		this.applyTime = applyTime;
+	}
+
 }

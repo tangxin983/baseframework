@@ -12,6 +12,7 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
+import org.activiti.engine.task.Task;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,7 @@ public class WorkFlowService {
 	 *            每页数量
 	 * @return
 	 */
-	public Page<Object[]> getProcessListByPage(int pageNumber, int pageSize) {
+	public Page<Object[]> getPaginationProcess(int pageNumber, int pageSize) {
 		ProcessDefinitionQuery processDefinitionQuery = repositoryService
 				.createProcessDefinitionQuery().orderByDeploymentId().desc();
 		// 设置page对象
@@ -80,7 +81,7 @@ public class WorkFlowService {
 	}
 
 	/**
-	 * 分页获取流程实例列表
+	 * 分页获取流程实例
 	 * 
 	 * @param pageNumber
 	 *            当前页
@@ -88,10 +89,10 @@ public class WorkFlowService {
 	 *            每页数量
 	 * @return
 	 */
-	public Page<ProcessInstance> getInstanceListByPage(int pageNumber,
+	public Page<ProcessInstance> getPaginationInstance(int pageNumber,
 			int pageSize) {
 		ProcessInstanceQuery processInstanceQuery = runtimeService
-				.createProcessInstanceQuery();
+				.createProcessInstanceQuery().orderByProcessInstanceId().desc();
 		// 设置page对象
 		Page<ProcessInstance> page = new Page<ProcessInstance>();
 		page.setCurrentPage(pageNumber);
@@ -103,10 +104,54 @@ public class WorkFlowService {
 	}
 
 	/**
+	 * 根据流程定义key获取流程实例
+	 * 
+	 * @param processDefinitionKey
+	 *            流程定义key
+	 * @return
+	 */
+	public List<ProcessInstance> getInstanceListByDefKey(
+			String processDefinitionKey) {
+		ProcessInstanceQuery processInstanceQuery = runtimeService
+				.createProcessInstanceQuery()
+				.processDefinitionKey(processDefinitionKey)
+				.orderByProcessInstanceId().desc();
+		return processInstanceQuery.list();
+	}
+
+	/**
+	 * 根据流程定义key获取流程实例
+	 * 
+	 * @param processDefinitionKey
+	 *            流程定义key
+	 * @param isActive
+	 *            true代表只获取激活的实例；false代表只获取挂起的实例
+	 * @return
+	 */
+	public List<ProcessInstance> getInstanceListByDefKey(
+			String processDefinitionKey, boolean isActive) {
+		ProcessInstanceQuery processInstanceQuery = null;
+		if (isActive) {
+			processInstanceQuery = runtimeService.createProcessInstanceQuery()
+					.processDefinitionKey(processDefinitionKey).active()
+					.orderByProcessInstanceId().desc();
+		} else {
+			processInstanceQuery = runtimeService.createProcessInstanceQuery()
+					.processDefinitionKey(processDefinitionKey).suspended()
+					.orderByProcessInstanceId().desc();
+		}
+		return processInstanceQuery.list();
+	}
+
+	/**
 	 * 启动流程实例
-	 * @param entity 业务实体（需继承WorkFlowEntity）
-	 * @param processDefinitionKey 业务流程key
-	 * @param variables 流程变量（可为null）
+	 * 
+	 * @param entity
+	 *            业务实体（需继承WorkFlowEntity）
+	 * @param processDefinitionKey
+	 *            业务流程key
+	 * @param variables
+	 *            流程变量（可为null）
 	 * @return
 	 */
 	public ProcessInstance startWorkflow(WorkFlowEntity entity,
@@ -115,8 +160,10 @@ public class WorkFlowService {
 		ProcessInstance processInstance = null;
 		try {
 			// 用来设置启动流程的人员ID，引擎会自动把用户ID保存到activiti:initiator中
-			identityService.setAuthenticatedUserId(ShiroUtil.getCurrentUserId());
-			processInstance = runtimeService.startProcessInstanceByKey(processDefinitionKey, businessKey, variables);
+			identityService
+					.setAuthenticatedUserId(ShiroUtil.getCurrentUserId());
+			processInstance = runtimeService.startProcessInstanceByKey(
+					processDefinitionKey, businessKey, variables);
 			logger.debug(
 					"start process of {key={}, bkey={}, pid={}, variables={}}",
 					new Object[] { processDefinitionKey, businessKey,
@@ -126,14 +173,41 @@ public class WorkFlowService {
 		}
 		return processInstance;
 	}
-	
+
 	/**
 	 * 获得流程实例当前任务名
-	 * @param processInstanceId 流程实例ID
+	 * 
+	 * @param processInstanceId
+	 *            流程实例ID
 	 * @return
 	 */
-	public String getCurrentTaskName(String processInstanceId){
-		return taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult().getName();
+	public String getCurrentTaskName(String processInstanceId) {
+		return taskService.createTaskQuery()
+				.processInstanceId(processInstanceId).singleResult().getName();
+	}
+
+	/**
+	 * 获得流程实例
+	 * 
+	 * @param processInstanceId
+	 *            流程实例ID
+	 * @return
+	 */
+	public ProcessInstance getProcessInstance(String processInstanceId) {
+		return runtimeService.createProcessInstanceQuery()
+				.processInstanceId(processInstanceId).singleResult();
+	}
+
+	/**
+	 * 获得当前任务
+	 * 
+	 * @param processInstanceId
+	 *            流程实例ID
+	 * @return
+	 */
+	public Task getCurrentTask(String processInstanceId) {
+		return taskService.createTaskQuery()
+				.processInstanceId(processInstanceId).singleResult();
 	}
 
 }

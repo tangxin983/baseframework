@@ -93,64 +93,27 @@
 				<table class="table table-striped table-hover">
 					<thead>
 						<tr>
-							<th>processInstanceId</th>
-							<th>startTime</th>
-							<th>endTime</th>
-							<th>leaveType</th>
-							<th>reason</th>
-							<th>applyTime</th>
-							<th>realityStartTime</th>
-							<th>realityEndTime</th>
-							<th>processStatus</th>
-							<th>createBy</th>
-							<th>createDate</th>
-							<th>updateBy</th>
-							<th>updateDate</th>
-							<th>remarks</th>
-							<th>delFlag</th>
-							<!--
-							<th>操作</th>
-							-->
+							<th>假种</th>
+							<th>申请人</th>
+							<th>申请时间</th>
+							<th>请假开始</th>
+							<th>请假结束</th>
+							<th>当前节点</th>
+							<th>流程状态</th>
+							<th>当前处理人</th>
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${page.result}" var="entity">
-							<tr>
-		    					<td>
-		    						<shiro:hasPermission name="oa:leave:edit">
-		    						<a href="${ctxModule}/update/${entity.id}" title="修改">
-										${entity.processInstanceId}
-									</a>
-									</shiro:hasPermission>
-									<shiro:lacksPermission name="oa:leave:edit">
-									${entity.processInstanceId}
-									</shiro:lacksPermission>
-		    					</td>
-							  	<td>${entity.startTime}</td>
-							  	<td>${entity.endTime}</td>
-							  	<td>${entity.leaveType}</td>
-							  	<td>${entity.reason}</td>
-							  	<td>${entity.applyTime}</td>
-							  	<td>${entity.realityStartTime}</td>
-							  	<td>${entity.realityEndTime}</td>
-							  	<td>${entity.processStatus}</td>
-							  	<td>${entity.createBy}</td>
-							  	<td>${entity.createDate}</td>
-							  	<td>${entity.updateBy}</td>
-							  	<td>${entity.updateDate}</td>
-							  	<td>${entity.remarks}</td>
-							  	<td>${entity.delFlag}</td>
-								<!--
-								<td>
-									<a href="${ctxModule}/update/${entity.id}" class="btn btn-default" title="修改">
-										<span class="glyphicon glyphicon-edit"></span>
-									</a>
-								    <a href="${ctxModule}/delete/${entity.id}" class="btn btn-danger" title="删除"
-								    	onclick="return confirmx('确定要删除吗?', this.href)">
-								    	<span class="glyphicon glyphicon-remove"></span>
-								    </a> 
-								</td>
-								-->
+						<c:forEach items="${page.result}" var="leave">
+							<tr id="${leave.id}" tid="${leave.task.id}">
+								<td>${leave.leaveType}</td>
+								<td>${leave.applyUser}</td>
+								<td><fmt:formatDate value="${leave.applyTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+								<td><fmt:formatDate value="${leave.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+								<td><fmt:formatDate value="${leave.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+								<td>${leave.task.name}</td>
+								<td>${leave.processInstance.suspended ? "已挂起" : "正常"}</td>
+								<td>${leave.task.assignee}</td>
 							</tr>
 						</c:forEach>
 					</tbody>

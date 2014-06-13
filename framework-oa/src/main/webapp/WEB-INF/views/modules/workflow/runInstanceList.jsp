@@ -77,7 +77,7 @@
 			<div class="text-muted bootstrap-admin-box-title">运行流程</div>
 		</div>
 		<div class="panel-body">
-			<form id="viewForm" action="${ctxModule}/delete" valid="false" method="post">
+			<form id="viewForm" valid="false" method="post">
 				<table class="table table-striped table-hover">
 					<thead>
 						<tr>
@@ -97,10 +97,10 @@
 								<td>${instance.suspended}</td>
 								<td>
 									<c:if test="${instance.suspended}">
-										<a href="update/active/${instance.processInstanceId}">激活</a>
+										<a href="${ctx}/workflow/instance/active/${instance.processInstanceId}">激活</a>
 									</c:if>
 									<c:if test="${!instance.suspended}">
-										<a href="update/suspend/${instance.processInstanceId}">挂起</a>
+										<a href="${ctx}/workflow/instance/suspend/${instance.processInstanceId}">挂起</a>
 									</c:if>
 								</td>
 							</tr>
