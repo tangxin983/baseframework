@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tx.framework.web.common.persistence.entity.Role;
 import com.tx.framework.web.common.persistence.entity.User;
 import com.tx.framework.web.common.persistence.entity.UserRole;
-import com.tx.framework.web.modules.sys.dao.ActIdentifyDao;
 import com.tx.framework.web.modules.sys.dao.RoleDao;
 import com.tx.framework.web.modules.sys.dao.UserDao;
 import com.tx.framework.web.modules.sys.dao.UserRoleDao;
+import com.tx.framework.web.modules.workflow.dao.ActIdentifyDao;
 
 /**
  * 用于操作activiti的服务
