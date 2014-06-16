@@ -1,10 +1,12 @@
 package com.tx.framework.web.common.persistence.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 
 import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -40,8 +42,11 @@ public class WorkFlowEntity extends BaseEntity {
 	// 运行中的流程实例
 	protected ProcessInstance processInstance;
 
-	// 历史的流程实例
+	// 历史流程实例
 	protected HistoricProcessInstance historicProcessInstance;
+
+	// 历史任务列表
+	protected List<HistoricTaskInstance> historicTaskInstances;
 
 	// 流程定义
 	protected ProcessDefinition processDefinition;
@@ -109,6 +114,15 @@ public class WorkFlowEntity extends BaseEntity {
 
 	public void setApplyTime(Date applyTime) {
 		this.applyTime = applyTime;
+	}
+
+	public List<HistoricTaskInstance> getHistoricTaskInstances() {
+		return historicTaskInstances;
+	}
+
+	public void setHistoricTaskInstances(
+			List<HistoricTaskInstance> historicTaskInstances) {
+		this.historicTaskInstances = historicTaskInstances;
 	}
 
 }

@@ -57,6 +57,16 @@ public class Leave extends WorkFlowEntity {
 	@Column(name = "del_flag")
 	private String delFlag;
 
+	private boolean pass;
+
+	public boolean isPass() {
+		return pass;
+	}
+
+	public void setPass(boolean pass) {
+		this.pass = pass;
+	}
+
 	public Date getStartTime() {
 		return startTime;
 	}

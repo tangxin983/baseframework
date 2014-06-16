@@ -154,6 +154,21 @@
 			<groupId>org.activiti</groupId>
 			<artifactId>activiti-spring</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-modeler</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-explorer</artifactId>
+		</dependency>
+		 
+		<dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-diagram-rest</artifactId>
+        </dependency>
 		<!-- workflow end -->
 
 		<!-- j2ee web spec from common -->

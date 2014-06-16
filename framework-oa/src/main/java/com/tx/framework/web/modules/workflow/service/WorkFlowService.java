@@ -3,10 +3,12 @@ package com.tx.framework.web.modules.workflow.service;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
@@ -48,6 +50,9 @@ public class WorkFlowService {
 
 	@Autowired
 	private IdentityService identityService;
+
+	@Autowired
+	private HistoryService historyService;
 
 	/**
 	 * 分页获取流程列表
@@ -120,7 +125,7 @@ public class WorkFlowService {
 	}
 
 	/**
-	 * 根据流程定义key获取流程实例
+	 * 获取某个业务流程的流程实例
 	 * 
 	 * @param processDefinitionKey
 	 *            流程定义key
@@ -128,8 +133,8 @@ public class WorkFlowService {
 	 *            true代表只获取激活的实例；false代表只获取挂起的实例
 	 * @return
 	 */
-	public List<ProcessInstance> getInstanceListByDefKey(
-			String processDefinitionKey, boolean isActive) {
+	public List<ProcessInstance> getInstanceList(String processDefinitionKey,
+			boolean isActive) {
 		ProcessInstanceQuery processInstanceQuery = null;
 		if (isActive) {
 			processInstanceQuery = runtimeService.createProcessInstanceQuery()
@@ -141,6 +146,30 @@ public class WorkFlowService {
 					.orderByProcessInstanceId().desc();
 		}
 		return processInstanceQuery.list();
+	}
+
+	/**
+	 * 获取用户某个业务流程下的待办任务
+	 * 
+	 * @param processDefinitionKey
+	 *            流程定义key
+	 * @param userId
+	 *            用户ID
+	 * @return
+	 */
+	public List<Task> getTodoTaskList(String processDefinitionKey, String userId) {
+		List<Task> tasks = Lists.newArrayList();
+		// 待办任务
+		List<Task> todoList = taskService.createTaskQuery()
+				.processDefinitionKey(processDefinitionKey)
+				.taskAssignee(userId).active().list();
+		// 未签收的任务
+		List<Task> unsignedTasks = taskService.createTaskQuery()
+				.processDefinitionKey(processDefinitionKey)
+				.taskCandidateUser(userId).active().list();
+		tasks.addAll(todoList);
+		tasks.addAll(unsignedTasks);
+		return tasks;
 	}
 
 	/**
@@ -208,6 +237,27 @@ public class WorkFlowService {
 	public Task getCurrentTask(String processInstanceId) {
 		return taskService.createTaskQuery()
 				.processInstanceId(processInstanceId).singleResult();
+	}
+
+	/**
+	 * 设置流程实体的流程相关属性
+	 * 
+	 * @param entity
+	 */
+	public void setWorkFlowEntity(WorkFlowEntity entity) {
+		String processInstanceId = entity.getProcessInstanceId();
+		// 实例信息
+		entity.setProcessInstance(runtimeService.createProcessInstanceQuery()
+				.processInstanceId(processInstanceId).singleResult());
+		// 当前任务信息
+		entity.setTask(taskService.createTaskQuery()
+				.processInstanceId(processInstanceId).singleResult());
+		// 历史任务信息（包括当前任务）
+		List<HistoricTaskInstance> historicTaskInstances = historyService
+				.createHistoricTaskInstanceQuery()
+				.processInstanceId(processInstanceId)
+				.orderByHistoricTaskInstanceEndTime().asc().list();
+		entity.setHistoricTaskInstances(historicTaskInstances);
 	}
 
 }

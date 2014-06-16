@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.activiti.engine.runtime.ProcessInstance;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,10 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.tx.framework.common.util.Servlets;
-import com.tx.framework.web.common.controller.BaseController;
 import com.tx.framework.web.common.config.Constant;
+import com.tx.framework.web.common.controller.BaseWorkFlowController;
 import com.tx.framework.web.common.persistence.entity.Leave;
 import com.tx.framework.web.common.persistence.entity.Page;
+import com.tx.framework.web.common.utils.ShiroUtil;
 import com.tx.framework.web.modules.oa.service.LeaveService;
 
 /**
@@ -32,7 +33,7 @@ import com.tx.framework.web.modules.oa.service.LeaveService;
  */
 @Controller
 @RequestMapping(value = "oa/leave")
-public class LeaveController extends BaseController<Leave, String> {
+public class LeaveController extends BaseWorkFlowController<Leave, String> {
 
 	private LeaveService leaveService;
 
@@ -43,8 +44,7 @@ public class LeaveController extends BaseController<Leave, String> {
 	}
 	
 	/**
-	 * 跳转列表页（分页）<br>
-	 * url:oa/leave
+	 * 流程实例列表
 	 */
 	@RequestMapping
 	public String list(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
@@ -52,11 +52,55 @@ public class LeaveController extends BaseController<Leave, String> {
 			Model model, HttpServletRequest request) {
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
 		setExtraSearchParam(searchParams);
-		Page<Leave> entitys = leaveService.findLeaveFlowByPage(searchParams, pageNumber, pageSize, false);
+		Page<Leave> entitys = leaveService.findLeaveInstanceByPage(searchParams, pageNumber, pageSize, false);
 		model.addAttribute("page", entitys);
 		// 将搜索条件编码成字符串，用于分页的URL
 		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
 		return getListPage();
+	}
+	
+	/**
+	 * 待办列表
+	 */
+	@RequestMapping("task")
+	public String todoTask(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
+			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
+			Model model, HttpServletRequest request) {
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
+		setExtraSearchParam(searchParams);
+		Page<Leave> entitys = leaveService.findTodoTaskByPage(searchParams, pageNumber, pageSize);
+		model.addAttribute("page", entitys);
+		// 将搜索条件编码成字符串，用于分页的URL
+		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
+		return "modules/oa/taskList";
+	}
+	
+	/**
+     * 签收任务
+     */
+    @RequestMapping("task/claim/{id}")
+    public String claim(@PathVariable("id") String taskId, RedirectAttributes redirectAttributes) {
+        super.claim(taskId, ShiroUtil.getCurrentUserId(), redirectAttributes);
+        return "redirect:/task";
+    }
+    
+    /**
+     * 流程详情页面
+     * @param id
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "detail/{id}", method = RequestMethod.GET)
+	public String detail(@PathVariable("id") String id, Model model) {
+    	model.addAttribute("entity", leaveService.getLeaveDetail(id));
+		return "modules/oa/leaveDetail";
+	}
+    
+    @RequestMapping(value = "deptLeaderAudit")
+	public String deptLeaderAudit(@Valid Leave leave, RedirectAttributes redirectAttributes) {
+		leaveService.deptLeaderAudit(leave);
+		addMessage(redirectAttributes, "请假审批成功");
+		return "redirect:/task";
 	}
 	
 	/**

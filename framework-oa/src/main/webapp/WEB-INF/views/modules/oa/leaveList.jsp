@@ -111,7 +111,9 @@
 								<td><fmt:formatDate value="${leave.applyTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td><fmt:formatDate value="${leave.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td><fmt:formatDate value="${leave.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-								<td>${leave.task.name}</td>
+								<td>
+									<a target="_blank" href="${ctx}/diagram-viewer/index.html?processDefinitionId=${leave.processInstance.processDefinitionId}&processInstanceId=${leave.processInstance.id}">${leave.task.name}
+								</td>
 								<td>${leave.processInstance.suspended ? "已挂起" : "正常"}</td>
 								<td>${leave.task.assignee}</td>
 							</tr>
