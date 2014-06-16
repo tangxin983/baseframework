@@ -250,14 +250,48 @@ public class WorkFlowService {
 		entity.setProcessInstance(runtimeService.createProcessInstanceQuery()
 				.processInstanceId(processInstanceId).singleResult());
 		// 当前任务信息
-		entity.setTask(taskService.createTaskQuery()
-				.processInstanceId(processInstanceId).singleResult());
+		entity.setTask(getCurrentTask(processInstanceId));
 		// 历史任务信息（包括当前任务）
 		List<HistoricTaskInstance> historicTaskInstances = historyService
 				.createHistoricTaskInstanceQuery()
 				.processInstanceId(processInstanceId)
-				.orderByHistoricTaskInstanceEndTime().asc().list();
+				.orderByHistoricTaskInstanceStartTime().asc().list();
 		entity.setHistoricTaskInstances(historicTaskInstances);
+	}
+
+	/**
+	 * 完成当前任务并返回下一任务对象
+	 * @param processInstanceId 流程实例ID
+	 * @param comment 批注
+	 * @param map 流程变量kv
+	 * @return
+	 */
+	public Task completeCurrentTask(String processInstanceId, String comment,
+			Map<String, Object> map) {
+		Task task = getCurrentTask(processInstanceId);
+		// 添加批注
+		taskService.addComment(task.getId(), processInstanceId, comment);
+		// 完成任务
+		taskService.complete(task.getId(), map);
+		// 查询下一任务
+		task = taskService.createTaskQuery()
+				.processInstanceId(processInstanceId).singleResult();
+		return task;
+	}
+	
+	/**
+	 * 完成当前任务并返回下一任务对象
+	 * @param processInstanceId 流程实例ID
+	 * @return
+	 */
+	public Task completeCurrentTask(String processInstanceId) {
+		Task task = getCurrentTask(processInstanceId);
+		// 完成任务
+		taskService.complete(task.getId());
+		// 查询下一任务
+		task = taskService.createTaskQuery()
+				.processInstanceId(processInstanceId).singleResult();
+		return task;
 	}
 
 }

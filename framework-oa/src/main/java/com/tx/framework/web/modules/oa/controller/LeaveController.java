@@ -81,7 +81,7 @@ public class LeaveController extends BaseWorkFlowController<Leave, String> {
     @RequestMapping("task/claim/{id}")
     public String claim(@PathVariable("id") String taskId, RedirectAttributes redirectAttributes) {
         super.claim(taskId, ShiroUtil.getCurrentUserId(), redirectAttributes);
-        return "redirect:/task";
+        return "redirect:/oa/leave/task";
     }
     
     /**
@@ -96,11 +96,43 @@ public class LeaveController extends BaseWorkFlowController<Leave, String> {
 		return "modules/oa/leaveDetail";
 	}
     
-    @RequestMapping(value = "deptLeaderAudit")
-	public String deptLeaderAudit(@Valid Leave leave, RedirectAttributes redirectAttributes) {
+    /**
+     * 部门领导审核
+     * @param leave
+     * @param redirectAttributes
+     * @return
+     */
+    @RequestMapping(value = "deptLeaderAudit", method = RequestMethod.POST)
+	public String deptLeaderAudit(@Valid @ModelAttribute("entity")Leave leave, RedirectAttributes redirectAttributes) {
 		leaveService.deptLeaderAudit(leave);
-		addMessage(redirectAttributes, "请假审批成功");
-		return "redirect:/task";
+		addMessage(redirectAttributes, "审批成功");
+		return "redirect:/oa/leave/task";
+	}
+    
+    /**
+     * 人事审核
+     * @param leave
+     * @param redirectAttributes
+     * @return
+     */
+    @RequestMapping(value = "hrAudit", method = RequestMethod.POST)
+	public String hrAudit(@Valid @ModelAttribute("entity")Leave leave, RedirectAttributes redirectAttributes) {
+		leaveService.hrAudit(leave);
+		addMessage(redirectAttributes, "审批成功");
+		return "redirect:/oa/leave/task";
+	}
+    
+    /**
+     * 销假
+     * @param leave
+     * @param redirectAttributes
+     * @return
+     */
+    @RequestMapping(value = "reportBack")
+	public String reportBack(Leave leave, RedirectAttributes redirectAttributes) {
+		leaveService.reportBack(leave);
+		addMessage(redirectAttributes, "销假成功");
+		return "redirect:/oa/leave/task";
 	}
 	
 	/**

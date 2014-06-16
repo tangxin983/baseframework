@@ -57,7 +57,17 @@ public class Leave extends WorkFlowEntity {
 	@Column(name = "del_flag")
 	private String delFlag;
 
-	private boolean pass;
+	private boolean pass;// 同意/驳回
+
+	private String auditRemark; // 审批备注
+
+	public String getAuditRemark() {
+		return auditRemark;
+	}
+
+	public void setAuditRemark(String auditRemark) {
+		this.auditRemark = auditRemark;
+	}
 
 	public boolean isPass() {
 		return pass;

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.tx.framework.web.common.persistence.entity.Leave;
 import com.tx.framework.web.common.persistence.entity.Page;
@@ -116,6 +117,7 @@ public class LeaveService extends BaseService<Leave, String> {
 
 	/**
 	 * 分页获取当前用户的请假流程待办任务
+	 * 
 	 * @param searchParams
 	 * @param pageNumber
 	 * @param pageSize
@@ -153,10 +155,12 @@ public class LeaveService extends BaseService<Leave, String> {
 				page.getCurrentEndResult()));
 		return page;
 	}
-	
+
 	/**
 	 * 获取请假流程详情
-	 * @param id 业务ID
+	 * 
+	 * @param id
+	 *            业务ID
 	 * @return
 	 */
 	public Leave getLeaveDetail(String id) {
@@ -164,18 +168,44 @@ public class LeaveService extends BaseService<Leave, String> {
 		workFlowService.setWorkFlowEntity(leave);
 		return leave;
 	}
-	
+
+	/**
+	 * 部门领导审核
+	 * 
+	 * @param leave
+	 *            业务实体
+	 */
 	public void deptLeaderAudit(Leave leave) {
-//		WorkflowUtils.claim(leave.getProcessInstanceId());
-//		Task task = taskService.createTaskQuery().processInstanceId(leave.getProcessInstanceId()).singleResult();
-//		//添加批注
-//		taskService.addComment(task.getId(), leave.getProcessInstanceId(), leave.getAuditRemarks());
-//		Map<String, Object> map = Maps.newHashMap();
-//		map.put("deptLeaderPass", leave.isPass());
-//		//完成任务
-//		taskService.complete(task.getId(),map);
-//		task = taskService.createTaskQuery().processInstanceId(leave.getProcessInstanceId()).singleResult();
-//		leave.setProcessStatus(task.getName());
-//		leaveDao.save(leave);
+		Map<String, Object> map = Maps.newHashMap();
+		map.put("deptLeaderPass", leave.isPass());
+		Task task = workFlowService.completeCurrentTask(
+				leave.getProcessInstanceId(), leave.getAuditRemark(), map);
+		leave.setProcessStatus(task.getName());
+		leaveDao.update(leave);
+	}
+
+	/**
+	 * 人事审核
+	 * 
+	 * @param leave
+	 *            业务实体
+	 */
+	public void hrAudit(Leave leave) {
+		Map<String, Object> map = Maps.newHashMap();
+		map.put("hrPass", leave.isPass());
+		Task task = workFlowService.completeCurrentTask(
+				leave.getProcessInstanceId(), leave.getAuditRemark(), map);
+		leave.setProcessStatus(task.getName());
+		leaveDao.update(leave);
+	}
+	
+	/**
+	 * 销假
+	 * @param leave 业务实体
+	 */
+	public void reportBack(Leave leave) {
+		workFlowService.completeCurrentTask(leave.getProcessInstanceId());
+		leave.setProcessStatus("已结束");
+		leaveDao.update(leave);
 	}
 }
