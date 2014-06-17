@@ -32,4 +32,12 @@
 		<function-signature>String extractProperty(java.util.Collection,java.lang.String,boolean)</function-signature>
 		<example>${fns:extractProperty(collection, property, true)}</example>  
 	</function>
+	
+	<function>
+		<description>根据用户ID获取用户对象</description>
+		<name>getUserById</name>
+		<function-class>com.tx.framework.web.common.utils.JstlFunction</function-class>
+		<function-signature>com.tx.framework.web.common.persistence.entity.User getUserById(java.lang.String)</function-signature>
+		<example>${fns:getUserById(userId)}</example>  
+	</function>
 </taglib>

@@ -36,7 +36,7 @@ import com.tx.framework.web.common.exception.ServiceException;
 import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.common.persistence.entity.ShiroEntity;
 import com.tx.framework.web.common.persistence.entity.User;
-import com.tx.framework.web.common.utils.ShiroUtil;
+import com.tx.framework.web.common.utils.SysUtil;
 import com.tx.framework.web.modules.sys.service.MenuService;
 import com.tx.framework.web.modules.sys.service.UserService;
 
@@ -123,7 +123,7 @@ public class ShiroAuthorizingRealm extends AuthorizingRealm {
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		addPermissions(info, perms);
 		// 将shiroEntity放入session
-		ShiroUtil.setAttribute("shiroEntity", shiroEntity);
+		SysUtil.setAttribute("shiroEntity", shiroEntity);
 		return info;
 	}
 

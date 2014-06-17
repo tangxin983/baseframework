@@ -8,6 +8,8 @@ import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -25,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.persistence.entity.WorkFlowEntity;
-import com.tx.framework.web.common.utils.ShiroUtil;
+import com.tx.framework.web.common.utils.SysUtil;
 
 /**
  * 工作流Service
@@ -94,29 +96,50 @@ public class WorkFlowService {
 	 *            每页数量
 	 * @return
 	 */
-	public Page<ProcessInstance> getPaginationInstance(int pageNumber,
+	public Page<Object[]> getPaginationInstance(int pageNumber,
 			int pageSize) {
 		ProcessInstanceQuery processInstanceQuery = runtimeService
 				.createProcessInstanceQuery().orderByProcessInstanceId().desc();
 		// 设置page对象
-		Page<ProcessInstance> page = new Page<ProcessInstance>();
+		Page<Object[]> page = new Page<Object[]>();
 		page.setCurrentPage(pageNumber);
 		page.setSize(pageSize);
 		page.setTotal((int) processInstanceQuery.count());
-		page.setResult(processInstanceQuery.listPage(page.getCurrentResult(),
-				pageSize));
+		// 保存两个对象，一个是ProcessInstance（流程实例），一个是Task（任务）
+		List<Object[]> objects = Lists.newArrayList();
+		List<ProcessInstance> instances = processInstanceQuery.listPage(page.getCurrentResult(), pageSize);
+		for(ProcessInstance instance : instances){
+			Task task = getCurrentTask(instance.getId());
+			objects.add(new Object[] { instance, task });
+		}
+		page.setResult(objects);
 		return page;
 	}
 
 	/**
-	 * 根据流程定义key获取流程实例
+	 * 获取某个业务流程已结束的历史流程实例
 	 * 
 	 * @param processDefinitionKey
 	 *            流程定义key
 	 * @return
 	 */
-	public List<ProcessInstance> getInstanceListByDefKey(
+	public List<HistoricProcessInstance> getFinishedHistoricInstanceList(
 			String processDefinitionKey) {
+		HistoricProcessInstanceQuery query = historyService
+				.createHistoricProcessInstanceQuery()
+				.processDefinitionKey(processDefinitionKey).finished()
+				.orderByProcessInstanceId().desc();
+		return query.list();
+	}
+
+	/**
+	 * 获取某个业务流程的流程实例
+	 * 
+	 * @param processDefinitionKey
+	 *            流程定义key
+	 * @return
+	 */
+	public List<ProcessInstance> getInstanceList(String processDefinitionKey) {
 		ProcessInstanceQuery processInstanceQuery = runtimeService
 				.createProcessInstanceQuery()
 				.processDefinitionKey(processDefinitionKey)
@@ -190,7 +213,7 @@ public class WorkFlowService {
 		try {
 			// 用来设置启动流程的人员ID，引擎会自动把用户ID保存到activiti:initiator中
 			identityService
-					.setAuthenticatedUserId(ShiroUtil.getCurrentUserId());
+					.setAuthenticatedUserId(SysUtil.getCurrentUserId());
 			processInstance = runtimeService.startProcessInstanceByKey(
 					processDefinitionKey, businessKey, variables);
 			logger.debug(
@@ -246,12 +269,20 @@ public class WorkFlowService {
 	 */
 	public void setWorkFlowEntity(WorkFlowEntity entity) {
 		String processInstanceId = entity.getProcessInstanceId();
-		// 实例信息
-		entity.setProcessInstance(runtimeService.createProcessInstanceQuery()
-				.processInstanceId(processInstanceId).singleResult());
-		// 当前任务信息
+		// 流程实例
+		ProcessInstance processInstance = runtimeService
+				.createProcessInstanceQuery()
+				.processInstanceId(processInstanceId).singleResult();
+		if (processInstance != null) {
+			entity.setProcessInstance(processInstance);
+		} else {
+			entity.setHistoricProcessInstance(historyService
+					.createHistoricProcessInstanceQuery()
+					.processInstanceId(processInstanceId).singleResult());
+		}
+		// 当前任务
 		entity.setTask(getCurrentTask(processInstanceId));
-		// 历史任务信息（包括当前任务）
+		// 历史任务（包括当前任务）
 		List<HistoricTaskInstance> historicTaskInstances = historyService
 				.createHistoricTaskInstanceQuery()
 				.processInstanceId(processInstanceId)
@@ -261,9 +292,13 @@ public class WorkFlowService {
 
 	/**
 	 * 完成当前任务并返回下一任务对象
-	 * @param processInstanceId 流程实例ID
-	 * @param comment 批注
-	 * @param map 流程变量kv
+	 * 
+	 * @param processInstanceId
+	 *            流程实例ID
+	 * @param comment
+	 *            批注
+	 * @param map
+	 *            流程变量kv
 	 * @return
 	 */
 	public Task completeCurrentTask(String processInstanceId, String comment,
@@ -278,10 +313,12 @@ public class WorkFlowService {
 				.processInstanceId(processInstanceId).singleResult();
 		return task;
 	}
-	
+
 	/**
 	 * 完成当前任务并返回下一任务对象
-	 * @param processInstanceId 流程实例ID
+	 * 
+	 * @param processInstanceId
+	 *            流程实例ID
 	 * @return
 	 */
 	public Task completeCurrentTask(String processInstanceId) {

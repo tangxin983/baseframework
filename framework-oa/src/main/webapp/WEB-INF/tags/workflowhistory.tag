@@ -22,7 +22,7 @@
 					<tr>
 						<td>1</td>
 						<td>启动流程</td>
-						<td>${entity.applyUser}</td>
+						<td>${fns:getUserById(entity.applyUser).name}</td>
 						<td><fmt:formatDate
 								value="${entity.applyTime}"
 								pattern="yyyy-MM-dd HH:mm:ss" /></td>
@@ -35,7 +35,7 @@
 						<tr>
 							<td>${status.index + 2}</td>
 							<td>${historicTaskInstance.name}</td>
-							<td>${historicTaskInstance.assignee}</td>
+							<td>${fns:getUserById(historicTaskInstance.assignee).name}</td>
 							<td><fmt:formatDate
 									value="${historicTaskInstance.startTime}"
 									pattern="yyyy-MM-dd HH:mm:ss" /></td>

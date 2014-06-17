@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.tx.framework.common.util.CollectionUtils;
+import com.tx.framework.web.common.persistence.entity.User;
+import com.tx.framework.web.modules.sys.service.UserService;
 
 /**
  * 自定义jstl函数
@@ -14,6 +16,8 @@ import com.tx.framework.common.util.CollectionUtils;
  * 
  */
 public class JstlFunction {
+	
+	private static UserService userService = SpringContextHolder.getBean(UserService.class);
 
 	public static <T> boolean contains(Collection<T> coll, Object o) {
 		if (coll != null && !coll.isEmpty()) {
@@ -29,5 +33,13 @@ public class JstlFunction {
 	
 	public static <T> String extractProperty(Collection<T> collection, String propertyName, boolean ignoreEmptyValue) {
 		return StringUtils.join(CollectionUtils.extractToList(collection, propertyName, ignoreEmptyValue), ",");
+	}
+	
+	public static User getUserById(String userId) {
+		if(StringUtils.isNotBlank(userId)) {
+			return userService.selectById(userId);
+		} else {
+			return null;
+		}
 	}
 }

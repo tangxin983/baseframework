@@ -19,7 +19,7 @@ import com.tx.framework.web.common.persistence.entity.User;
 import com.tx.framework.web.common.persistence.entity.UserRole;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.common.utils.DigestUtil;
-import com.tx.framework.web.common.utils.ShiroUtil;
+import com.tx.framework.web.common.utils.SysUtil;
 import com.tx.framework.web.modules.sys.dao.RoleDao;
 import com.tx.framework.web.modules.sys.dao.UserDao;
 import com.tx.framework.web.modules.sys.dao.UserRoleDao;
@@ -123,8 +123,8 @@ public class UserService extends BaseService<User, String> {
 					user.getSalt()));
 		}
 		userDao.update(user);
-		user.setRoles(ShiroUtil.getCurrentUser().getRoles());
-		ShiroUtil.updateCurrentUser(user);
+		user.setRoles(SysUtil.getCurrentUser().getRoles());
+		SysUtil.updateCurrentUser(user);
 	}
 
 	/**

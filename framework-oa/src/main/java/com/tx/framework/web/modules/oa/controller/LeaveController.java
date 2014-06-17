@@ -23,7 +23,7 @@ import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.controller.BaseWorkFlowController;
 import com.tx.framework.web.common.persistence.entity.Leave;
 import com.tx.framework.web.common.persistence.entity.Page;
-import com.tx.framework.web.common.utils.ShiroUtil;
+import com.tx.framework.web.common.utils.SysUtil;
 import com.tx.framework.web.modules.oa.service.LeaveService;
 
 /**
@@ -80,7 +80,7 @@ public class LeaveController extends BaseWorkFlowController<Leave, String> {
      */
     @RequestMapping("task/claim/{id}")
     public String claim(@PathVariable("id") String taskId, RedirectAttributes redirectAttributes) {
-        super.claim(taskId, ShiroUtil.getCurrentUserId(), redirectAttributes);
+        super.claim(taskId, SysUtil.getCurrentUserId(), redirectAttributes);
         return "redirect:/oa/leave/task";
     }
     

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tx.framework.common.util.CaptchaUtils;
 import com.tx.framework.web.common.persistence.entity.Menu;
-import com.tx.framework.web.common.utils.ShiroUtil;
+import com.tx.framework.web.common.utils.SysUtil;
 import com.tx.framework.web.modules.sys.security.CaptchaAuthenticationFilter;
 
 /**
@@ -31,7 +31,7 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/login")
 	public String login() {
-		if (ShiroUtil.isAuthenticated() || ShiroUtil.isRemembered()) {
+		if (SysUtil.isAuthenticated() || SysUtil.isRemembered()) {
 			return "redirect:/index";
 		} else {
 			return "modules/sys/login";
@@ -48,7 +48,7 @@ public class LoginController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String loginFail(@RequestParam("username") String userName,
 			Model model) {
-		if (ShiroUtil.isAuthenticated() || ShiroUtil.isRemembered()) {
+		if (SysUtil.isAuthenticated() || SysUtil.isRemembered()) {
 			return "redirect:/index";
 		}
 		model.addAttribute("username", userName);
@@ -66,7 +66,7 @@ public class LoginController {
 	public byte[] getCaptcha() {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		String captcha = CaptchaUtils.getGifCaptcha(80, 32, 4, outputStream, 1000).toLowerCase();
-		ShiroUtil.setAttribute(CaptchaAuthenticationFilter.DEFAULT_CAPTCHA_PARAM, captcha);
+		SysUtil.setAttribute(CaptchaAuthenticationFilter.DEFAULT_CAPTCHA_PARAM, captcha);
 		return outputStream.toByteArray();
 	}
 	
@@ -79,7 +79,7 @@ public class LoginController {
     @ResponseBody
     public String breadcrumb(@RequestParam("id") String id){
 		StringBuilder sb = new StringBuilder();
-		List<Menu> menus = ShiroUtil.getNavs();
+		List<Menu> menus = SysUtil.getNavs();
 		Menu selected = null;
 		if (menus != null) {
 			for (Menu menu : menus) {

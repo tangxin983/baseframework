@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import com.google.common.collect.Sets;
 import com.tx.framework.web.common.persistence.entity.Leave;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.service.BaseService;
-import com.tx.framework.web.common.utils.ShiroUtil;
+import com.tx.framework.web.common.utils.SysUtil;
 import com.tx.framework.web.modules.oa.dao.LeaveDao;
 import com.tx.framework.web.modules.workflow.service.WorkFlowService;
 
@@ -51,7 +52,7 @@ public class LeaveService extends BaseService<Leave, String> {
 	 */
 	public ProcessInstance saveLeave(Leave entity) {
 		// 设置流程发起人和发起时间
-		entity.setApplyUser(ShiroUtil.getCurrentUserId());
+		entity.setApplyUser(SysUtil.getCurrentUserId());
 		entity.setApplyTime(new Date());
 		leaveDao.insert(entity);
 		// 启动流程
@@ -80,13 +81,14 @@ public class LeaveService extends BaseService<Leave, String> {
 			boolean isAll) {
 		if (!isAll) {
 			// 设置只获取当前用户的请假单
-			searchParams.put("applyUser", ShiroUtil.getCurrentUserId());
+			searchParams.put("applyUser", SysUtil.getCurrentUserId());
 		}
 		// 根据条件获取请假列表
 		List<Leave> list = select(searchParams);
-		// 获取所有激活的请假流程
-		List<ProcessInstance> instances = workFlowService.getInstanceList(
-				PROCESS_DEF_KEY, true);
+		// 获取所有未完结的流程
+		List<ProcessInstance> instances = workFlowService.getInstanceList(PROCESS_DEF_KEY);
+		// 获取所有已完结的流程
+		List<HistoricProcessInstance> historicInstances = workFlowService.getFinishedHistoricInstanceList(PROCESS_DEF_KEY);
 
 		List<Leave> result = Lists.newArrayList();
 		if (list.size() > 0) {
@@ -94,13 +96,13 @@ public class LeaveService extends BaseService<Leave, String> {
 			for (ProcessInstance instance : instances) {
 				processInstanceIds.add(instance.getId());
 			}
+			for (HistoricProcessInstance historicInstance : historicInstances) {
+				processInstanceIds.add(historicInstance.getId());
+			}
 			for (Leave leave : list) {
-				// 当激活流程里包含此单据时才加入结果集
+				// 当流程实例里包含此单据时才加入结果集
 				if (processInstanceIds.contains(leave.getProcessInstanceId())) {
-					leave.setProcessInstance(workFlowService
-							.getProcessInstance(leave.getProcessInstanceId()));
-					leave.setTask(workFlowService.getCurrentTask(leave
-							.getProcessInstanceId()));
+					workFlowService.setWorkFlowEntity(leave);
 					result.add(leave);
 				}
 			}
@@ -129,7 +131,7 @@ public class LeaveService extends BaseService<Leave, String> {
 		List<Leave> list = select(searchParams);
 		// 获取待办任务
 		List<Task> tasks = workFlowService.getTodoTaskList(PROCESS_DEF_KEY,
-				ShiroUtil.getCurrentUserId());
+				SysUtil.getCurrentUserId());
 
 		List<Leave> result = Lists.newArrayList();
 		if (list.size() > 0) {

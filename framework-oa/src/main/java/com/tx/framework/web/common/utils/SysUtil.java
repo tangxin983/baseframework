@@ -8,10 +8,10 @@ import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.common.persistence.entity.ShiroEntity;
 import com.tx.framework.web.common.persistence.entity.User;
 
-public class ShiroUtil {
+public class SysUtil {
 	
 	/**
-	 * 取出Shiro中的当前用户对象.
+	 * 获取当前用户对象.
 	 */
 	public static User getCurrentUser() {
 		ShiroEntity entity = (ShiroEntity) SecurityUtils.getSubject().getPrincipal();
@@ -19,7 +19,7 @@ public class ShiroUtil {
 	}
 
 	/**
-	 * 取出Shiro中的当前用户Id.
+	 * 获取当前用户Id.
 	 */
 	public static String getCurrentUserId() {
 		ShiroEntity entity = (ShiroEntity) SecurityUtils.getSubject().getPrincipal();
@@ -27,7 +27,7 @@ public class ShiroUtil {
 	}
 
 	/**
-	 * 取出Shiro中的当前用户name.
+	 * 获取当前用户姓名.
 	 */
 	public static String getCurrentUserName() {
 		ShiroEntity entity = (ShiroEntity) SecurityUtils.getSubject().getPrincipal();
@@ -35,7 +35,7 @@ public class ShiroUtil {
 	}
 
 	/**
-	 * 更新Shiro中当前用户对象.
+	 * 更新当前用户对象.
 	 */
 	public static void updateCurrentUser(User user) {
 		ShiroEntity entity = (ShiroEntity) SecurityUtils.getSubject().getPrincipal();
