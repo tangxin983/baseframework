@@ -159,8 +159,25 @@ public class WorkFlowController {
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model) {
 		model.addAttribute("page",
-				workFlowListService.getPaginationInstance(pageNumber, pageSize));
+				workFlowListService.getPaginationRunningInstance(pageNumber, pageSize));
 		return "modules/workflow/runInstanceList";
+	}
+	
+	/**
+	 * 已结束的流程实例列表
+	 * @param pageNumber 当前页码
+	 * @param pageSize 每页记录数
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("instance/finished")
+	public String finished(
+			@RequestParam(value = "page", defaultValue = "1") int pageNumber,
+			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
+			Model model) {
+		model.addAttribute("page",
+				workFlowListService.getPaginationFinishedInstance(pageNumber, pageSize));
+		return "modules/workflow/finishedList";
 	}
 	
 	/**

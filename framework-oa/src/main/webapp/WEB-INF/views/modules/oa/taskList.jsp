@@ -47,7 +47,7 @@
 										</a>
 									</c:if>
 									<c:if test="${not empty leave.task.assignee}">
-										<a href="${ctxModule}/detail/${leave.id}" class="btn btn-primary"> 
+										<a href="${ctxModule}/handle/${leave.id}" class="btn btn-primary"> 
 									    	<span class="glyphicon glyphicon-edit"></span> 办理
 										</a>
 									</c:if>

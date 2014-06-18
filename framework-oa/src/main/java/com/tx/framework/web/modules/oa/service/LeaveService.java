@@ -85,17 +85,13 @@ public class LeaveService extends BaseService<Leave, String> {
 		}
 		// 根据条件获取请假列表
 		List<Leave> list = select(searchParams);
-		// 获取所有未完结的流程
-		List<ProcessInstance> instances = workFlowService.getInstanceList(PROCESS_DEF_KEY);
-		// 获取所有已完结的流程
-		List<HistoricProcessInstance> historicInstances = workFlowService.getFinishedHistoricInstanceList(PROCESS_DEF_KEY);
+		// 获取当前和已完结的流程
+		List<HistoricProcessInstance> historicInstances = workFlowService
+				.getHistoricInstanceList(PROCESS_DEF_KEY);
 
 		List<Leave> result = Lists.newArrayList();
 		if (list.size() > 0) {
 			Set<String> processInstanceIds = Sets.newHashSet();
-			for (ProcessInstance instance : instances) {
-				processInstanceIds.add(instance.getId());
-			}
 			for (HistoricProcessInstance historicInstance : historicInstances) {
 				processInstanceIds.add(historicInstance.getId());
 			}
@@ -187,6 +183,25 @@ public class LeaveService extends BaseService<Leave, String> {
 	}
 
 	/**
+	 * 调整申请
+	 * 
+	 * @param leave
+	 *            业务实体
+	 */
+	public void modifyApply(Leave leave) {
+		Map<String, Object> map = Maps.newHashMap();
+		map.put("reApply", leave.isPass());
+		Task task = workFlowService.completeCurrentTask(
+				leave.getProcessInstanceId(), map);
+		if (task == null) {
+			leave.setProcessStatus("已完成");
+		} else {
+			leave.setProcessStatus(task.getName());
+		}
+		leaveDao.update(leave);
+	}
+
+	/**
 	 * 人事审核
 	 * 
 	 * @param leave
@@ -200,14 +215,16 @@ public class LeaveService extends BaseService<Leave, String> {
 		leave.setProcessStatus(task.getName());
 		leaveDao.update(leave);
 	}
-	
+
 	/**
 	 * 销假
-	 * @param leave 业务实体
+	 * 
+	 * @param leave
+	 *            业务实体
 	 */
 	public void reportBack(Leave leave) {
 		workFlowService.completeCurrentTask(leave.getProcessInstanceId());
-		leave.setProcessStatus("已结束");
+		leave.setProcessStatus("已完成");
 		leaveDao.update(leave);
 	}
 }

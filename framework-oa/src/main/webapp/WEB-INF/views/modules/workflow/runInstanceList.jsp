@@ -82,7 +82,8 @@
 					<thead>
 						<tr>
 							<th>流程实例ID</th>
-							<th>流程定义ID</th>
+							<th>流程名称</th>
+							<th>流程发起人</th>
 							<th>当前节点</th>
 							<th>当前处理人</th>
 							<th>是否挂起</th>
@@ -91,11 +92,18 @@
 					</thead>
 					<tbody>
 						<c:forEach items="${page.result}" var="object">
-							<c:set var="instance" value="${object[0]}" />
-							<c:set var="task" value="${object[1]}" />
+							<c:set var="def" value="${object[0]}" />
+							<c:set var="instance" value="${object[1]}" />
+							<c:set var="hisInstance" value="${object[2]}" />
+							<c:set var="task" value="${object[3]}" />
 							<tr>
-								<td>${instance.processInstanceId}</td>
-								<td>${instance.processDefinitionId}</td>
+								<td>
+									<a href="${ctx}/oa/${def.key}/detail/${instance.businessKey}"> 
+									    ${instance.processInstanceId}
+									</a>
+								</td>
+								<td>${def.name}</td>
+								<td>${fns:getUserById(hisInstance.startUserId).name}</td>
 								<td>
 									<a target="_blank" href="${ctx}/diagram-viewer/index.html?processDefinitionId=${instance.processDefinitionId}&processInstanceId=${instance.id}">${task.name}
 								</td>
@@ -108,9 +116,6 @@
 									<c:if test="${!instance.suspended}">
 										<a href="${ctx}/workflow/instance/suspend/${instance.processInstanceId}">挂起</a>
 									</c:if>
-									<a href="${ctx}/oa/leave/detail/${instance.businessKey}" class="btn btn-primary"> 
-									    <span class="glyphicon glyphicon-edit"></span> 查看
-									</a>
 								</td>
 							</tr>
 						</c:forEach>

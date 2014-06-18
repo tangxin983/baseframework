@@ -85,6 +85,18 @@ public class LeaveController extends BaseWorkFlowController<Leave, String> {
     }
     
     /**
+     * 流程办理页面
+     * @param id
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "handle/{id}", method = RequestMethod.GET)
+	public String handle(@PathVariable("id") String id, Model model) {
+    	model.addAttribute("entity", leaveService.getLeaveDetail(id));
+		return "modules/oa/leaveDetail";
+	}
+    
+    /**
      * 流程详情页面
      * @param id
      * @param model
@@ -93,6 +105,7 @@ public class LeaveController extends BaseWorkFlowController<Leave, String> {
     @RequestMapping(value = "detail/{id}", method = RequestMethod.GET)
 	public String detail(@PathVariable("id") String id, Model model) {
     	model.addAttribute("entity", leaveService.getLeaveDetail(id));
+    	model.addAttribute("isView", true);
 		return "modules/oa/leaveDetail";
 	}
     
@@ -106,6 +119,19 @@ public class LeaveController extends BaseWorkFlowController<Leave, String> {
 	public String deptLeaderAudit(@Valid @ModelAttribute("entity")Leave leave, RedirectAttributes redirectAttributes) {
 		leaveService.deptLeaderAudit(leave);
 		addMessage(redirectAttributes, "审批成功");
+		return "redirect:/oa/leave/task";
+	}
+    
+    /**
+     * 调整申请
+     * @param leave
+     * @param redirectAttributes
+     * @return
+     */
+    @RequestMapping(value = "modifyApply")
+	public String modifyApply(@Valid @ModelAttribute("entity")Leave leave, RedirectAttributes redirectAttributes) {
+		leaveService.modifyApply(leave);
+		addMessage(redirectAttributes, "请假调整成功");
 		return "redirect:/oa/leave/task";
 	}
     
