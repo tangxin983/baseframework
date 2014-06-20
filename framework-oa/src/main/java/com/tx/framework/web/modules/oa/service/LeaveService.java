@@ -8,12 +8,12 @@ import java.util.Set;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.tx.framework.web.common.persistence.entity.Leave;
 import com.tx.framework.web.common.persistence.entity.Page;
@@ -113,46 +113,6 @@ public class LeaveService extends BaseService<Leave, String> {
 		return page;
 	}
 
-	/**
-	 * 分页获取当前用户的请假流程待办任务
-	 * 
-	 * @param searchParams
-	 * @param pageNumber
-	 * @param pageSize
-	 * @return
-	 */
-	public Page<Leave> findTodoTaskByPage(Map<String, Object> searchParams,
-			int pageNumber, int pageSize) {
-		// 根据条件获取请假列表
-		List<Leave> list = select(searchParams);
-		// 获取待办任务
-		List<Task> tasks = workFlowService.getTodoTaskList(PROCESS_DEF_KEY,
-				SysUtil.getCurrentUserId());
-
-		List<Leave> result = Lists.newArrayList();
-		if (list.size() > 0) {
-			// 从待办任务中获取流程实例集合
-			Set<String> processInstanceIds = Sets.newHashSet();
-			for (Task task : tasks) {
-				processInstanceIds.add(task.getProcessInstanceId());
-			}
-			for (Leave leave : list) {
-				// 当流程实例里包含此单据时才加入结果集
-				if (processInstanceIds.contains(leave.getProcessInstanceId())) {
-					workFlowService.setWorkFlowEntity(leave);
-					result.add(leave);
-				}
-			}
-		}
-		// 设置page对象
-		Page<Leave> page = new Page<Leave>();
-		page.setCurrentPage(pageNumber);
-		page.setSize(pageSize);
-		page.setTotal(result.size());
-		page.setResult(result.subList(page.getCurrentResult(),
-				page.getCurrentEndResult()));
-		return page;
-	}
 
 	/**
 	 * 获取请假流程详情
@@ -168,63 +128,25 @@ public class LeaveService extends BaseService<Leave, String> {
 	}
 
 	/**
-	 * 部门领导审核
+	 * 完成任务
 	 * 
 	 * @param leave
 	 *            业务实体
 	 */
-	public void deptLeaderAudit(Leave leave) {
-		Map<String, Object> map = Maps.newHashMap();
-		map.put("deptLeaderPass", leave.isPass());
-		Task task = workFlowService.completeCurrentTask(
-				leave.getProcessInstanceId(), leave.getAuditRemark(), map);
-		leave.setProcessStatus(task.getName());
-		leaveDao.update(leave);
-	}
-
-	/**
-	 * 调整申请
-	 * 
-	 * @param leave
-	 *            业务实体
-	 */
-	public void modifyApply(Leave leave) {
-		Map<String, Object> map = Maps.newHashMap();
-		map.put("reApply", leave.isPass());
-		Task task = workFlowService.completeCurrentTask(
-				leave.getProcessInstanceId(), map);
+	public void completeTask(Leave leave) {
+		Task task = null;
+		if(StringUtils.isNotBlank(leave.getComment())){
+			task = workFlowService.completeCurrentTask(
+					leave.getProcessInstanceId(), leave.getComment(), leave.getVariable());
+		}else{
+			task = workFlowService.completeCurrentTask(
+					leave.getProcessInstanceId(), leave.getVariable());
+		}
 		if (task == null) {
 			leave.setProcessStatus("已完成");
 		} else {
 			leave.setProcessStatus(task.getName());
 		}
-		leaveDao.update(leave);
-	}
-
-	/**
-	 * 人事审核
-	 * 
-	 * @param leave
-	 *            业务实体
-	 */
-	public void hrAudit(Leave leave) {
-		Map<String, Object> map = Maps.newHashMap();
-		map.put("hrPass", leave.isPass());
-		Task task = workFlowService.completeCurrentTask(
-				leave.getProcessInstanceId(), leave.getAuditRemark(), map);
-		leave.setProcessStatus(task.getName());
-		leaveDao.update(leave);
-	}
-
-	/**
-	 * 销假
-	 * 
-	 * @param leave
-	 *            业务实体
-	 */
-	public void reportBack(Leave leave) {
-		workFlowService.completeCurrentTask(leave.getProcessInstanceId());
-		leave.setProcessStatus("已完成");
 		leaveDao.update(leave);
 	}
 }

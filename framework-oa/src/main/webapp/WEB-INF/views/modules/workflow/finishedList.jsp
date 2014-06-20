@@ -81,13 +81,13 @@
 				<table class="table table-striped table-hover">
 					<thead>
 						<tr>
-							<th>流程实例ID</th>
+							<th>单据号</th>
+							<th>流程ID</th>
 							<th>流程名称</th>
-							<th>流程发起人</th>
-							<th>流程启动时间</th>
-							<th>流程结束时间</th>
-							<th>流程结束原因</th>
-							<th>操作</th>
+							<th>发起人</th>
+							<th>启动时间</th>
+							<th>结束时间</th>
+							<th>结束原因</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -97,16 +97,15 @@
 							<tr>
 								<td>
 									<a href="${ctx}/oa/${def.key}/detail/${instance.businessKey}"> 
-									    ${instance.processInstanceId}
+									    ${instance.businessKey}
 									</a>
 								</td>
+								<td>${instance.processInstanceId}</td>
 								<td>${def.name}</td>
 								<td>${fns:getUserById(instance.startUserId).name}</td>
 								<td><fmt:formatDate value="${instance.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td><fmt:formatDate value="${instance.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td>${instance.deleteReason}</td>
-								<td>
-								</td>
 							</tr>
 						</c:forEach>
 					</tbody>

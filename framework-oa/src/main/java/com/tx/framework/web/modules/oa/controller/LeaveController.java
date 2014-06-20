@@ -20,10 +20,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.tx.framework.common.util.Servlets;
 import com.tx.framework.web.common.config.Constant;
-import com.tx.framework.web.common.controller.BaseWorkFlowController;
+import com.tx.framework.web.common.controller.OaController;
 import com.tx.framework.web.common.persistence.entity.Leave;
 import com.tx.framework.web.common.persistence.entity.Page;
-import com.tx.framework.web.common.utils.SysUtil;
 import com.tx.framework.web.modules.oa.service.LeaveService;
 
 /**
@@ -33,7 +32,7 @@ import com.tx.framework.web.modules.oa.service.LeaveService;
  */
 @Controller
 @RequestMapping(value = "oa/leave")
-public class LeaveController extends BaseWorkFlowController<Leave, String> {
+public class LeaveController extends OaController<Leave, String> {
 
 	private LeaveService leaveService;
 
@@ -44,7 +43,7 @@ public class LeaveController extends BaseWorkFlowController<Leave, String> {
 	}
 	
 	/**
-	 * 流程实例列表
+	 * 单据列表
 	 */
 	@RequestMapping
 	public String list(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
@@ -58,31 +57,6 @@ public class LeaveController extends BaseWorkFlowController<Leave, String> {
 		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
 		return getListPage();
 	}
-	
-	/**
-	 * 待办列表
-	 */
-	@RequestMapping("task")
-	public String todoTask(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
-			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
-			Model model, HttpServletRequest request) {
-		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
-		setExtraSearchParam(searchParams);
-		Page<Leave> entitys = leaveService.findTodoTaskByPage(searchParams, pageNumber, pageSize);
-		model.addAttribute("page", entitys);
-		// 将搜索条件编码成字符串，用于分页的URL
-		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
-		return "modules/oa/taskList";
-	}
-	
-	/**
-     * 签收任务
-     */
-    @RequestMapping("task/claim/{id}")
-    public String claim(@PathVariable("id") String taskId, RedirectAttributes redirectAttributes) {
-        super.claim(taskId, SysUtil.getCurrentUserId(), redirectAttributes);
-        return "redirect:/oa/leave/task";
-    }
     
     /**
      * 流程办理页面
@@ -110,56 +84,18 @@ public class LeaveController extends BaseWorkFlowController<Leave, String> {
 	}
     
     /**
-     * 部门领导审核
+     * 完成任务
      * @param leave
      * @param redirectAttributes
      * @return
      */
-    @RequestMapping(value = "deptLeaderAudit", method = RequestMethod.POST)
-	public String deptLeaderAudit(@Valid @ModelAttribute("entity")Leave leave, RedirectAttributes redirectAttributes) {
-		leaveService.deptLeaderAudit(leave);
-		addMessage(redirectAttributes, "审批成功");
-		return "redirect:/oa/leave/task";
+    @RequestMapping(value = "completeTask", method = RequestMethod.POST)
+	public String completeTask(@Valid @ModelAttribute("entity")Leave leave, RedirectAttributes redirectAttributes) {
+		leaveService.completeTask(leave);
+		addMessage(redirectAttributes, "办理成功");
+		return "redirect:/workflow/task/todo";
 	}
     
-    /**
-     * 调整申请
-     * @param leave
-     * @param redirectAttributes
-     * @return
-     */
-    @RequestMapping(value = "modifyApply")
-	public String modifyApply(@Valid @ModelAttribute("entity")Leave leave, RedirectAttributes redirectAttributes) {
-		leaveService.modifyApply(leave);
-		addMessage(redirectAttributes, "请假调整成功");
-		return "redirect:/oa/leave/task";
-	}
-    
-    /**
-     * 人事审核
-     * @param leave
-     * @param redirectAttributes
-     * @return
-     */
-    @RequestMapping(value = "hrAudit", method = RequestMethod.POST)
-	public String hrAudit(@Valid @ModelAttribute("entity")Leave leave, RedirectAttributes redirectAttributes) {
-		leaveService.hrAudit(leave);
-		addMessage(redirectAttributes, "审批成功");
-		return "redirect:/oa/leave/task";
-	}
-    
-    /**
-     * 销假
-     * @param leave
-     * @param redirectAttributes
-     * @return
-     */
-    @RequestMapping(value = "reportBack")
-	public String reportBack(Leave leave, RedirectAttributes redirectAttributes) {
-		leaveService.reportBack(leave);
-		addMessage(redirectAttributes, "销假成功");
-		return "redirect:/oa/leave/task";
-	}
 	
 	/**
 	 * 跳转新增页面<br>

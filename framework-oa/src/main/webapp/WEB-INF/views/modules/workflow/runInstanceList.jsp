@@ -81,9 +81,10 @@
 				<table class="table table-striped table-hover">
 					<thead>
 						<tr>
-							<th>流程实例ID</th>
+							<th>单据号</th>
+							<th>流程ID</th>
 							<th>流程名称</th>
-							<th>流程发起人</th>
+							<th>发起人</th>
 							<th>当前节点</th>
 							<th>当前处理人</th>
 							<th>是否挂起</th>
@@ -99,9 +100,10 @@
 							<tr>
 								<td>
 									<a href="${ctx}/oa/${def.key}/detail/${instance.businessKey}"> 
-									    ${instance.processInstanceId}
+									    ${instance.businessKey}
 									</a>
 								</td>
+								<td>${instance.processInstanceId}</td>
 								<td>${def.name}</td>
 								<td>${fns:getUserById(hisInstance.startUserId).name}</td>
 								<td>

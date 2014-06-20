@@ -41,7 +41,7 @@
 									pattern="yyyy-MM-dd HH:mm:ss" /></td>
 							<td><fmt:formatDate value="${historicTaskInstance.endTime}"
 									pattern="yyyy-MM-dd HH:mm:ss" /></td>
-							<td></td>
+							<td>${entity.commentMap[historicTaskInstance.id]}</td>
 						</tr>
 					</c:forEach>
 				</tbody>

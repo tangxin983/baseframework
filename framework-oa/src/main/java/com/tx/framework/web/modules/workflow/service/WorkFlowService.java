@@ -5,18 +5,21 @@ import java.util.Map;
 
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
+import org.activiti.engine.ManagementService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
+import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +59,11 @@ public class WorkFlowService {
 	@Autowired
 	private HistoryService historyService;
 
+	@Autowired
+	private ManagementService managementService;
+
 	/**
-	 * 分页获取流程列表
+	 * 分页获取流程定义列表
 	 * 
 	 * @param pageNumber
 	 *            当前页
@@ -65,7 +71,8 @@ public class WorkFlowService {
 	 *            每页数量
 	 * @return
 	 */
-	public Page<Object[]> getPaginationProcess(int pageNumber, int pageSize) {
+	public Page<Object[]> getPaginationProcessDefinition(int pageNumber,
+			int pageSize) {
 		ProcessDefinitionQuery processDefinitionQuery = repositoryService
 				.createProcessDefinitionQuery().orderByDeploymentId().desc();
 		// 设置page对象
@@ -113,8 +120,10 @@ public class WorkFlowService {
 			Task task = getCurrentTask(instance.getId());
 			ProcessDefinition processDefinition = getProcessDefinition(instance
 					.getProcessDefinitionId());
-			HistoricProcessInstance hisInstance = getHistoricProcessInstance(instance.getId());
-			objects.add(new Object[] { processDefinition, instance, hisInstance, task });
+			HistoricProcessInstance hisInstance = getHistoricProcessInstance(instance
+					.getId());
+			objects.add(new Object[] { processDefinition, instance,
+					hisInstance, task });
 		}
 		page.setResult(objects);
 		return page;
@@ -149,6 +158,67 @@ public class WorkFlowService {
 			objects.add(new Object[] { processDefinition, instance });
 		}
 		page.setResult(objects);
+		return page;
+	}
+
+	/**
+	 * 分页获取当前用户的待办任务
+	 * 
+	 * @param pageNumber
+	 * @param pageSize
+	 * @return
+	 */
+	public Page<WorkFlowEntity> getPaginationTodoTask(int pageNumber,
+			int pageSize) {
+		TaskQuery query = taskService.createTaskQuery()
+				.taskCandidateOrAssigned(SysUtil.getCurrentUserId()).active()
+				.orderByTaskId().desc();
+		// 设置page对象
+		Page<WorkFlowEntity> page = new Page<WorkFlowEntity>();
+		page.setCurrentPage(pageNumber);
+		page.setSize(pageSize);
+		page.setTotal((int) query.count());
+		List<WorkFlowEntity> result = Lists.newArrayList();
+		List<Task> tasks = query.listPage(page.getCurrentResult(), pageSize);
+		for (Task task : tasks) {
+			WorkFlowEntity entity = new WorkFlowEntity();
+			entity.setTask(task);
+			entity.setProcessInstanceId(task.getProcessInstanceId());
+			setWorkFlowEntity(entity);
+			result.add(entity);
+		}
+		page.setResult(result);
+		return page;
+	}
+
+	/**
+	 * 分页获取当前用户的已办任务
+	 * 
+	 * @param pageNumber
+	 * @param pageSize
+	 * @return
+	 */
+	public Page<WorkFlowEntity> getPaginationDoneTask(int pageNumber,
+			int pageSize) {
+		HistoricTaskInstanceQuery query = historyService
+				.createHistoricTaskInstanceQuery()
+				.taskAssignee(SysUtil.getCurrentUserId()).orderByHistoricTaskInstanceEndTime()
+				.desc();
+		// 设置page对象
+		Page<WorkFlowEntity> page = new Page<WorkFlowEntity>();
+		page.setCurrentPage(pageNumber);
+		page.setSize(pageSize);
+		page.setTotal((int) query.count());
+		List<WorkFlowEntity> result = Lists.newArrayList();
+		List<HistoricTaskInstance> tasks = query.listPage(page.getCurrentResult(), pageSize);
+		for (HistoricTaskInstance historicTaskInstance : tasks) {
+			WorkFlowEntity entity = new WorkFlowEntity();
+			entity.setHistoricTaskInstance(historicTaskInstance);
+			entity.setProcessInstanceId(historicTaskInstance.getProcessInstanceId());
+			setWorkFlowEntity(entity);
+			result.add(entity);
+		}
+		page.setResult(result);
 		return page;
 	}
 
@@ -217,18 +287,22 @@ public class WorkFlowService {
 	 * @return
 	 */
 	public List<Task> getTodoTaskList(String processDefinitionKey, String userId) {
-		List<Task> tasks = Lists.newArrayList();
-		// 待办任务
-		List<Task> todoList = taskService.createTaskQuery()
+		return taskService.createTaskQuery()
 				.processDefinitionKey(processDefinitionKey)
-				.taskAssignee(userId).active().list();
-		// 未签收的任务
-		List<Task> unsignedTasks = taskService.createTaskQuery()
-				.processDefinitionKey(processDefinitionKey)
-				.taskCandidateUser(userId).active().list();
-		tasks.addAll(todoList);
-		tasks.addAll(unsignedTasks);
-		return tasks;
+				.taskCandidateOrAssigned(userId).active().orderByTaskId()
+				.desc().list();
+	}
+
+	/**
+	 * 获取用户所有待办任务
+	 * 
+	 * @param userId
+	 *            用户ID
+	 * @return
+	 */
+	public List<Task> getTodoTaskList(String userId) {
+		return taskService.createTaskQuery().taskCandidateOrAssigned(userId)
+				.active().orderByTaskId().desc().list();
 	}
 
 	/**
@@ -268,15 +342,25 @@ public class WorkFlowService {
 	 */
 	public void setWorkFlowEntity(WorkFlowEntity entity) {
 		String processInstanceId = entity.getProcessInstanceId();
-		// 流程实例
 		ProcessInstance processInstance = getProcessInstance(processInstanceId);
+		// 流程实例和流程定义
 		if (processInstance != null) {
 			entity.setProcessInstance(processInstance);
+			entity.setHistoricProcessInstance(getHistoricProcessInstance(processInstanceId));
+			entity.setProcessDefinition(getProcessDefinition(processInstance
+					.getProcessDefinitionId()));
 		} else {
 			entity.setHistoricProcessInstance(getHistoricProcessInstance(processInstanceId));
+			entity.setProcessDefinition(getProcessDefinition(entity
+					.getHistoricProcessInstance().getProcessDefinitionId()));
 		}
 		// 当前任务
-		entity.setTask(getCurrentTask(processInstanceId));
+		if (entity.getTask() == null) {
+			entity.setTask(getCurrentTask(processInstanceId));
+		}
+		// 任务批注
+		entity.setComments(taskService
+				.getProcessInstanceComments(processInstanceId));
 		// 历史任务（包括当前任务）
 		List<HistoricTaskInstance> historicTaskInstances = historyService
 				.createHistoricTaskInstanceQuery()
@@ -307,7 +391,7 @@ public class WorkFlowService {
 		task = getCurrentTask(processInstanceId);
 		return task;
 	}
-	
+
 	/**
 	 * 完成当前任务并返回下一任务对象
 	 * 
@@ -342,7 +426,7 @@ public class WorkFlowService {
 		task = getCurrentTask(processInstanceId);
 		return task;
 	}
-	
+
 	/**
 	 * 获得流程实例当前任务名
 	 * 
@@ -374,7 +458,8 @@ public class WorkFlowService {
 	 *            流程实例ID
 	 * @return
 	 */
-	public HistoricProcessInstance getHistoricProcessInstance(String processInstanceId) {
+	public HistoricProcessInstance getHistoricProcessInstance(
+			String processInstanceId) {
 		return historyService.createHistoricProcessInstanceQuery()
 				.processInstanceId(processInstanceId).singleResult();
 	}

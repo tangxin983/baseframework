@@ -4,10 +4,6 @@
 <head>
 	<title>请假流程办理</title>
 	<meta name="decorator" content="default"/>
-	<!-- 这里引入额外的css和js 
-	<link rel="stylesheet" type="text/css" href="" />
-	<script type="text/javascript" src=""></script>
-	-->
 	<script type="text/javascript">
 		function auditPass(isPass) {
 			$("#pass").val(isPass);
@@ -63,15 +59,15 @@
 				<div class="text-muted bootstrap-admin-box-title">${entity.processStatus}</div>
 			</div>
 			<div class="panel-body">
-				<!-- 部门领导审批 -->
-				<c:if test="${entity.task.taskDefinitionKey eq 'deptLeaderAudit'}">
-					<form id="workflowForm" action="${ctxModule}/deptLeaderAudit" method="post" class="form-horizontal">
+				<form id="workflowForm" action="${ctxModule}/completeTask" method="post" class="form-horizontal">
+					<!-- 部门领导审批 -->
+					<c:if test="${entity.task.taskDefinitionKey eq 'deptLeaderAudit'}">
 						<input type="hidden" name="id" value="${entity.id}">
-						<input type="hidden" name="pass" id="pass" value="${entity.pass}">
+						<input type="hidden" name="variable['deptLeaderPass']" id="pass">
 						<div class="form-group">
 							<label class="col-md-2 control-label">审批备注：</label>
 							<div class="col-md-6">
-								<textarea name="auditRemark" rows="5" maxlength="200" class="form-control required">
+								<textarea name="comment" rows="5" maxlength="200" class="form-control required">
 								</textarea>
 							</div>
 						</div>
@@ -82,12 +78,11 @@
 								<input class="btn btn-default" type="button" value="返 回" onclick="history.go(-1)"/>
 							</div>
 						</div>
-					</form>
-				</c:if>
-				<c:if test="${entity.task.taskDefinitionKey eq 'modifyApply'}">
-					<form id="workflowForm" action="${ctxModule}/modifyApply" method="post" class="form-horizontal">
+					</c:if>
+					<!-- 调整申请 -->
+					<c:if test="${entity.task.taskDefinitionKey eq 'modifyApply'}">
 						<input type="hidden" name="id" value="${entity.id}">
-						<input type="hidden" name="pass" id="pass" value="${entity.pass}">
+						<input type="hidden" name="variable['reApply']" id="pass">
 						<div class="form-group">
 							<label class="col-md-2 control-label">请假类型：</label>
 							<div class="col-md-6">
@@ -126,17 +121,15 @@
 								<input class="btn btn-default" type="button" value="返 回" onclick="history.go(-1)"/>
 							</div>
 						</div>
-					</form>
-				</c:if>
-				<!-- 人事审批 -->
-				<c:if test="${entity.task.taskDefinitionKey eq 'hrAudit'}">
-					<form id="workflowForm" action="${ctxModule}/hrAudit" method="post" class="form-horizontal">
+					</c:if>
+					<!-- 人事审批 -->
+					<c:if test="${entity.task.taskDefinitionKey eq 'hrAudit'}">
 						<input type="hidden" name="id" value="${entity.id}">
-						<input type="hidden" name="pass" id="pass" value="${entity.pass}">
+						<input type="hidden" name="variable['hrPass']" id="pass">
 						<div class="form-group">
 							<label class="col-md-2 control-label">审批备注：</label>
 							<div class="col-md-6">
-								<textarea name="auditRemark" rows="5" maxlength="200" class="form-control required">
+								<textarea name="comment" rows="5" maxlength="200" class="form-control required">
 								</textarea>
 							</div>
 						</div>
@@ -147,11 +140,9 @@
 								<input class="btn btn-default" type="button" value="返 回" onclick="history.go(-1)"/>
 							</div>
 						</div>
-					</form>
-				</c:if>
-				<!-- 销假 -->
-				<c:if test="${entity.task.taskDefinitionKey eq 'reportBack'}">
-					<form id="workflowForm" action="${ctxModule}/reportBack" method="post" class="form-horizontal">
+					</c:if>
+					<!-- 销假 -->
+					<c:if test="${entity.task.taskDefinitionKey eq 'reportBack'}">
 						<input type="hidden" name="id" value="${entity.id}">
 						<div class="form-group">
 							<label class="col-md-2 control-label">实际开始时间：</label>
@@ -175,8 +166,8 @@
 								<input class="btn btn-default" type="button" value="返 回" onclick="history.go(-1)"/>
 							</div>
 						</div>
-					</form>
-				</c:if> 
+					</c:if> 
+				</form>
 			</div>
 		</div>
 	</c:if>

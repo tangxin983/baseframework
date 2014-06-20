@@ -2,6 +2,7 @@ package com.tx.framework.web.common.persistence.entity;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 
@@ -9,7 +10,11 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
+import org.apache.commons.lang3.ObjectUtils;
+
+import com.google.common.collect.Maps;
 
 /**
  * 工作流业务实体需继承此类
@@ -36,8 +41,11 @@ public class WorkFlowEntity extends BaseEntity {
 	@Column(name = "process_status")
 	protected String processStatus;
 
-	// 流程任务
+	// 任务
 	protected Task task;
+
+	// 历史任务
+	protected HistoricTaskInstance historicTaskInstance;
 
 	// 运行中的流程实例
 	protected ProcessInstance processInstance;
@@ -50,6 +58,69 @@ public class WorkFlowEntity extends BaseEntity {
 
 	// 流程定义
 	protected ProcessDefinition processDefinition;
+
+	// 任务批注
+	protected List<Comment> comments;
+
+	// 存储流程变量
+	protected Map<String, Object> variable = Maps.newHashMap();
+
+	// 批注
+	protected String comment;
+
+	public HistoricTaskInstance getHistoricTaskInstance() {
+		return historicTaskInstance;
+	}
+
+	public void setHistoricTaskInstance(
+			HistoricTaskInstance historicTaskInstance) {
+		this.historicTaskInstance = historicTaskInstance;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public Map<String, Object> getVariable() {
+		// 处理流程变量
+		for (String key : variable.keySet()) {
+			if (ObjectUtils.toString(variable.get(key))
+					.equalsIgnoreCase("true")) {
+				variable.put(key, true);
+			}
+			if (ObjectUtils.toString(variable.get(key)).equalsIgnoreCase(
+					"false")) {
+				variable.put(key, false);
+			}
+		}
+		return variable;
+	}
+
+	public void setVariable(Map<String, Object> variable) {
+		this.variable = variable;
+	}
+
+	public Map<String, Object> getCommentMap() {
+		Map<String, Object> map = Maps.newHashMap();
+		if (comments != null && comments.size() > 0) {
+			for (Comment comment : comments) {
+				map.put(comment.getTaskId(), comment.getFullMessage());
+			}
+		}
+		return map;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
 
 	public String getProcessInstanceId() {
 		return processInstanceId;

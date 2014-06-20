@@ -93,8 +93,8 @@
 				<table class="table table-striped table-hover">
 					<thead>
 						<tr>
+							<th>单据号</th>
 							<th>假种</th>
-							<th>申请人</th>
 							<th>申请时间</th>
 							<th>请假开始</th>
 							<th>请假结束</th>
@@ -105,9 +105,13 @@
 					</thead>
 					<tbody>
 						<c:forEach items="${page.result}" var="leave">
-							<tr id="${leave.id}" tid="${leave.task.id}">
+							<tr>
+								<td>
+									<a href="${ctxModule}/detail/${leave.id}"> 
+									    ${leave.id}
+									</a>
+								</td>
 								<td>${leave.leaveType}</td>
-								<td>${leave.applyUser}</td>
 								<td><fmt:formatDate value="${leave.applyTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td><fmt:formatDate value="${leave.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td><fmt:formatDate value="${leave.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
@@ -118,7 +122,7 @@
 									<td>${leave.processInstance.suspended ? "已挂起" : "正常"}</td>
 									<td>${fns:getUserById(leave.task.assignee).name}</td>
 								</c:if>
-								<c:if test="${not empty leave.historicProcessInstance}">
+								<c:if test="${not empty leave.historicProcessInstance.endTime}">
 									<td>
 										<a target="_blank" href="${ctx}/diagram-viewer/index.html?processDefinitionId=${leave.historicProcessInstance.processDefinitionId}&processInstanceId=${leave.historicProcessInstance.id}">结束
 									</td>
