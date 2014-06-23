@@ -1,4 +1,4 @@
-package com.tx.framework.web.common.persistence.util;
+package com.tx.framework.web.common.persistence.dao;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,7 @@ import org.apache.ibatis.jdbc.SQL;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.tx.framework.web.common.persistence.dao.BaseDao;
+import com.tx.framework.web.common.persistence.util.PersistenceUtil;
 
 /**
  * 增删改查模板

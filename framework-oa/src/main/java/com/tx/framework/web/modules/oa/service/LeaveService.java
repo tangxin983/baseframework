@@ -1,11 +1,8 @@
 package com.tx.framework.web.modules.oa.service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.lang3.StringUtils;
@@ -13,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.tx.framework.web.common.persistence.entity.Leave;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.service.BaseService;
@@ -84,35 +79,18 @@ public class LeaveService extends BaseService<Leave, String> {
 			searchParams.put("applyUser", SysUtil.getCurrentUserId());
 		}
 		// 根据条件获取请假列表
-		List<Leave> list = select(searchParams);
-		// 获取当前和已完结的流程
-		List<HistoricProcessInstance> historicInstances = workFlowService
-				.getHistoricInstanceList(PROCESS_DEF_KEY);
-
-		List<Leave> result = Lists.newArrayList();
-		if (list.size() > 0) {
-			Set<String> processInstanceIds = Sets.newHashSet();
-			for (HistoricProcessInstance historicInstance : historicInstances) {
-				processInstanceIds.add(historicInstance.getId());
-			}
-			for (Leave leave : list) {
-				// 当流程实例里包含此单据时才加入结果集
-				if (processInstanceIds.contains(leave.getProcessInstanceId())) {
-					workFlowService.setWorkFlowEntity(leave);
-					result.add(leave);
+		Page<Leave> page = buildPage(pageNumber, pageSize);
+		page.setResult(leaveDao.findLeave(page, searchParams));
+		if (page.getResult().size() > 0) {
+			for (Leave leave : page.getResult()) {
+				if(StringUtils.isBlank(leave.getProcessInstanceId())){
+					continue;
 				}
+				workFlowService.setWorkFlowEntity(leave);
 			}
 		}
-		// 设置page对象
-		Page<Leave> page = new Page<Leave>();
-		page.setCurrentPage(pageNumber);
-		page.setSize(pageSize);
-		page.setTotal(result.size());
-		page.setResult(result.subList(page.getCurrentResult(),
-				page.getCurrentEndResult()));
 		return page;
 	}
-
 
 	/**
 	 * 获取请假流程详情
@@ -135,10 +113,11 @@ public class LeaveService extends BaseService<Leave, String> {
 	 */
 	public void completeTask(Leave leave) {
 		Task task = null;
-		if(StringUtils.isNotBlank(leave.getComment())){
+		if (StringUtils.isNotBlank(leave.getComment())) {
 			task = workFlowService.completeCurrentTask(
-					leave.getProcessInstanceId(), leave.getComment(), leave.getVariable());
-		}else{
+					leave.getProcessInstanceId(), leave.getComment(),
+					leave.getVariable());
+		} else {
 			task = workFlowService.completeCurrentTask(
 					leave.getProcessInstanceId(), leave.getVariable());
 		}

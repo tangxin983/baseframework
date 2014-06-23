@@ -13,7 +13,6 @@ import org.apache.ibatis.annotations.UpdateProvider;
 
 import com.tx.framework.web.common.persistence.entity.BaseEntity;
 import com.tx.framework.web.common.persistence.entity.Page;
-import com.tx.framework.web.common.persistence.util.CrudProvider;
 
 /**
  * 提供基本增删改查方法的基础接口<br>

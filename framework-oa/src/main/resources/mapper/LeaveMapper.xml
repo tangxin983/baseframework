@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tx.framework.web.modules.oa.dao.LeaveDao">
+	
+	<!-- 查找请假单列表 -->
+	<select id="findLeave" resultType="Leave">
+		select * from oa_leave
+		<where>
+			<if test="para.applyUser != null and para.applyUser != ''">
+				apply_user = #{para.applyUser}
+			</if>
+		</where>
+	</select>
+	 
+</mapper>

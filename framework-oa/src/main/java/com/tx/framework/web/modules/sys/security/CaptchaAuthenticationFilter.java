@@ -9,6 +9,7 @@ import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -88,6 +89,8 @@ public class CaptchaAuthenticationFilter extends FormAuthenticationFilter{
 	protected void setFailureAttribute(ServletRequest request,AuthenticationException ae) {
 		if (ae instanceof IncorrectCredentialsException) {
 			request.setAttribute(getFailureKeyAttribute(), "密码不正确");
+		} else if (ae instanceof AccountException || ae instanceof UnknownAccountException) {
+			request.setAttribute(getFailureKeyAttribute(), ae.getMessage());
 		} else {
 			request.setAttribute(getFailureKeyAttribute(), "服务异常");
 		}

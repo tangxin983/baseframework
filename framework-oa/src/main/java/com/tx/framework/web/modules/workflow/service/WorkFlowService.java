@@ -21,6 +21,7 @@ import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
+import com.tx.framework.web.common.exception.ServiceException;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.persistence.entity.WorkFlowEntity;
 import com.tx.framework.web.common.utils.SysUtil;
@@ -201,7 +203,7 @@ public class WorkFlowService {
 	public Page<WorkFlowEntity> getPaginationDoneTask(int pageNumber,
 			int pageSize) {
 		HistoricTaskInstanceQuery query = historyService
-				.createHistoricTaskInstanceQuery()
+				.createHistoricTaskInstanceQuery().finished()
 				.taskAssignee(SysUtil.getCurrentUserId()).orderByHistoricTaskInstanceEndTime()
 				.desc();
 		// 设置page对象
@@ -223,7 +225,7 @@ public class WorkFlowService {
 	}
 
 	/**
-	 * 获取某个业务流程当前和已经结束的流程实例
+	 * 获取某个业务流程的历史流程实例
 	 * 
 	 * @param processDefinitionKey
 	 *            流程定义key
@@ -233,6 +235,21 @@ public class WorkFlowService {
 			String processDefinitionKey) {
 		HistoricProcessInstanceQuery query = historyService
 				.createHistoricProcessInstanceQuery()
+				.processDefinitionKey(processDefinitionKey)
+				.orderByProcessInstanceId().desc();
+		return query.list();
+	}
+	
+	/**
+	 * 获取某个业务流程的历史流程实例
+	 * @param processDefinitionKey 流程定义key
+	 * @param userId 发起人ID
+	 * @return
+	 */
+	public List<HistoricProcessInstance> getHistoricInstanceList(
+			String processDefinitionKey, String userId) {
+		HistoricProcessInstanceQuery query = historyService
+				.createHistoricProcessInstanceQuery().startedBy(userId)
 				.processDefinitionKey(processDefinitionKey)
 				.orderByProcessInstanceId().desc();
 		return query.list();
@@ -278,34 +295,6 @@ public class WorkFlowService {
 	}
 
 	/**
-	 * 获取用户某个业务流程下的待办任务
-	 * 
-	 * @param processDefinitionKey
-	 *            流程定义key
-	 * @param userId
-	 *            用户ID
-	 * @return
-	 */
-	public List<Task> getTodoTaskList(String processDefinitionKey, String userId) {
-		return taskService.createTaskQuery()
-				.processDefinitionKey(processDefinitionKey)
-				.taskCandidateOrAssigned(userId).active().orderByTaskId()
-				.desc().list();
-	}
-
-	/**
-	 * 获取用户所有待办任务
-	 * 
-	 * @param userId
-	 *            用户ID
-	 * @return
-	 */
-	public List<Task> getTodoTaskList(String userId) {
-		return taskService.createTaskQuery().taskCandidateOrAssigned(userId)
-				.active().orderByTaskId().desc().list();
-	}
-
-	/**
 	 * 启动流程实例
 	 * 
 	 * @param entity
@@ -342,6 +331,9 @@ public class WorkFlowService {
 	 */
 	public void setWorkFlowEntity(WorkFlowEntity entity) {
 		String processInstanceId = entity.getProcessInstanceId();
+		if(StringUtils.isBlank(processInstanceId)){
+			throw new ServiceException("processInstanceId is empty");
+		}
 		ProcessInstance processInstance = getProcessInstance(processInstanceId);
 		// 流程实例和流程定义
 		if (processInstance != null) {
