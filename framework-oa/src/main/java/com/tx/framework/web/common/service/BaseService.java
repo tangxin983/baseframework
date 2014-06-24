@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
 
+import com.google.common.collect.Table;
 import com.tx.framework.web.common.persistence.dao.BaseDao;
 import com.tx.framework.web.common.persistence.entity.Page;
 
@@ -37,6 +38,14 @@ public abstract class BaseService<T, PK> {
 		Class<?>[] clazzs = GenericTypeResolver.resolveTypeArguments(getClass(), BaseService.class);
 		this.genericType = (Class<T>)clazzs[0];
 	}
+	
+	/**
+	 * 获取所有记录
+	 * @return
+	 */
+	public List<T> select() {
+		return dao.select(genericType);
+	}
 	 
 	/**
 	 * 根据主键获取记录
@@ -48,48 +57,91 @@ public abstract class BaseService<T, PK> {
 	}
 	
 	/**
-	 * 根据查询参数获取记录集(模糊查询)
-	 * @param searchParams
-	 * @return
-	 */
-	public List<T> selectByLikeCondition(Map<String, Object> searchParams) {
-		return dao.selectByLikeCondition(genericType, searchParams);
-	}
-	
-	/**
-	 * 获取所有记录集
-	 * @return
-	 */
-	public List<T> select() {
-		return dao.select(genericType);
-	}
-	
-	/**
-	 * 获取所有记录集并排序（升序排列）
+	 * 获取所有记录并排序
 	 * @param orders 要排序的字段列表
 	 * @return
 	 */
-	public List<T> select(List<String> orders) {
+	public List<T> selectByOrder(Map<String, String> orders) {
 		return dao.selectByOrder(genericType, orders);
 	}
 	
 	/**
-	 * 根据查询参数获取记录集(精确查询)
+	 * 精确查询
 	 * @param searchParams
 	 * @return
 	 */
 	public List<T> select(Map<String, Object> searchParams) {
-		return dao.selectByCondition(genericType, searchParams);
+		return dao.selectByCondition(genericType, null, searchParams, null);
 	}
 	
 	/**
-	 * 根据查询参数获取记录集并排序(精确查询)
+	 * 精确查询并排序
 	 * @param searchParams
-	 * @param orders 要排序的字段列表
+	 * @param orders 
 	 * @return
 	 */
-	public List<T> select(Map<String, Object> searchParams, List<String> orders) {
-		return dao.selectByConditionAndOrder(genericType, searchParams, orders);
+	public List<T> select(Map<String, Object> searchParams, Map<String, String> orders) {
+		return dao.selectByCondition(genericType, null, searchParams, orders);
+	}
+	
+	/**
+	 * 复杂查询
+	 * @param searchTable
+	 * @return
+	 */
+	public List<T> select(Table<String, String, Object> searchTable) {
+		return dao.selectByComplicated(genericType, null, searchTable, null);
+	}
+	
+	/**
+	 * 复杂查询并排序
+	 * @param searchTable
+	 * @param orders
+	 * @return
+	 */
+	public List<T> select(Table<String, String, Object> searchTable, Map<String, String> orders) {
+		return dao.selectByComplicated(genericType, null, searchTable, orders);
+	}
+	
+	/**
+	 * 分页查询
+	 * @param paraMap 精确查询参数
+	 * @param orders 排序参数
+	 * @param pageNumber 页码
+	 * @param pageSize 每页数量
+	 * @return
+	 */
+	public Page<T> selectByPage(Map<String, Object> paraMap, Map<String, String> orders, int pageNumber, int pageSize) {
+		Page<T> p = buildPage(pageNumber, pageSize);
+		p.setResult(dao.selectByCondition(genericType, p, paraMap, orders));
+		return p;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param searchTable 复杂查询参数
+	 * @param orders 排序参数
+	 * @param pageNumber 页码
+	 * @param pageSize 每页数量
+	 * @return
+	 */
+	public Page<T> selectByPage(Table<String, String, Object> searchTable, Map<String, String> orders, int pageNumber, int pageSize) {
+		Page<T> p = buildPage(pageNumber, pageSize);
+		p.setResult(dao.selectByComplicated(genericType, p, searchTable, orders));
+		return p;
+	}
+	
+	/**
+	 * 构建分页对象
+	 * @param pageNumber
+	 * @param pageSize
+	 * @return
+	 */
+	protected Page<T> buildPage(int pageNumber, int pageSize) {
+		Page<T> page = new Page<T>();
+		page.setCurrentPage(pageNumber);
+		page.setSize(pageSize);
+		return page;
 	}
 	
 	/**
@@ -143,42 +195,4 @@ public abstract class BaseService<T, PK> {
 		}
 	}
 	
-	/**
-	 * 根据查询参数进行分页查询(模糊查询)
-	 * @param searchParams 查询参数
-	 * @param pageNumber 当前页
-	 * @param pageSize 每页数量
-	 * @return
-	 */
-	public Page<T> selectByPage(Map<String, Object> searchParams, int pageNumber, int pageSize) {
-		Page<T> p = buildPage(pageNumber, pageSize);
-		p.setResult(dao.selectByPageAndLikeCondition(genericType, p, searchParams));
-		return p;
-	}
-	
-	/**
-	 * 分页查询
-	 * @param searchParams 查询参数
-	 * @param pageNumber 当前页
-	 * @param pageSize 每页数量
-	 * @return
-	 */
-	public Page<T> selectByPage(int pageNumber, int pageSize) {
-		Page<T> p = buildPage(pageNumber, pageSize);
-		p.setResult(dao.selectByPage(genericType, p));
-		return p;
-	}
-	
-	/**
-	 * 构建分页对象
-	 * @param pageNumber
-	 * @param pageSize
-	 * @return
-	 */
-	protected Page<T> buildPage(int pageNumber, int pageSize) {
-		Page<T> page = new Page<T>();
-		page.setCurrentPage(pageNumber);
-		page.setSize(pageSize);
-		return page;
-	}
 }

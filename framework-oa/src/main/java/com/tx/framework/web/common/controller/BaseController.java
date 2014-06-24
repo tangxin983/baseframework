@@ -50,9 +50,9 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	 * 供子类设置额外的查询参数
 	 * @param searchParams
 	 */
-	protected void setExtraSearchParam(Map<String, Object> searchParams){
-		
-	}
+//	protected void setExtraSearchParam(Map<String, Object> searchParams){
+//		
+//	}
 	
 	/**
 	 * 通过反射取得requestMapping value（头尾的'/'会被去掉）
@@ -122,12 +122,11 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	 * @param request
 	 * @return
 	 */
-	public String list(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
+	public String paginationList(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model, ServletRequest request) {
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
-		setExtraSearchParam(searchParams);
-		Page<T> entitys = service.selectByPage(searchParams, pageNumber, pageSize);
+		Page<T> entitys = service.selectByPage(searchParams, null, pageNumber, pageSize);
 		model.addAttribute("page", entitys);
 		// 将搜索条件编码成字符串，用于分页的URL
 		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
@@ -140,9 +139,9 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	 * @param request
 	 * @return
 	 */
-	public String view(Model model, ServletRequest request) {
+	public String list(Model model, ServletRequest request) {
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
-		List<T> entitys = service.selectByLikeCondition(searchParams);
+		List<T> entitys = service.select(searchParams);
 		model.addAttribute("entitys", entitys);
 		return getListPage();
 	}

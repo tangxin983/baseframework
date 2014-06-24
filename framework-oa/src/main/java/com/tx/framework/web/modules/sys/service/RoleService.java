@@ -76,8 +76,7 @@ public class RoleService extends BaseService<Role, String> {
 	public List<String> findRoleMenu(String id) {
 		Map<String, Object> searchParams = Maps.newHashMap();
 		searchParams.put("roleId", id);
-		List<RoleMenu> roleMenus = roleMenuDao.selectByCondition(
-				RoleMenu.class, searchParams);
+		List<RoleMenu> roleMenus = roleMenuDao.selectByCondition(RoleMenu.class, null, searchParams, null);
 		return CollectionUtils.extractToList(roleMenus, "menuId", true);
 	}
 

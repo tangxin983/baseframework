@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.tx.framework.web.common.persistence.entity.Leave;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.service.BaseService;
@@ -53,10 +55,9 @@ public class LeaveService extends BaseService<Leave, String> {
 		// 启动流程
 		ProcessInstance processInstance = workFlowService.startWorkflow(entity,
 				PROCESS_DEF_KEY, null);
-		// 设置流程实例ID、当前节点名
+		// 设置流程实例ID和流程状态
 		entity.setProcessInstanceId(processInstance.getId());
-		entity.setProcessStatus(workFlowService
-				.getCurrentTaskName(processInstance.getId()));
+		entity.setProcessStatus("0");
 		leaveDao.update(entity);
 		return processInstance;
 	}
@@ -74,13 +75,22 @@ public class LeaveService extends BaseService<Leave, String> {
 	public Page<Leave> findLeaveInstanceByPage(
 			Map<String, Object> searchParams, int pageNumber, int pageSize,
 			boolean isAll) {
+		Table<String, String, Object> table = HashBasedTable.create();
 		if (!isAll) {
 			// 设置只获取当前用户的请假单
-			searchParams.put("applyUser", SysUtil.getCurrentUserId());
+			table.put("applyUser", "=", SysUtil.getCurrentUserId());
+		}
+		if(searchParams.get("processStatus") != null) {
+			table.put("processStatus", "=", searchParams.get("processStatus"));
+		}
+		if(searchParams.get("startTime") != null) {
+			table.put("startTime", ">=", searchParams.get("startTime"));
+		}
+		if(searchParams.get("endTime") != null) {
+			table.put("endTime", "<=", searchParams.get("endTime"));
 		}
 		// 根据条件获取请假列表
-		Page<Leave> page = buildPage(pageNumber, pageSize);
-		page.setResult(leaveDao.findLeave(page, searchParams));
+		Page<Leave> page = selectByPage(table, null, pageNumber, pageSize);
 		if (page.getResult().size() > 0) {
 			for (Leave leave : page.getResult()) {
 				if(StringUtils.isBlank(leave.getProcessInstanceId())){
@@ -121,10 +131,9 @@ public class LeaveService extends BaseService<Leave, String> {
 			task = workFlowService.completeCurrentTask(
 					leave.getProcessInstanceId(), leave.getVariable());
 		}
+		// 表示流程已结束
 		if (task == null) {
-			leave.setProcessStatus("已完成");
-		} else {
-			leave.setProcessStatus(task.getName());
+			leave.setProcessStatus("1");
 		}
 		leaveDao.update(leave);
 	}

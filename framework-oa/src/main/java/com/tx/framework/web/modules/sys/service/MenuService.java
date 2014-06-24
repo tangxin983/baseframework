@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
 import com.tx.framework.common.util.CollectionUtils;
 import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.common.persistence.entity.RoleMenu;
@@ -147,8 +149,8 @@ public class MenuService extends BaseService<Menu, String> {
 	 * @return
 	 */
 	public List<Menu> findAllMenuBySort(Map<String, Object> searchParams) {
-		List<String> orders = Lists.newArrayList();
-		orders.add("sort");
+		Map<String, String> orders = Maps.newHashMap();
+		orders.put("sort", "asc");
 		return select(searchParams, orders);
 	}
 
@@ -211,9 +213,9 @@ public class MenuService extends BaseService<Menu, String> {
 	 * @return
 	 */
 	public List<Menu> findChildsByPid(String id){
-		Map<String, Object> searchParams = Maps.newHashMap();
-		searchParams.put("parentIds", "," + id + ",");
-		return selectByLikeCondition(searchParams);
+		Table<String, String, Object> table = HashBasedTable.create();
+		table.put("parentIds", "like", "," + id + ",");
+		return select(table);
 	}
 	
 	/**

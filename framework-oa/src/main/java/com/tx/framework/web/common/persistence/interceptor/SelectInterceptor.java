@@ -79,11 +79,11 @@ public class SelectInterceptor implements Interceptor {
 
 			// 如果有page参数且sql语句中有select，则表明此sql语句需要做分页处理
 			Page<?> page = null;
-			if (paramObj instanceof Page) {
+			if (paramObj instanceof Page && paramObj != null) {
 				page = (Page<?>) paramObj;
 			} else if (paramObj instanceof Map) {
 				Map map = (HashMap) paramObj;
-				if (map.containsKey(BaseDao.PAGE_KEY)) {
+				if (map.containsKey(BaseDao.PAGE_KEY) && map.get(BaseDao.PAGE_KEY) != null) {
 					page = (Page<?>) map.get(BaseDao.PAGE_KEY);
 				}
 			}

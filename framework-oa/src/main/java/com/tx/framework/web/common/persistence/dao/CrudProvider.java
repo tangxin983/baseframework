@@ -1,13 +1,14 @@
 package com.tx.framework.web.common.persistence.dao;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
 import com.tx.framework.web.common.persistence.util.PersistenceUtil;
 
 /**
@@ -49,17 +50,16 @@ public class CrudProvider<T> {
 				if(parameter.containsKey(BaseDao.PARA_KEY)){
 					paramMap = (Map<String, Object>) parameter.get(BaseDao.PARA_KEY);
 				}
-				// like查询条件（key like '%value%'）
-				Map<String, Object> likeMap = Maps.newHashMap();
-				if(parameter.containsKey(BaseDao.LIKE_KEY)){
-					likeMap = (Map<String, Object>) parameter.get(BaseDao.LIKE_KEY);
+				// 复杂查询条件（<列名,运算符,列值>）
+				Table<String, String, Object> comMap = HashBasedTable.create();
+				if(parameter.containsKey(BaseDao.COM_KEY)){
+					comMap = (Table<String, String, Object>) parameter.get(BaseDao.COM_KEY);
 				}
 				// 排序条件
-				List<String> orders = Lists.newArrayList();
+				Map<String, String> orderMap = Maps.newHashMap();
 				if(parameter.containsKey(BaseDao.ORDER_KEY)){
-					orders = (List<String>) parameter.get(BaseDao.ORDER_KEY);
+					orderMap = (Map<String, String>) parameter.get(BaseDao.ORDER_KEY);
 				}
-				String orderBy = StringUtils.join(orders, ",");
 				SELECT("*");
 				FROM(PersistenceUtil.getTableName(clazz));
 				if(paramMap != null) {
@@ -74,29 +74,34 @@ public class CrudProvider<T> {
 						}
 					}
 				}
-				if(likeMap != null) {
-					for(String key : likeMap.keySet())  {
+				if(comMap != null) {
+					for (Cell<String, String, Object> cell : comMap.cellSet()) {
+						// 用rowKey查找数据库列名 如果找不到则以rowKey作为列名
+						String columnName = PersistenceUtil.getFieldNameByColumnName(clazz, cell.getRowKey());
+						if(StringUtils.isBlank(columnName)){
+							columnName = cell.getRowKey();
+						}
+						if(StringUtils.isNotBlank(cell.getValue().toString())){
+							if(cell.getColumnKey().equalsIgnoreCase("like")){
+								WHERE(columnName + " like '%" + cell.getValue() + "%'");
+							}else{
+								WHERE(columnName + cell.getColumnKey() + "'" + cell.getValue() + "'");
+							}
+						}
+					}
+				}
+				if(orderMap != null) {
+					for(String key : orderMap.keySet())  {
 						// 用map key查找数据库列名 如果找不到则以key作为列名
 						String columnName = PersistenceUtil.getFieldNameByColumnName(clazz, key);
 						if(StringUtils.isBlank(columnName)){
 							columnName = key;
 						}
-						if(likeMap.get(key) != null && (StringUtils.isNotBlank(likeMap.get(key).toString()))){
-							WHERE(columnName + " like CONCAT('%',#{" + BaseDao.LIKE_KEY + "." + key + "},'%')");
-						}
+						ORDER_BY(columnName + " " + StringUtils.defaultString(orderMap.get(key)));
 					}
-				}
-				if(StringUtils.isNotBlank(orderBy)){
-					ORDER_BY(orderBy);
 				}
 			}
 		}.toString();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public String selectByPage(final Map<String, Object> parameter) {
-		Class<T> clazz = (Class<T>) parameter.get(BaseDao.CLASS_KEY);
-		return select(clazz);
 	}
 	
 	public String count(final Class<T> clazz) {

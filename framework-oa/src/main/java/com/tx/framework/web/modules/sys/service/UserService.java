@@ -50,7 +50,7 @@ public class UserService extends BaseService<User, String> {
 	 * 列表页分页查询(覆盖BaseService)
 	 */
 	@Override
-	public Page<User> selectByPage(Map<String, Object> searchParams, int pageNumber, int pageSize) {
+	public Page<User> selectByPage(Map<String, Object> searchParams, Map<String, String> orders, int pageNumber, int pageSize) {
 		Page<User> p = buildPage(pageNumber, pageSize);
 		p.setResult(userDao.findUserByPageAndLikeCondition(p, searchParams));
 		return p;
@@ -136,7 +136,7 @@ public class UserService extends BaseService<User, String> {
 		userDao.deleteById(genericType, id);
 		Map<String, Object> para = Maps.newHashMap();
 		para.put("userId", id);
-		List<UserRole> userRoles = userRoleDao.selectByCondition(UserRole.class, para);
+		List<UserRole> userRoles = userRoleDao.selectByCondition(UserRole.class, null, para, null);
 		deleteActiviti(id, userRoles);
 		userRoleDao.deleteByCondition(UserRole.class, para);
 	}

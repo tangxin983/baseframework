@@ -50,7 +50,6 @@ public class LeaveController extends OaController<Leave, String> {
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model, HttpServletRequest request) {
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
-		setExtraSearchParam(searchParams);
 		Page<Leave> entitys = leaveService.findLeaveInstanceByPage(searchParams, pageNumber, pageSize, false);
 		model.addAttribute("page", entitys);
 		// 将搜索条件编码成字符串，用于分页的URL

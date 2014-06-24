@@ -23,7 +23,7 @@
 							<th>发起人</th>
 							<th>发起时间</th>
 							<th>当前节点</th>
-							<th>流程状态</th>
+							<th>到达时间</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -37,7 +37,7 @@
 								<td>
 									<a target="_blank" href="${ctx}/diagram-viewer/index.html?processDefinitionId=${entity.processDefinition.id}&processInstanceId=${entity.processInstance.id}">${entity.task.name}
 								</td>
-								<td>${entity.processInstance.suspended ? "挂起" : "正常"}</td>
+								<td><fmt:formatDate value="${entity.task.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td>
 									<c:if test="${empty entity.task.assignee}">
 										<a href="${ctx}/workflow/task/claim/${entity.task.id}" class="btn btn-primary">

@@ -43,10 +43,10 @@ public class UserController extends BaseController<User, String> {
 	 * 跳转用户列表页（分页）
 	 */
 	@RequestMapping
-	public String list(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
+	public String paginationList(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model, HttpServletRequest request) {
-		return super.list(pageNumber, pageSize, model, request);
+		return super.paginationList(pageNumber, pageSize, model, request);
 	}
 	
 	/**

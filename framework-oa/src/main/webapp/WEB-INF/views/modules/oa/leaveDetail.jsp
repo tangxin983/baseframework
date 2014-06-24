@@ -56,7 +56,7 @@
 	<c:if test="${!isView}">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<div class="text-muted bootstrap-admin-box-title">${entity.processStatus}</div>
+				<div class="text-muted bootstrap-admin-box-title">${entity.task.name}</div>
 			</div>
 			<div class="panel-body">
 				<form id="workflowForm" action="${ctxModule}/completeTask" method="post" class="form-horizontal">

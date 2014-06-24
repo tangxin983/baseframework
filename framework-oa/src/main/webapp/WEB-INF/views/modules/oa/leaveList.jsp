@@ -32,6 +32,13 @@
 				<input name="s_endTime" value="${param.s_endTime}" class="form-control Wdate" placeholder="结束时间" 
 					readonly="readonly" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});"/>
 			</div>
+			<div class="form-group">
+				<select name="s_processStatus" class="form-control">
+					<option value="" ${param.s_processStatus eq "" ? "selected" : ""}>全部</option>
+					<option value="0" ${param.s_processStatus eq "0" ? "selected" : ""}>运行中</option>
+					<option value="1" ${param.s_processStatus eq "1" ? "selected" : ""}>已完成</option>				 
+				</select>
+			</div>
 			<button type="submit" class="btn btn-primary">
 				<span class="glyphicon glyphicon-search"></span> 查询
 			</button>
@@ -57,8 +64,8 @@
 							<th>请假开始</th>
 							<th>请假结束</th>
 							<th>当前节点</th>
-							<th>流程状态</th>
 							<th>当前处理人</th>
+							<th>流程状态</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -77,16 +84,13 @@
 									<td>
 										<a target="_blank" href="${ctx}/diagram-viewer/index.html?processDefinitionId=${leave.processInstance.processDefinitionId}&processInstanceId=${leave.processInstance.id}">${leave.task.name}
 									</td>
-									<td>${leave.processInstance.suspended ? "已挂起" : "正常"}</td>
 									<td>${fns:getUserById(leave.task.assignee).name}</td>
 								</c:if>
 								<c:if test="${not empty leave.historicProcessInstance.endTime}">
-									<td>
-										<a target="_blank" href="${ctx}/diagram-viewer/index.html?processDefinitionId=${leave.historicProcessInstance.processDefinitionId}&processInstanceId=${leave.historicProcessInstance.id}">结束
-									</td>
-									<td>已完成</td>
+									<td></td>
 									<td></td>
 								</c:if>
+								<td>${leave.processStatus eq "1" ? "已完成" : "运行中"}</td>
 							</tr>
 						</c:forEach>
 					</tbody>

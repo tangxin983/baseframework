@@ -24,7 +24,7 @@
 							<th>到达时间</th>
 							<th>结束时间</th>
 							<th>当前节点</th>
-							<th>流程状态</th>
+							<th>当前处理人</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -42,7 +42,7 @@
 								<td>
 									<a target="_blank" href="${ctx}/diagram-viewer/index.html?processDefinitionId=${entity.processDefinition.id}&processInstanceId=${entity.processInstance.id}">${entity.task.name}
 								</td>
-								<td>${entity.processInstance.suspended ? "挂起" : "正常"}</td>
+								<td>${fns:getUserById(entity.task.assignee).name}</td>
 							</tr>
 						</c:forEach>
 					</tbody>

@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
 import com.tx.framework.common.util.CollectionUtils;
 import com.tx.framework.web.common.persistence.entity.Area;
 import com.tx.framework.web.common.service.BaseService;
@@ -39,9 +40,9 @@ public class AreaService extends BaseService<Area, String> {
 	 * @return
 	 */
 	public List<Area> findAreaOrderByCode() {
-		List<String> orders = Lists.newArrayList();
-		orders.add("code");
-		return select(orders);
+		Map<String, String> orders = Maps.newHashMap();
+		orders.put("code", "asc");
+		return selectByOrder(orders);
 	}
 	
 	/**
@@ -103,9 +104,9 @@ public class AreaService extends BaseService<Area, String> {
 	 * @return
 	 */
 	private List<Area> findChildsByPid(String id){
-		Map<String, Object> searchParams = Maps.newHashMap();
-		searchParams.put("parentIds", "," + id + ",");
-		return selectByLikeCondition(searchParams);
+		Table<String, String, Object> table = HashBasedTable.create();
+		table.put("parentIds", "like", "," + id + ",");
+		return select(table);
 	}
 	
 }
