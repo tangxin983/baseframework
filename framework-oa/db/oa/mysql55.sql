@@ -15,7 +15,7 @@ CREATE TABLE `oa_leave` (
   `apply_time` datetime default NULL COMMENT '申请时间',
   `reality_start_time` datetime default NULL COMMENT '实际开始时间',
   `reality_end_time` datetime default NULL COMMENT '实际结束时间',
-  `process_status` varchar(50) default NULL COMMENT '流程状态',
+  `process_status` char(1) default NULL COMMENT '流程状态',
   `create_by` varchar(64) default NULL COMMENT '创建者',
   `create_date` datetime default NULL COMMENT '创建时间',
   `update_by` varchar(64) default NULL COMMENT '更新者',
