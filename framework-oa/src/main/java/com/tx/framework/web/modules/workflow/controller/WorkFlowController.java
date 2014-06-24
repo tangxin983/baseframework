@@ -2,6 +2,8 @@ package com.tx.framework.web.modules.workflow.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.tx.framework.web.common.config.Constant;
@@ -64,9 +69,59 @@ public class WorkFlowController {
 			@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model) {
-		model.addAttribute("page",
-				workFlowService.getPaginationProcessDefinition(pageNumber, pageSize));
+		model.addAttribute("page", workFlowService
+				.getPaginationProcessDefinition(pageNumber, pageSize));
 		return "modules/workflow/processList";
+	}
+
+	/**
+	 * 跳转部署页面
+	 * 
+	 * @return
+	 */
+	@RequestMapping("process/deployForm")
+	public String deployForm() {
+		return "modules/workflow/deploy";
+	}
+
+	/**
+	 * 部署流程
+	 * 
+	 * @param file
+	 * @return
+	 */
+	@RequestMapping("process/deploy")
+	public String deploy(
+			@RequestParam(value = "file", required = false) MultipartFile file,
+			RedirectAttributes redirectAttributes) {
+		String fileName = file.getOriginalFilename();
+		try {
+			InputStream fileInputStream = file.getInputStream();
+			Deployment deployment = null;
+			String extension = FilenameUtils.getExtension(fileName);
+			if (extension.equals("zip") || extension.equals("bar")) {
+				ZipInputStream zip = new ZipInputStream(fileInputStream);
+				deployment = repositoryService.createDeployment()
+						.addZipInputStream(zip).deploy();
+			} else {
+				deployment = repositoryService.createDeployment()
+						.addInputStream(fileName, fileInputStream).deploy();
+			}
+			List<ProcessDefinition> list = repositoryService
+					.createProcessDefinitionQuery()
+					.deploymentId(deployment.getId()).list();
+			if (list.isEmpty()) {
+				logger.error("deploy process error");
+				redirectAttributes.addFlashAttribute("message", "部署失败");
+			} else {
+				redirectAttributes.addFlashAttribute("message", "部署成功");
+			}
+		} catch (Exception e) {
+			logger.error("deploy process error:" + e.getMessage());
+			redirectAttributes.addFlashAttribute("message",
+					"部署失败:" + e.getMessage());
+		}
+		return "redirect:/workflow/process/list";
 	}
 
 	/**
@@ -224,6 +279,7 @@ public class WorkFlowController {
 
 	/**
 	 * 待办任务列表
+	 * 
 	 * @param pageNumber
 	 * @param pageSize
 	 * @param model
@@ -237,11 +293,12 @@ public class WorkFlowController {
 			Model model, HttpServletRequest request) {
 		model.addAttribute("page",
 				workFlowService.getPaginationTodoTask(pageNumber, pageSize));
-		return "modules/workflow/taskList";
+		return "modules/workflow/todoList";
 	}
-	
+
 	/**
 	 * 已办任务列表
+	 * 
 	 * @param pageNumber
 	 * @param pageSize
 	 * @param model
@@ -257,18 +314,21 @@ public class WorkFlowController {
 				workFlowService.getPaginationDoneTask(pageNumber, pageSize));
 		return "modules/workflow/doneList";
 	}
-	
+
 	/**
 	 * 签收任务
-	 * @param taskId 任务ID
+	 * 
+	 * @param taskId
+	 *            任务ID
 	 * @param redirectAttributes
 	 * @return
 	 */
-    @RequestMapping("task/claim/{id}")
-    public String claim(@PathVariable("id") String taskId, RedirectAttributes redirectAttributes) {
-    	taskService.claim(taskId, SysUtil.getCurrentUserId());
-    	redirectAttributes.addFlashAttribute("message", "任务已签收");
-        return "redirect:/workflow/task/todo";
-    }
+	@RequestMapping("task/claim/{id}")
+	public String claim(@PathVariable("id") String taskId,
+			RedirectAttributes redirectAttributes) {
+		taskService.claim(taskId, SysUtil.getCurrentUserId());
+		redirectAttributes.addFlashAttribute("message", "任务已签收");
+		return "redirect:/workflow/task/todo";
+	}
 
 }
