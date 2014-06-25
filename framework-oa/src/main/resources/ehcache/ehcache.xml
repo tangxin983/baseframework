@@ -18,5 +18,9 @@
 	<!-- shiro授权缓存 -->
 	<cache name="shiroAuthorizationCache" maxEntriesLocalHeap="10000" eternal="false" timeToLiveSeconds="3600"
 		overflowToDisk="false" maxEntriesLocalDisk="100000" />
+		
+	<!-- 字典列表缓存 -->
+	<cache name="dictCache" maxEntriesLocalHeap="10000" eternal="false" timeToLiveSeconds="3600"
+		overflowToDisk="false" maxEntriesLocalDisk="100000" />
 
 </ehcache>
