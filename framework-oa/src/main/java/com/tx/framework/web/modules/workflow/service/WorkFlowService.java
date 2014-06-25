@@ -105,10 +105,20 @@ public class WorkFlowService {
 	 *            每页数量
 	 * @return
 	 */
-	public Page<Object[]> getPaginationRunningInstance(int pageNumber,
-			int pageSize) {
-		ProcessInstanceQuery processInstanceQuery = runtimeService
-				.createProcessInstanceQuery().orderByProcessInstanceId().desc();
+	public Page<Object[]> getPaginationRunningInstance(
+			Map<String, Object> param, int pageNumber, int pageSize) {
+		ProcessInstanceQuery processInstanceQuery = null;
+		if (param.get("processDefinitionId") != null) {
+			logger.debug(param.get("processDefinitionId").toString());
+			processInstanceQuery = runtimeService
+					.createProcessInstanceQuery()
+					.processDefinitionId(
+							param.get("processDefinitionId").toString())
+					.orderByProcessInstanceId().desc();
+		} else {
+			processInstanceQuery = runtimeService.createProcessInstanceQuery()
+					.orderByProcessInstanceId().desc();
+		}
 		// 设置page对象
 		Page<Object[]> page = new Page<Object[]>();
 		page.setCurrentPage(pageNumber);
@@ -204,19 +214,21 @@ public class WorkFlowService {
 			int pageSize) {
 		HistoricTaskInstanceQuery query = historyService
 				.createHistoricTaskInstanceQuery().finished()
-				.taskAssignee(SysUtil.getCurrentUserId()).orderByHistoricTaskInstanceEndTime()
-				.desc();
+				.taskAssignee(SysUtil.getCurrentUserId())
+				.orderByHistoricTaskInstanceEndTime().desc();
 		// 设置page对象
 		Page<WorkFlowEntity> page = new Page<WorkFlowEntity>();
 		page.setCurrentPage(pageNumber);
 		page.setSize(pageSize);
 		page.setTotal((int) query.count());
 		List<WorkFlowEntity> result = Lists.newArrayList();
-		List<HistoricTaskInstance> tasks = query.listPage(page.getCurrentResult(), pageSize);
+		List<HistoricTaskInstance> tasks = query.listPage(
+				page.getCurrentResult(), pageSize);
 		for (HistoricTaskInstance historicTaskInstance : tasks) {
 			WorkFlowEntity entity = new WorkFlowEntity();
 			entity.setHistoricTaskInstance(historicTaskInstance);
-			entity.setProcessInstanceId(historicTaskInstance.getProcessInstanceId());
+			entity.setProcessInstanceId(historicTaskInstance
+					.getProcessInstanceId());
 			setWorkFlowEntity(entity);
 			result.add(entity);
 		}
@@ -239,11 +251,14 @@ public class WorkFlowService {
 				.orderByProcessInstanceId().desc();
 		return query.list();
 	}
-	
+
 	/**
 	 * 获取某个业务流程的历史流程实例
-	 * @param processDefinitionKey 流程定义key
-	 * @param userId 发起人ID
+	 * 
+	 * @param processDefinitionKey
+	 *            流程定义key
+	 * @param userId
+	 *            发起人ID
 	 * @return
 	 */
 	public List<HistoricProcessInstance> getHistoricInstanceList(
@@ -331,7 +346,7 @@ public class WorkFlowService {
 	 */
 	public void setWorkFlowEntity(WorkFlowEntity entity) {
 		String processInstanceId = entity.getProcessInstanceId();
-		if(StringUtils.isBlank(processInstanceId)){
+		if (StringUtils.isBlank(processInstanceId)) {
 			throw new ServiceException("processInstanceId is empty");
 		}
 		ProcessInstance processInstance = getProcessInstance(processInstanceId);
@@ -466,6 +481,15 @@ public class WorkFlowService {
 	public ProcessDefinition getProcessDefinition(String processDefinitionId) {
 		return repositoryService.createProcessDefinitionQuery()
 				.processDefinitionId(processDefinitionId).singleResult();
+	}
+
+	/**
+	 * 获得流程定义列表
+	 * 
+	 * @return
+	 */
+	public List<ProcessDefinition> getProcessDefinition() {
+		return repositoryService.createProcessDefinitionQuery().list();
 	}
 
 	/**

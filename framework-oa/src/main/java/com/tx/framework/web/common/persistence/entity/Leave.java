@@ -56,6 +56,16 @@ public class Leave extends WorkFlowEntity {
 
 	@Column(name = "del_flag")
 	private String delFlag;
+	
+	private String procType;//测试用
+
+	public String getProcType() {
+		return procType;
+	}
+
+	public void setProcType(String procType) {
+		this.procType = procType;
+	}
 
 	public Date getStartTime() {
 		return startTime;

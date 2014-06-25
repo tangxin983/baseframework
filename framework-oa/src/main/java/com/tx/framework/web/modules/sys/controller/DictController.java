@@ -1,0 +1,129 @@
+package com.tx.framework.web.modules.sys.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.google.common.collect.Maps;
+import com.tx.framework.common.util.Servlets;
+import com.tx.framework.web.common.controller.BaseController;
+import com.tx.framework.web.common.config.Constant;
+import com.tx.framework.web.common.persistence.entity.Dict;
+import com.tx.framework.web.common.persistence.entity.Page;
+import com.tx.framework.web.modules.sys.service.DictService;
+
+/**
+ * 字典Controller
+ * @author tangx
+ * @version 2014-06-25
+ */
+@Controller
+@RequestMapping(value = "sys/dict")
+public class DictController extends BaseController<Dict, String> {
+
+	private DictService dictService;
+
+	@Autowired
+	public void setDictService(DictService dictService) {
+		super.setService(dictService);
+		this.dictService = dictService;
+	}
+	
+	/**
+	 * 跳转列表页（分页）<br>
+	 * url:sys/dict
+	 */
+	@RequestMapping
+	public String paginationList(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
+			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
+			Model model, HttpServletRequest request) {
+		model.addAttribute("typeList", dictService.findTypeList());
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
+		// 按type排序
+		Map<String, String> orders = Maps.newHashMap();
+		orders.put("type", "asc");
+		Page<Dict> entitys = service.selectByPage(searchParams, orders, pageNumber, pageSize);
+		model.addAttribute("page", entitys);
+		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
+		return getListPage();
+	}
+	
+	/**
+	 * 跳转新增页面<br>
+	 * url:sys/dict/create
+	 */
+	@RequestMapping(value = "create", method = RequestMethod.GET)
+	public String createForm(Model model) {
+		return super.createForm(model);
+	}
+
+	/**
+	 * 新增操作<br>
+	 * url:sys/dict/create
+	 */
+	@RequestMapping(value = "create", method = RequestMethod.POST)
+	public String create(@Valid Dict entity,
+			RedirectAttributes redirectAttributes) {
+		return super.create(entity, redirectAttributes);
+	}
+	
+	/**
+	 * 跳转更新页面<br>
+	 * URL:sys/dict/update/{id}
+	 */
+	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
+	public String updateForm(@PathVariable("id") String id, Model model) {
+		return super.updateForm(id, model);
+	}
+	
+	/**
+	 * 更新操作<br>
+	 * URL:sys/dict/update
+	 */
+	@RequestMapping(value = "update", method = RequestMethod.POST)
+	public String update(@Valid @ModelAttribute("entity")Dict entity, RedirectAttributes redirectAttributes) {
+		return super.update(entity, redirectAttributes);
+	}
+	
+	/**
+	 * 删除操作<br>
+	 * URL:sys/dict/delete/{id}
+	 */
+	@RequestMapping("delete/{id}")
+	public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+		return super.delete(id, redirectAttributes);
+	}
+	
+	/**
+	 * 批量删除操作<br>
+	 * URL:sys/dict/delete
+	 */
+	@RequestMapping("delete")
+	public String multiDelete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
+		return super.multiDelete(ids, redirectAttributes);
+	}
+	
+	/**
+	 * 根据id查找实体（json）<br>
+	 * URL:sys/dict/get/{id}
+	 */
+	@RequestMapping("get/{id}")
+	@ResponseBody
+	public Dict get(@PathVariable("id") String id) {
+		return super.get(id);
+	}
+
+}

@@ -39,6 +39,14 @@
 					<option value="1" ${param.s_processStatus eq "1" ? "selected" : ""}>已完成</option>				 
 				</select>
 			</div>
+			<div class="form-group">
+				<select name="s_leaveType" class="form-control">
+					<option value="" ${param.s_leaveType eq "" ? "selected" : ""}>全部</option>
+					<c:forEach items="${fns:getDictList('oa_leave_type')}" var="type">
+						<option value="${type.value}" ${param.s_leaveType eq type.value ? "selected" : ""}>${type.label}</option>
+					</c:forEach>
+				</select>
+			</div>
 			<button type="submit" class="btn btn-primary">
 				<span class="glyphicon glyphicon-search"></span> 查询
 			</button>
@@ -76,7 +84,7 @@
 									    ${leave.id}
 									</a>
 								</td>
-								<td>${leave.leaveType}</td>
+								<td>${fns:getDictLabel('oa_leave_type',leave.leaveType,'')}</td>
 								<td><fmt:formatDate value="${leave.applyTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td><fmt:formatDate value="${leave.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td><fmt:formatDate value="${leave.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>

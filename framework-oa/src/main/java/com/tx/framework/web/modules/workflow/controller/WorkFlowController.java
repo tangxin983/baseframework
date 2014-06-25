@@ -3,6 +3,7 @@ package com.tx.framework.web.modules.workflow.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.tx.framework.common.util.Servlets;
 import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.exception.ServiceException;
 import com.tx.framework.web.common.utils.SysUtil;
@@ -217,9 +219,11 @@ public class WorkFlowController {
 	public String running(
 			@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
-			Model model) {
+			Model model, HttpServletRequest request) {
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
+		model.addAttribute("processDefinitionList", workFlowService.getProcessDefinition());
 		model.addAttribute("page", workFlowService
-				.getPaginationRunningInstance(pageNumber, pageSize));
+				.getPaginationRunningInstance(searchParams, pageNumber, pageSize));
 		return "modules/workflow/runInstanceList";
 	}
 

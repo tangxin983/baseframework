@@ -25,7 +25,7 @@
 				<div class="form-group">
 					<label class="col-md-2 control-label">请假类型：</label>
 					<div class="col-md-6">
-						<p class="form-control-static">${entity.leaveType}</p>
+						<p class="form-control-static">${fns:getDictLabel('oa_leave_type',entity.leaveType,'')}</p>
 					</div>
 				</div>
 				<div class="form-group">

@@ -11,6 +11,10 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 		});
+		function formSubmit() {
+			$("#procType").val("leave1");
+			$("#workflowForm").submit();
+		}
 	</script>
 </head>
 <body>
@@ -19,13 +23,18 @@
 			<div class="text-muted bootstrap-admin-box-title">请假编辑</div>
 		</div>
 		<div class="panel-body">
-			<form class="form-horizontal" action="${ctxModule}/${action}" method="post">
+			<form class="form-horizontal" action="${ctxModule}/${action}" method="post" id="workflowForm">
 				<input type="hidden" name="id" value="${entity.id}">
+				<!-- 测试用 -->
+				<input type="hidden" id="procType" name="procType">
 				<div class="form-group">
 					<label class="col-md-2 control-label">请假类型：</label>
 					<div class="col-md-6">
-						<input name="leaveType" maxlength="50" class="form-control required"
-							value="${entity.leaveType}" />
+						<select name="leaveType" class="form-control required">
+							<c:forEach items="${fns:getDictList('oa_leave_type')}" var="type">
+								<option value="${type.value}" ${entity.leaveType eq type.value ? "selected" : ""}>${type.label}</option>
+							</c:forEach>
+						</select>
 					</div>
 				</div>
 				<div class="form-group">
@@ -53,6 +62,8 @@
 				<div class="form-group">
 					<div class="col-md-offset-2 col-md-10">
 						<input type="submit" class="btn btn-primary" value="保存" /> 
+						<!-- 测试用 -->
+						<input type="button" onclick="formSubmit()" class="btn btn-primary" value="启动leave1流程" /> 
 						<a href="${ctxModule}" class="btn btn-default">返 回</a>
 					</div>
 				</div>

@@ -52,9 +52,17 @@ public class LeaveService extends BaseService<Leave, String> {
 		entity.setApplyUser(SysUtil.getCurrentUserId());
 		entity.setApplyTime(new Date());
 		leaveDao.insert(entity);
-		// 启动流程
-		ProcessInstance processInstance = workFlowService.startWorkflow(entity,
-				PROCESS_DEF_KEY, null);
+		ProcessInstance processInstance = null;
+		if(StringUtils.isNotBlank(entity.getProcType())){
+			// 测试用流程
+			processInstance = workFlowService.startWorkflow(entity,
+					entity.getProcType(), null);
+		}else{
+			// 启动流程
+			processInstance = workFlowService.startWorkflow(entity,
+					PROCESS_DEF_KEY, null);
+		}
+		
 		// 设置流程实例ID和流程状态
 		entity.setProcessInstanceId(processInstance.getId());
 		entity.setProcessStatus("0");
@@ -79,6 +87,9 @@ public class LeaveService extends BaseService<Leave, String> {
 		if (!isAll) {
 			// 设置只获取当前用户的请假单
 			table.put("applyUser", "=", SysUtil.getCurrentUserId());
+		}
+		if(searchParams.get("leaveType") != null) {
+			table.put("leaveType", "=", searchParams.get("leaveType"));
 		}
 		if(searchParams.get("processStatus") != null) {
 			table.put("processStatus", "=", searchParams.get("processStatus"));

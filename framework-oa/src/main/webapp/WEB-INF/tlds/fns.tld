@@ -40,4 +40,20 @@
 		<function-signature>com.tx.framework.web.common.persistence.entity.User getUserById(java.lang.String)</function-signature>
 		<example>${fns:getUserById(userId)}</example>  
 	</function>
+	
+	<function>
+	    <description>根据字典类型获取字典列表</description>
+	    <name>getDictList</name>
+	    <function-class>com.tx.framework.web.common.utils.JstlFunction</function-class>
+	    <function-signature>java.util.List getDictList(java.lang.String)</function-signature>
+	    <example>${fns:getDictList(type)}</example>  
+  	</function>
+  	
+  	<function>
+	    <description>获取字典名称</description>
+	    <name>getDictLabel</name>
+	    <function-class>com.tx.framework.web.common.utils.JstlFunction</function-class>
+	    <function-signature>java.lang.String getDictLabel(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+	    <example>${fns:getDictLabel(type, value, defaultValue)}</example>  
+  	</function>
 </taglib>
