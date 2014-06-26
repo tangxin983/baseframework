@@ -224,7 +224,7 @@ public class WorkFlowController {
 		model.addAttribute("processDefinitionList", workFlowService.getProcessDefinition());
 		model.addAttribute("page", workFlowService
 				.getPaginationRunningInstance(searchParams, pageNumber, pageSize));
-		return "modules/workflow/runInstanceList";
+		return "modules/workflow/runningInstance";
 	}
 
 	/**
@@ -244,7 +244,7 @@ public class WorkFlowController {
 			Model model) {
 		model.addAttribute("page", workFlowService
 				.getPaginationFinishedInstance(pageNumber, pageSize));
-		return "modules/workflow/finishedList";
+		return "modules/workflow/finishedInstance";
 	}
 
 	/**
@@ -297,7 +297,7 @@ public class WorkFlowController {
 			Model model, HttpServletRequest request) {
 		model.addAttribute("page",
 				workFlowService.getPaginationTodoTask(pageNumber, pageSize));
-		return "modules/workflow/todoList";
+		return "modules/workflow/todoTask";
 	}
 
 	/**
@@ -316,7 +316,7 @@ public class WorkFlowController {
 			Model model, HttpServletRequest request) {
 		model.addAttribute("page",
 				workFlowService.getPaginationDoneTask(pageNumber, pageSize));
-		return "modules/workflow/doneList";
+		return "modules/workflow/doneTask";
 	}
 
 	/**

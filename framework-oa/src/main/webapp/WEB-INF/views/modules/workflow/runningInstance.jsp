@@ -25,10 +25,10 @@
 				</select>
 			</div>
 			<div class="form-group">
-				节点名称：
+				单据号：
 			</div>
 			<div class="form-group">
-				<input name="test" class="form-control"/>
+				<input name="s_businessKey" value="${param.s_businessKey}" class="form-control"/>
 			</div>
 			<button type="submit" class="btn btn-primary">
 				<span class="glyphicon glyphicon-search"></span> 查询
@@ -46,8 +46,8 @@
 					<thead>
 						<tr>
 							<th>单据号</th>
-							<th>流程ID</th>
 							<th>流程名称</th>
+							<th>流程版本</th>
 							<th>发起人</th>
 							<th>当前节点</th>
 							<th>当前处理人</th>
@@ -67,8 +67,8 @@
 									    ${instance.businessKey}
 									</a>
 								</td>
-								<td>${instance.processInstanceId}</td>
 								<td>${def.name}</td>
+								<td>${def.version}</td>
 								<td>${fns:getUserById(hisInstance.startUserId).name}</td>
 								<td>
 									<a target="_blank" href="${ctx}/diagram-viewer/index.html?processDefinitionId=${instance.processDefinitionId}&processInstanceId=${instance.id}">${task.name}

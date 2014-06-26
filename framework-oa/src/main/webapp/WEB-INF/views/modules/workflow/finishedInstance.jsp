@@ -82,8 +82,8 @@
 					<thead>
 						<tr>
 							<th>单据号</th>
-							<th>流程ID</th>
 							<th>流程名称</th>
+							<th>流程版本</th>
 							<th>发起人</th>
 							<th>启动时间</th>
 							<th>结束时间</th>
@@ -100,8 +100,8 @@
 									    ${instance.businessKey}
 									</a>
 								</td>
-								<td>${instance.processInstanceId}</td>
 								<td>${def.name}</td>
+								<td>${def.version}</td>
 								<td>${fns:getUserById(instance.startUserId).name}</td>
 								<td><fmt:formatDate value="${instance.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td><fmt:formatDate value="${instance.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>

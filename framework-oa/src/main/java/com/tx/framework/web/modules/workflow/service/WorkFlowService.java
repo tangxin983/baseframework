@@ -13,6 +13,8 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricTaskInstanceQuery;
+import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
@@ -107,26 +109,22 @@ public class WorkFlowService {
 	 */
 	public Page<Object[]> getPaginationRunningInstance(
 			Map<String, Object> param, int pageNumber, int pageSize) {
-		ProcessInstanceQuery processInstanceQuery = null;
-		if (param.get("processDefinitionId") != null) {
-			logger.debug(param.get("processDefinitionId").toString());
-			processInstanceQuery = runtimeService
-					.createProcessInstanceQuery()
-					.processDefinitionId(
-							param.get("processDefinitionId").toString())
-					.orderByProcessInstanceId().desc();
-		} else {
-			processInstanceQuery = runtimeService.createProcessInstanceQuery()
-					.orderByProcessInstanceId().desc();
+		ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery();
+		if (StringUtils.isNotBlank(ObjectUtils.toString(param.get("processDefinitionId")))) {
+			query = query.processDefinitionId(ObjectUtils.toString(param.get("processDefinitionId")));
 		}
+		if (StringUtils.isNotBlank(ObjectUtils.toString(param.get("businessKey")))) {
+			query = query.processInstanceBusinessKey(ObjectUtils.toString(param.get("businessKey")));
+		}
+		query = query.orderByProcessInstanceId().desc();
 		// 设置page对象
 		Page<Object[]> page = new Page<Object[]>();
 		page.setCurrentPage(pageNumber);
 		page.setSize(pageSize);
-		page.setTotal((int) processInstanceQuery.count());
+		page.setTotal((int) query.count());
 		// 保存ProcessInstance,ProcessDefinition,Task,HistoricProcessInstance(用于获取startUserId)
 		List<Object[]> objects = Lists.newArrayList();
-		List<ProcessInstance> instances = processInstanceQuery.listPage(
+		List<ProcessInstance> instances = query.listPage(
 				page.getCurrentResult(), pageSize);
 		for (ProcessInstance instance : instances) {
 			Task task = getCurrentTask(instance.getId());
@@ -474,13 +472,27 @@ public class WorkFlowService {
 	/**
 	 * 获得流程定义
 	 * 
-	 * @param processInstanceId
+	 * @param processDefinitionId
 	 *            流程定义ID
 	 * @return
 	 */
 	public ProcessDefinition getProcessDefinition(String processDefinitionId) {
 		return repositoryService.createProcessDefinitionQuery()
 				.processDefinitionId(processDefinitionId).singleResult();
+	}
+	
+	/**
+	 * 获得某个流程定义下的节点列表
+	 * 
+	 * @param processDefinitionId
+	 *            流程定义ID
+	 * @return
+	 */
+	public List<ActivityImpl> getActivitys(String processDefinitionId) {
+		ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
+				.processDefinitionId(processDefinitionId).singleResult();
+		ProcessDefinitionEntity pde = (ProcessDefinitionEntity) processDefinition;
+		return pde.getActivities();
 	}
 
 	/**
