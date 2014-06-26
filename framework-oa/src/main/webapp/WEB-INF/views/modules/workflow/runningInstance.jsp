@@ -7,34 +7,8 @@
 </head>
 <body>
 	<tags:message content="${message}" />
-
 	<!-- search form -->
-	<nav class="navbar navbar-default">
-		<form class="navbar-form navbar-left" valid="false">
-			<div class="form-group">
-				流程名称：
-			</div>
-			<div class="form-group">
-				<select name="s_processDefinitionId" class="form-control">
-					<option value="" ${param.s_processDefinitionId eq "" ? "selected" : ""}>全部</option>
-					<c:forEach items="${processDefinitionList}" var="processDefinition">
-						<option value="${processDefinition.id}" ${param.s_processDefinitionId eq processDefinition.id ? "selected" : ""}>
-							${processDefinition.name}(版本:${processDefinition.version})
-						</option>
-					</c:forEach>
-				</select>
-			</div>
-			<div class="form-group">
-				单据号：
-			</div>
-			<div class="form-group">
-				<input name="s_businessKey" value="${param.s_businessKey}" class="form-control"/>
-			</div>
-			<button type="submit" class="btn btn-primary">
-				<span class="glyphicon glyphicon-search"></span> 查询
-			</button>
-		</form>
-	</nav>
+	<%@ include file="/WEB-INF/views/include/workflowQuery.jsp"%>
 	<!-- table -->
 	<div class="panel panel-default">
 		<div class="panel-heading">

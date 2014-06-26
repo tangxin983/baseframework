@@ -7,7 +7,8 @@
 </head>
 <body>
 	<tags:message content="${message}" />
-	
+	<!-- search form -->
+	<%@ include file="/WEB-INF/views/include/workflowQuery.jsp"%>
 	<!-- table -->
 	<div class="panel panel-default">
 		<div class="panel-heading">

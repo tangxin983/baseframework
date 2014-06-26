@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
+import com.tx.framework.common.util.JodaTimeUtil;
 import com.tx.framework.web.common.exception.ServiceException;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.persistence.entity.WorkFlowEntity;
@@ -148,11 +149,16 @@ public class WorkFlowService {
 	 *            每页数量
 	 * @return
 	 */
-	public Page<Object[]> getPaginationFinishedInstance(int pageNumber,
-			int pageSize) {
-		HistoricProcessInstanceQuery query = historyService
-				.createHistoricProcessInstanceQuery().finished()
-				.orderByProcessInstanceId().desc();
+	public Page<Object[]> getPaginationFinishedInstance(
+			Map<String, Object> param, int pageNumber, int pageSize) {
+		HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery().finished();
+		if (StringUtils.isNotBlank(ObjectUtils.toString(param.get("processDefinitionId")))) {
+			query = query.processDefinitionId(ObjectUtils.toString(param.get("processDefinitionId")));
+		}
+		if (StringUtils.isNotBlank(ObjectUtils.toString(param.get("businessKey")))) {
+			query = query.processInstanceBusinessKey(ObjectUtils.toString(param.get("businessKey")));
+		}
+		query = query.orderByProcessInstanceEndTime().desc();
 		// 设置page对象
 		Page<Object[]> page = new Page<Object[]>();
 		page.setCurrentPage(pageNumber);
@@ -178,11 +184,22 @@ public class WorkFlowService {
 	 * @param pageSize
 	 * @return
 	 */
-	public Page<WorkFlowEntity> getPaginationTodoTask(int pageNumber,
-			int pageSize) {
-		TaskQuery query = taskService.createTaskQuery()
-				.taskCandidateOrAssigned(SysUtil.getCurrentUserId()).active()
-				.orderByTaskId().desc();
+	public Page<WorkFlowEntity> getPaginationTodoTask(
+			Map<String, Object> param, int pageNumber, int pageSize) {
+		TaskQuery query = taskService.createTaskQuery().taskCandidateOrAssigned(SysUtil.getCurrentUserId()).active();
+		if (StringUtils.isNotBlank(ObjectUtils.toString(param.get("processDefinitionId")))) {
+			query = query.processDefinitionId(ObjectUtils.toString(param.get("processDefinitionId")));
+		}
+		if (StringUtils.isNotBlank(ObjectUtils.toString(param.get("businessKey")))) {
+			query = query.processInstanceBusinessKey(ObjectUtils.toString(param.get("businessKey")));
+		}
+		if (StringUtils.isNotBlank(ObjectUtils.toString(param.get("taskCreateTime1")))) {
+			query = query.taskCreatedAfter(JodaTimeUtil.convertFromString(ObjectUtils.toString(param.get("taskCreateTime1"))));
+		}
+		if (StringUtils.isNotBlank(ObjectUtils.toString(param.get("taskCreateTime2")))) {
+			query = query.taskCreatedBefore(JodaTimeUtil.convertFromString(ObjectUtils.toString(param.get("taskCreateTime2"))));
+		}
+		query = query.orderByTaskCreateTime().desc();
 		// 设置page对象
 		Page<WorkFlowEntity> page = new Page<WorkFlowEntity>();
 		page.setCurrentPage(pageNumber);
@@ -208,12 +225,17 @@ public class WorkFlowService {
 	 * @param pageSize
 	 * @return
 	 */
-	public Page<WorkFlowEntity> getPaginationDoneTask(int pageNumber,
-			int pageSize) {
-		HistoricTaskInstanceQuery query = historyService
-				.createHistoricTaskInstanceQuery().finished()
-				.taskAssignee(SysUtil.getCurrentUserId())
-				.orderByHistoricTaskInstanceEndTime().desc();
+	public Page<WorkFlowEntity> getPaginationDoneTask(
+			Map<String, Object> param, int pageNumber, int pageSize) {
+		HistoricTaskInstanceQuery query = historyService.createHistoricTaskInstanceQuery().finished()
+				.taskAssignee(SysUtil.getCurrentUserId());
+		if (StringUtils.isNotBlank(ObjectUtils.toString(param.get("processDefinitionId")))) {
+			query = query.processDefinitionId(ObjectUtils.toString(param.get("processDefinitionId")));
+		}
+		if (StringUtils.isNotBlank(ObjectUtils.toString(param.get("businessKey")))) {
+			query = query.processInstanceBusinessKey(ObjectUtils.toString(param.get("businessKey")));
+		}
+		query = query.orderByHistoricTaskInstanceEndTime().desc();
 		// 设置page对象
 		Page<WorkFlowEntity> page = new Page<WorkFlowEntity>();
 		page.setCurrentPage(pageNumber);

@@ -241,9 +241,11 @@ public class WorkFlowController {
 	public String finished(
 			@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
-			Model model) {
+			Model model, HttpServletRequest request) {
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
+		model.addAttribute("processDefinitionList", workFlowService.getProcessDefinition());
 		model.addAttribute("page", workFlowService
-				.getPaginationFinishedInstance(pageNumber, pageSize));
+				.getPaginationFinishedInstance(searchParams, pageNumber, pageSize));
 		return "modules/workflow/finishedInstance";
 	}
 
@@ -295,8 +297,10 @@ public class WorkFlowController {
 			@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model, HttpServletRequest request) {
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
+		model.addAttribute("processDefinitionList", workFlowService.getProcessDefinition());
 		model.addAttribute("page",
-				workFlowService.getPaginationTodoTask(pageNumber, pageSize));
+				workFlowService.getPaginationTodoTask(searchParams, pageNumber, pageSize));
 		return "modules/workflow/todoTask";
 	}
 
@@ -314,8 +318,10 @@ public class WorkFlowController {
 			@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model, HttpServletRequest request) {
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
+		model.addAttribute("processDefinitionList", workFlowService.getProcessDefinition());
 		model.addAttribute("page",
-				workFlowService.getPaginationDoneTask(pageNumber, pageSize));
+				workFlowService.getPaginationDoneTask(searchParams, pageNumber, pageSize));
 		return "modules/workflow/doneTask";
 	}
 
