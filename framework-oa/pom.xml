@@ -237,6 +237,7 @@
 										src="db/activiti/create/activiti.${jdbc.type}.create.identity.sql" />
 									<transaction src="db/sys/${jdbc.type}.sql" />
 									<transaction src="db/oa/${jdbc.type}.sql" />
+									<transaction src="db/data/${jdbc.type}.sql" />
 								</sql>
 							</target>
 						</configuration>
