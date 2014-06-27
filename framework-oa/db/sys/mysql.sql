@@ -70,7 +70,6 @@ CREATE TABLE `sys_menu` (
   `icon` varchar(100) default NULL COMMENT '图标',
   `sort` int(11) NOT NULL COMMENT '排序（升序）',
   `is_show` char(1) NOT NULL COMMENT '是否在菜单中显示',
-  `is_activiti` char(1) default NULL COMMENT '是否同步工作流',
   `permission` varchar(200) default NULL COMMENT '权限标识',
   `create_by` varchar(64) default NULL COMMENT '创建者',
   `create_time` datetime default NULL COMMENT '创建时间',
