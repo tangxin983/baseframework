@@ -8,7 +8,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$("#treeTable").treeTable({
-			expandLevel : 3
+			expandLevel : 2
 		});
 	});
 </script>
