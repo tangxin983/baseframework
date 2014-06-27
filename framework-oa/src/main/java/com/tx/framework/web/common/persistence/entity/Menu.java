@@ -36,9 +36,6 @@ public class Menu extends BaseEntity {
 	@Column(name = "is_show")
 	private String isShow;
 
-	@Column(name = "is_activiti")
-	private String isActiviti;
-
 	private String parentName;
 
 	private Menu parent;
@@ -124,15 +121,7 @@ public class Menu extends BaseEntity {
 	public void setIsShow(String isShow) {
 		this.isShow = isShow;
 	}
-
-	public String getIsActiviti() {
-		return isActiviti;
-	}
-
-	public void setIsActiviti(String isActiviti) {
-		this.isActiviti = isActiviti;
-	}
-
+ 
 	public String getParentName() {
 		return parentName;
 	}

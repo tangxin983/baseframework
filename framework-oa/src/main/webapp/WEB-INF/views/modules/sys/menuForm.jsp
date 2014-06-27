@@ -94,15 +94,6 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-md-2 control-label">同步到工作流:</label>
-					<div class="col-md-6">
-						<select id="isActiviti" name="isActiviti" class="selectpicker required form-control">
-							<option value="1">是</option>
-							<option value="0">否</option>				 
-						</select>
-					</div>
-				</div>
-				<div class="form-group">
 					<div class="col-md-offset-2 col-md-10">
 						<input type="submit" class="btn btn-primary" value="保存" /> 
 						<a href="${ctxModule}" class="btn btn-default">返 回</a>
