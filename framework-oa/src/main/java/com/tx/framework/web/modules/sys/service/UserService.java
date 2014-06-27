@@ -11,7 +11,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
 import com.tx.framework.common.util.CollectionUtils;
 import com.tx.framework.web.common.exception.ServiceException;
 import com.tx.framework.web.common.persistence.entity.Page;
@@ -47,12 +49,20 @@ public class UserService extends BaseService<User, String> {
 	}
 	
 	/**
-	 * 列表页分页查询(覆盖BaseService)
+	 * 列表页分页模糊查询(覆盖BaseService)
 	 */
 	@Override
 	public Page<User> selectByPage(Map<String, Object> searchParams, Map<String, String> orders, int pageNumber, int pageSize) {
 		Page<User> p = buildPage(pageNumber, pageSize);
-		p.setResult(userDao.findUserByPageAndLikeCondition(p, searchParams));
+		Table<String, String, Object> searchTable = HashBasedTable.create();
+		for(String key : searchParams.keySet()) {
+			searchTable.put(key, "like", searchParams.get(key));
+		}
+		List<User> users = userDao.selectByComplicated(genericType, p, searchTable, orders);
+		for(User user : users) {
+			user.setRoles(roleDao.findRolesByUserId(user.getId()));
+		}
+		p.setResult(userDao.selectByComplicated(genericType, p, searchTable, orders));
 		return p;
 	}
 
@@ -63,7 +73,15 @@ public class UserService extends BaseService<User, String> {
 	 * @return
 	 */
 	public User findUserByLoginName(String loginName) {
-		return userDao.findUserByLoginName(loginName);
+		Map<String, Object> param = Maps.newHashMap();
+		param.put("loginName", loginName);
+		List<User> users = select(param);
+		User user = null;
+		if(users != null && users.size() > 0) {
+			user = users.get(0);
+			user.setRoles(roleDao.findRolesByUserId(user.getId()));
+		}
+		return user;
 	}
 	
 	/**
@@ -73,8 +91,9 @@ public class UserService extends BaseService<User, String> {
 	 * @return
 	 */
 	public User findUserById(String id) {
-		User user = userDao.findUserById(id);
+		User user = selectById(id);
 		if(user != null) {
+			user.setRoles(roleDao.findRolesByUserId(user.getId()));
 			List<String> roleIds = CollectionUtils.extractToList(user.getRoles(), "id", true);
 			user.setRoleIds(roleIds);
 		}
