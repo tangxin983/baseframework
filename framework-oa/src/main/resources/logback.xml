@@ -24,6 +24,9 @@
 	
 	<!-- 项目默认输出debug日志 -->
 	<logger name="com.tx.framework.web" level="DEBUG" />
+	
+	<!-- activiti日志 -->
+	<logger name="org.activiti" level="DEBUG" />
 	<!-- 
  	<logger name="com.tx.framework.web" level="DEBUG" additivity="false">
  		<appender-ref ref="rollingFile" />
