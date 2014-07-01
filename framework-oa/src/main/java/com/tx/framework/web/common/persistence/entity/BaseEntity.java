@@ -2,6 +2,8 @@ package com.tx.framework.web.common.persistence.entity;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  * 通用Mybatis实体，其他实体需继承此类
  * 
@@ -23,4 +25,8 @@ public class BaseEntity implements Serializable {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
+	public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }
