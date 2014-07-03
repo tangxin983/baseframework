@@ -2,23 +2,28 @@
 <!-- 级别从低到高：TRACE、DEBUG、INFO、WARN、ERROR。打印等于或高于本级别的日志 -->
 <!-- additivity="false" 禁止内容向上级传递  -->
 <configuration>
-	<property name="logBase" value="~/framework-oa" />
+	<!-- "oalog"生成在工程目录下,"/oalog"生成在工程所在盘符根目录下 -->
+	<property name="logBase" value="/oalog" />
 
 	<!-- 控制台输出 -->
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{0}.%M - %msg%n</pattern>
+			<!-- 格式化输出 -->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{50}.%M - %msg%n</pattern>
 		</encoder>
 	</appender>
 
-	<!-- 日志文件  -->
+	<!-- 每天生成日志文件  -->
 	<appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logBase}/logs/log.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${logBase}/logs/log.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- 日志文件输出的文件名 -->  
+			<fileNamePattern>${logBase}/oa.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!-- 日志文件保留天数 -->  
+            <MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{0}.%M - %msg%n</pattern>
+			<!-- 格式化输出 -->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{50}.%M - %msg%n</pattern>
 		</encoder>
 	</appender>
 	
