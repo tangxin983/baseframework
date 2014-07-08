@@ -12,9 +12,6 @@
 		//<c:if test="${not empty entity.isShow}">
 		$('#isShow').selectpicker('val', "${entity.isShow}");
 		//</c:if>
-		//<c:if test="${not empty entity.isActiviti}">
-		$('#isActiviti').selectpicker('val', "${entity.isActiviti}");
-		//</c:if>
 		$("[name='href']").rules("add", {
 			remote : {
 				url : "${ctxModule}/checkHref",
