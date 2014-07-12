@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath*:oa/springTypicalUsageTest-context.xml")
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration("classpath*:oa/springTypicalUsageTest-context.xml")
 public class DeployProcessByAnnoTest {
 	@Autowired
 	private RuntimeService runtimeService;
@@ -26,7 +26,7 @@ public class DeployProcessByAnnoTest {
 	@Rule
 	public ActivitiRule activitiSpringRule;
 
-	@Test
+//	@Test
 	@Deployment(resources = {"oa/simple.bpmn20.xml"})
 	public void simpleProcessTest() {
 		runtimeService.startProcessInstanceByKey("simpleProcess");
