@@ -14,6 +14,8 @@
 	</script>
 </head>
 <body>
+	<tags:message content="${message}" />
+
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<div class="text-muted bootstrap-admin-box-title">区域编辑</div>

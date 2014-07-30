@@ -1,8 +1,11 @@
 package com.tx.framework.web.common.persistence.entity;
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Table;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * 区域实体
@@ -42,6 +45,7 @@ public class Area extends BaseEntity {
 	private Date updateTime;
 
 	@Column(name = "remarks")
+	@NotEmpty(message="注释不能为空")
 	private String remarks;
 
 	@Column(name = "del_flag")

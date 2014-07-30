@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import com.tx.framework.web.modules.sys.service.AreaService;
 
 /**
  * 区域Controller
+ * 
  * @author tangx
  * @version 2014-05-12
  */
@@ -39,7 +41,7 @@ public class AreaController extends BaseController<Area, String> {
 		super.setService(areaService);
 		this.areaService = areaService;
 	}
-	
+
 	/**
 	 * 跳转列表页<br>
 	 * url:sys/area
@@ -52,7 +54,7 @@ public class AreaController extends BaseController<Area, String> {
 		model.addAttribute("entitys", list);
 		return getListPage();
 	}
-	
+
 	/**
 	 * 对原始list进行整理以适合treetable要求
 	 * 
@@ -75,7 +77,7 @@ public class AreaController extends BaseController<Area, String> {
 			}
 		}
 	}
-	
+
 	/**
 	 * 跳转新增页面<br>
 	 * url:sys/area/create
@@ -104,13 +106,17 @@ public class AreaController extends BaseController<Area, String> {
 	 * url:sys/area/create
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public String create(@Valid Area entity,
+	public String create(@Valid Area entity, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			addMessage(model, getFieldErrorMessage(result));
+			return createForm(entity, model);
+		}
 		areaService.saveArea(entity);
 		addMessage(redirectAttributes, "保存区域'" + entity.getName() + "'成功");
 		return "redirect:/" + getControllerContext();
 	}
-	
+
 	/**
 	 * 跳转更新页面<br>
 	 * URL:sys/area/update/{id}
@@ -128,24 +134,31 @@ public class AreaController extends BaseController<Area, String> {
 		model.addAttribute("action", "update");
 		return getUpdateFormPage();
 	}
-	
+
 	/**
 	 * 更新操作<br>
 	 * URL:sys/area/update
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute("entity")Area entity, RedirectAttributes redirectAttributes) {
+	public String update(@Valid @ModelAttribute("entity") Area entity,
+			BindingResult result, Model model,
+			RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			addMessage(model, getFieldErrorMessage(result));
+			return updateForm(entity.getId(), model);
+		}
 		areaService.updateArea(entity);
 		addMessage(redirectAttributes, "更新区域'" + entity.getName() + "'成功");
 		return "redirect:/" + getControllerContext();
 	}
-	
+
 	/**
 	 * 删除操作<br>
 	 * URL:sys/area/delete/{id}
 	 */
 	@RequestMapping("delete/{id}")
-	public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+	public String delete(@PathVariable("id") String id,
+			RedirectAttributes redirectAttributes) {
 		areaService.deleteArea(id);
 		addMessage(redirectAttributes, "删除成功");
 		return "redirect:/" + getControllerContext();
@@ -153,6 +166,7 @@ public class AreaController extends BaseController<Area, String> {
 
 	/**
 	 * 获取树形菜单数据
+	 * 
 	 * @param extId
 	 * @return
 	 */
@@ -164,7 +178,9 @@ public class AreaController extends BaseController<Area, String> {
 		List<Area> list = areaService.findAreaOrderByCode();
 		for (Area e : list) {
 			// 排除extId及其子菜单
-			if (extId == null || (extId != null && !extId.equals(e.getId()) && e.getParentIds().indexOf("," + extId + ",") == -1)) {
+			if (extId == null
+					|| (extId != null && !extId.equals(e.getId()) && e
+							.getParentIds().indexOf("," + extId + ",") == -1)) {
 				Map<String, Object> map = Maps.newHashMap();
 				map.put("id", e.getId());
 				map.put("pId", e.getParentId());

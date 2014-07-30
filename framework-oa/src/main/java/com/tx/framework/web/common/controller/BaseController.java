@@ -10,6 +10,8 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
 import com.tx.framework.common.util.Servlets;
 import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.persistence.entity.Page;
@@ -100,18 +103,6 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	 */
 	protected String getUpdateFormPage(){
 		return "modules/" + getControllerContext() + "Form";
-	}
-	
-	/**
-	 * 添加Flash消息
-     * @param messages 消息
-	 */
-	protected void addMessage(RedirectAttributes redirectAttributes, String... messages) {
-		StringBuilder sb = new StringBuilder();
-		for (String message : messages){
-			sb.append(message).append(messages.length>1?"<br/>":"");
-		}
-		redirectAttributes.addFlashAttribute("message", sb.toString());
 	}
 	
 	/**
@@ -224,6 +215,43 @@ public abstract class BaseController<T, PK>  implements ServletContextAware{
 	@ResponseBody
 	public T get(@PathVariable("id") PK id) {
 		return service.selectById(id);
+	}
+	
+	/**
+	 * 添加Flash消息
+     * @param messages 消息
+	 */
+	protected void addMessage(RedirectAttributes redirectAttributes, String... messages) {
+		StringBuilder sb = new StringBuilder();
+		for (String message : messages){
+			sb.append(message).append(messages.length>1?"<br/>":"");
+		}
+		redirectAttributes.addFlashAttribute("message", sb.toString());
+	}
+	
+	/**
+	 * 添加Model消息
+	 * @param messages 消息
+	 */
+	protected void addMessage(Model model, String... messages) {
+		StringBuilder sb = new StringBuilder();
+		for (String message : messages){
+			sb.append(message).append(messages.length>1?"<br/>":"");
+		}
+		model.addAttribute("message", sb.toString());
+	}
+	
+	/**
+	 * 获取服务端参数验证错误信息
+	 * @param result
+	 */
+	protected String[] getFieldErrorMessage(BindingResult result){
+		List<String> message = Lists.newArrayList();
+		for(FieldError error : result.getFieldErrors()){
+			message.add(error.getDefaultMessage());
+		}
+		message.add(0, "数据校验失败：");
+		return message.toArray(new String[]{});
 	}
 	
 	/**
