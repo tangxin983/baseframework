@@ -9,6 +9,7 @@ import org.springframework.core.GenericTypeResolver;
 
 import com.google.common.collect.Table;
 import com.tx.framework.web.common.persistence.dao.BaseDao;
+import com.tx.framework.web.common.persistence.entity.BaseEntity;
 import com.tx.framework.web.common.persistence.entity.Page;
 
 
@@ -20,7 +21,7 @@ import com.tx.framework.web.common.persistence.entity.Page;
  * @param <T>
  * @param <PK>
  */
-public abstract class BaseService<T, PK> {
+public abstract class BaseService<T extends BaseEntity, PK> {
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	

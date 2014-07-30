@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -75,9 +76,9 @@ public class DictController extends BaseController<Dict, String> {
 	 * url:sys/dict/create
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public String create(@Valid Dict entity,
-			RedirectAttributes redirectAttributes) {
-		return super.create(entity, redirectAttributes);
+	public String create(@Valid Dict entity, BindingResult result, 
+			Model model, RedirectAttributes redirectAttributes) {
+		return super.create(entity, result, model, redirectAttributes);
 	}
 	
 	/**
@@ -94,8 +95,9 @@ public class DictController extends BaseController<Dict, String> {
 	 * URL:sys/dict/update
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute("entity")Dict entity, RedirectAttributes redirectAttributes) {
-		return super.update(entity, redirectAttributes);
+	public String update(@Valid @ModelAttribute("entity")Dict entity, BindingResult result, 
+			Model model, RedirectAttributes redirectAttributes) {
+		return super.update(entity, result, model, redirectAttributes);
 	}
 	
 	/**

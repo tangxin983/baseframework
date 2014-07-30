@@ -23,7 +23,7 @@ import com.tx.framework.web.common.persistence.entity.Page;
  * 
  * @param <T>
  */
-public interface BaseDao<T, PK> {
+public interface BaseDao<T extends BaseEntity, PK> {
 
 	public static final String CLASS_KEY = "clazz";
 

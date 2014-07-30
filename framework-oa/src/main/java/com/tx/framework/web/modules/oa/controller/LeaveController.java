@@ -10,6 +10,7 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -131,8 +132,9 @@ public class LeaveController extends OaController<Leave, String> {
 	 * URL:oa/leave/update
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute("entity")Leave entity, RedirectAttributes redirectAttributes) {
-		return super.update(entity, redirectAttributes);
+	public String update(@Valid @ModelAttribute("entity")Leave entity, BindingResult result, 
+			Model model, RedirectAttributes redirectAttributes) {
+		return super.update(entity, result, model, redirectAttributes);
 	}
 	
 	/**

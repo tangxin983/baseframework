@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -104,8 +105,12 @@ public class MenuController extends BaseController<Menu, String> {
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	@Override
-	public String create(@Valid Menu entity,
+	public String create(@Valid Menu entity, BindingResult result, Model model, 
 			RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			addMessage(model, getFieldErrorMessage(result));
+			return createForm(entity, model);
+		}
 		menuService.saveMenu(entity);
 		addMessage(redirectAttributes, "保存菜单'" + entity.getName() + "'成功");
 		return "redirect:/" + getControllerContext();
@@ -134,8 +139,12 @@ public class MenuController extends BaseController<Menu, String> {
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	@Override
-	public String update(@Valid @ModelAttribute("entity") Menu entity,
-			RedirectAttributes redirectAttributes) {
+	public String update(@Valid @ModelAttribute("entity") Menu entity, BindingResult result, 
+			Model model, RedirectAttributes redirectAttributes) {
+		if (result.hasErrors()) {
+			addMessage(model, getFieldErrorMessage(result));
+			return updateForm(entity.getId(), model);
+		}
 		menuService.updateMenu(entity);
 		addMessage(redirectAttributes, "更新菜单'" + entity.getName() + "'成功");
 		return "redirect:/" + getControllerContext();
