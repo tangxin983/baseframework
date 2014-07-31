@@ -5,8 +5,10 @@
 
 <configuration>
 	<settings>
-		<!-- 使用驼峰命名法转换字段。 default:false -->
-		<!-- 数据库字段a_column对应domain字段aColumn,免去写resultMap的麻烦 -->
+		<!-- 启用延迟加载 -->
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="aggressiveLazyLoading" value="false" />
+		<!-- 使用驼峰命名法,数据库字段a_column对应domain字段aColumn,免去写resultMap的麻烦 -->
 		<setting name="mapUnderscoreToCamelCase" value="true" />
 	</settings>
 </configuration>
