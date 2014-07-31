@@ -72,9 +72,9 @@ public class ${ClassName}Controller extends BaseController<${ClassName}, String>
 	 * url:${urlPrefix}/create
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public String create(@Valid ${ClassName} entity,
+	public String create(@Valid ${ClassName} entity, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
-		return super.create(entity, redirectAttributes);
+		return super.create(entity, result, model, redirectAttributes);
 	}
 	
 	/**
@@ -91,8 +91,9 @@ public class ${ClassName}Controller extends BaseController<${ClassName}, String>
 	 * URL:${urlPrefix}/update
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute("entity")${ClassName} entity, RedirectAttributes redirectAttributes) {
-		return super.update(entity, redirectAttributes);
+	public String update(@Valid @ModelAttribute("entity")${ClassName} entity, BindingResult result, 
+		Model model, RedirectAttributes redirectAttributes) {
+		return super.update(entity, result, model, redirectAttributes);
 	}
 	
 	/**
