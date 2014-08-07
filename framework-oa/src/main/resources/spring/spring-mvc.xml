@@ -45,19 +45,19 @@
 	<!-- 针对controller启用aop注解 -->
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 
-	<!-- jsp视图解析器(优先级高) -->
+	<!-- jsp视图解析器(优先级低) -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/views/" />
 		<property name="suffix" value=".jsp" />
-		<property name="order" value="0" />
+		<property name="order" value="1" />
 	</bean>
 	
-	<!-- freemarker视图解析器(优先级低) -->
+	<!-- freemarker视图解析器(优先级高) -->
 	<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
 		<property name="cache" value="false" />
 		<property name="suffix" value=".ftl" />
 		<property name="contentType" value="text/html;charset=utf-8" />
-		<property name="order" value="1" />
+		<property name="order" value="0" />
 	</bean>
 	
 	<!-- freemarker配置 -->
