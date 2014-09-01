@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Select;
 
 import com.tx.framework.web.common.persistence.annotation.MyBatisDao;
 import com.tx.framework.web.common.persistence.dao.BaseDao;
-import com.tx.framework.web.common.persistence.entity.Menu;
+import com.tx.framework.web.modules.sys.entity.Menu;
 
 @MyBatisDao
 public interface MenuDao extends BaseDao<Menu, String> {

@@ -2,7 +2,7 @@ package com.tx.framework.web.modules.oa.dao;
 
 import com.tx.framework.web.common.persistence.annotation.MyBatisDao;
 import com.tx.framework.web.common.persistence.dao.BaseDao;
-import com.tx.framework.web.common.persistence.entity.Leave;
+import com.tx.framework.web.modules.oa.entity.Leave;
 
 /**
  * 请假Dao

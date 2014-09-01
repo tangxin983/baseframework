@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tx.framework.web.common.persistence.entity.Role;
-import com.tx.framework.web.common.persistence.entity.User;
-import com.tx.framework.web.common.persistence.entity.UserRole;
 import com.tx.framework.web.modules.sys.dao.RoleDao;
 import com.tx.framework.web.modules.sys.dao.UserDao;
 import com.tx.framework.web.modules.sys.dao.UserRoleDao;
+import com.tx.framework.web.modules.sys.entity.Role;
+import com.tx.framework.web.modules.sys.entity.User;
+import com.tx.framework.web.modules.sys.entity.UserRole;
 import com.tx.framework.web.modules.workflow.dao.ActIdentifyDao;
 
 /**

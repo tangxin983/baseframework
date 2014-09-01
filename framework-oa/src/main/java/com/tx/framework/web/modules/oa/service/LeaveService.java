@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.tx.framework.web.common.persistence.entity.Leave;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.common.utils.SysUtil;
 import com.tx.framework.web.modules.oa.dao.LeaveDao;
+import com.tx.framework.web.modules.oa.entity.Leave;
 import com.tx.framework.web.modules.workflow.service.WorkFlowService;
 
 /**

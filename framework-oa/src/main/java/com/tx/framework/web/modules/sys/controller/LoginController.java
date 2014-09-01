@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tx.framework.common.util.CaptchaUtils;
-import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.common.utils.SysUtil;
+import com.tx.framework.web.modules.sys.entity.Menu;
 import com.tx.framework.web.modules.sys.security.CaptchaAuthenticationFilter;
 
 /**

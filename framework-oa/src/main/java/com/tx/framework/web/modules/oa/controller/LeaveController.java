@@ -22,8 +22,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.tx.framework.common.util.Servlets;
 import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.controller.OaController;
-import com.tx.framework.web.common.persistence.entity.Leave;
 import com.tx.framework.web.common.persistence.entity.Page;
+import com.tx.framework.web.modules.oa.entity.Leave;
 import com.tx.framework.web.modules.oa.service.LeaveService;
 
 /**

@@ -3,6 +3,10 @@ package com.tx.framework.web.common.persistence.entity;
 import java.io.Serializable;
 import java.util.List;
 
+import com.tx.framework.web.modules.sys.entity.Menu;
+import com.tx.framework.web.modules.sys.entity.Role;
+import com.tx.framework.web.modules.sys.entity.User;
+
 @SuppressWarnings("serial")
 public class ShiroEntity implements Serializable {
 

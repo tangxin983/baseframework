@@ -1,8 +1,11 @@
-package com.tx.framework.web.common.persistence.entity;
+package com.tx.framework.web.modules.sys.entity;
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Table;
+
+import com.tx.framework.web.common.persistence.entity.BaseEntity;
 
 /**
  * 字典实体

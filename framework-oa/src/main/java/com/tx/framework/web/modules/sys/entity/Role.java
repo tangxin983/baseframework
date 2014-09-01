@@ -1,10 +1,12 @@
-package com.tx.framework.web.common.persistence.entity;
+package com.tx.framework.web.modules.sys.entity;
 
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.tx.framework.web.common.persistence.entity.BaseEntity;
 
 @SuppressWarnings("serial")
 @Table(name = "sys_role")

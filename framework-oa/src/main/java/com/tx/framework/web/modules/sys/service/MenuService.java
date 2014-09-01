@@ -14,11 +14,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.tx.framework.common.util.CollectionUtils;
-import com.tx.framework.web.common.persistence.entity.Menu;
-import com.tx.framework.web.common.persistence.entity.RoleMenu;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.modules.sys.dao.MenuDao;
 import com.tx.framework.web.modules.sys.dao.RoleMenuDao;
+import com.tx.framework.web.modules.sys.entity.Menu;
+import com.tx.framework.web.modules.sys.entity.RoleMenu;
 import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
 
 @Service

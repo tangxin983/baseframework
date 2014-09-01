@@ -17,14 +17,14 @@ import com.google.common.collect.Table;
 import com.tx.framework.common.util.CollectionUtils;
 import com.tx.framework.web.common.exception.ServiceException;
 import com.tx.framework.web.common.persistence.entity.Page;
-import com.tx.framework.web.common.persistence.entity.User;
-import com.tx.framework.web.common.persistence.entity.UserRole;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.common.utils.DigestUtil;
 import com.tx.framework.web.common.utils.SysUtil;
 import com.tx.framework.web.modules.sys.dao.RoleDao;
 import com.tx.framework.web.modules.sys.dao.UserDao;
 import com.tx.framework.web.modules.sys.dao.UserRoleDao;
+import com.tx.framework.web.modules.sys.entity.User;
+import com.tx.framework.web.modules.sys.entity.UserRole;
 import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
 
 @Service

@@ -1,4 +1,4 @@
-package com.tx.framework.web.common.persistence.entity;
+package com.tx.framework.web.modules.oa.entity;
 
 import java.util.Date;
 
@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.tx.framework.web.common.persistence.entity.WorkFlowEntity;
 
 /**
  * 请假实体

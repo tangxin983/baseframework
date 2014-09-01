@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.apache.shiro.SecurityUtils;
 
-import com.tx.framework.web.common.persistence.entity.Menu;
 import com.tx.framework.web.common.persistence.entity.ShiroEntity;
-import com.tx.framework.web.common.persistence.entity.User;
+import com.tx.framework.web.modules.sys.entity.Menu;
+import com.tx.framework.web.modules.sys.entity.User;
 
 public class SysUtil {
 	

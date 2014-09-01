@@ -8,8 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Maps;
 import com.tx.framework.common.util.CollectionUtils;
-import com.tx.framework.web.common.persistence.entity.Dict;
-import com.tx.framework.web.common.persistence.entity.User;
+import com.tx.framework.web.modules.sys.entity.Dict;
+import com.tx.framework.web.modules.sys.entity.User;
 import com.tx.framework.web.modules.sys.service.DictService;
 import com.tx.framework.web.modules.sys.service.UserService;
 

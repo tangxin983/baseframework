@@ -12,9 +12,9 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.tx.framework.common.util.CollectionUtils;
-import com.tx.framework.web.common.persistence.entity.Org;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.modules.sys.dao.OrgDao;
+import com.tx.framework.web.modules.sys.entity.Org;
 
 /**
  * 机构Service

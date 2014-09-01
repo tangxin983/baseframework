@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
-import com.tx.framework.web.common.persistence.entity.Dict;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.modules.sys.dao.DictDao;
+import com.tx.framework.web.modules.sys.entity.Dict;
 
 /**
  * 字典Service
