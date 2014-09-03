@@ -6,10 +6,9 @@
 		<artifactId>framework-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>framework-web</artifactId>
-	<name>framework-web</name>
+	<artifactId>dining</artifactId>
+	<name>dining</name>
 	<packaging>war</packaging>
-	<description>web module</description>
 
 	<!-- 依赖项定义 -->
 	<dependencies>
@@ -170,7 +169,7 @@
 	</profiles>
 
 	<build>
-		<finalName>dining</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -183,11 +182,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-			    	<archive>
-			        	<addMavenDescriptor>false</addMavenDescriptor>
-			        </archive>
-			    </configuration>
 			</plugin>
 			<!-- 按照不同环境替换prop文件属性 -->
 			<plugin>
