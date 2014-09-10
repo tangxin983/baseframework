@@ -1,9 +1,9 @@
-package ${entityPackageName};
+package ${packageName}.${moduleName}.entity${subModuleName};
 
 import java.util.Date;
-import java.sql.*;
 import javax.persistence.Column;
 import javax.persistence.Table;
+import com.tx.framework.web.common.persistence.entity.BaseEntity;
 
 /**
  * ${functionName}实体

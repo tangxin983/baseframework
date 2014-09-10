@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tx.framework.web.common.service.BaseService;
-import ${entityPackageName}.${ClassName};
+import ${packageName}.${moduleName}.entity${subModuleName}.${ClassName};
 import ${packageName}.${moduleName}.dao${subModuleName}.${ClassName}Dao;
 
 /**

@@ -2,7 +2,7 @@ package ${packageName}.${moduleName}.dao${subModuleName};
 
 import com.tx.framework.web.common.persistence.annotation.MyBatisDao;
 import com.tx.framework.web.common.persistence.dao.BaseDao;
-import ${entityPackageName}.${ClassName};
+import ${packageName}.${moduleName}.entity${subModuleName}.${ClassName};
 
 /**
  * ${functionName}Dao

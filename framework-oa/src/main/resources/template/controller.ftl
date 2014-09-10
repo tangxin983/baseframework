@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,13 +16,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.tx.framework.web.common.controller.BaseController;
 import com.tx.framework.web.common.config.Constant;
-import ${entityPackageName}.${ClassName};
+import ${packageName}.${moduleName}.entity${subModuleName}.${ClassName};
 import ${packageName}.${moduleName}.service${subModuleName}.${ClassName}Service;
 
 /**
  * ${functionName}Controller
  * @author ${classAuthor}
- * @version ${classVersion}
+ * @since ${classVersion}
  */
 @Controller
 @RequestMapping(value = "${urlPrefix}")
@@ -38,7 +39,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}> {
 	// ========== 以下为简单crud示例。注意：一旦修改url，对应生成的视图url也需手动修改 ===========
 	<#if isPagination>
 	/**
-	 * 跳转列表页（分页）<br>
+	 * 跳转列表页（分页）<p>
 	 * url:${urlPrefix}
 	 */
 	@RequestMapping
@@ -49,7 +50,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}> {
 	}
 	<#else>
 	/**
-	 * 跳转列表页（不分页）<br>
+	 * 跳转列表页（不分页）<p>
 	 * url:${urlPrefix}
 	 */
 	@RequestMapping
@@ -59,7 +60,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}> {
 	</#if>
 	
 	/**
-	 * 跳转新增页面<br>
+	 * 跳转新增页面<p>
 	 * url:${urlPrefix}/create
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.GET)
@@ -68,7 +69,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}> {
 	}
 
 	/**
-	 * 新增操作<br>
+	 * 新增操作<p>
 	 * url:${urlPrefix}/create
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.POST)
@@ -78,7 +79,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}> {
 	}
 	
 	/**
-	 * 跳转更新页面<br>
+	 * 跳转更新页面<p>
 	 * URL:${urlPrefix}/update/{id}
 	 */
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
@@ -87,7 +88,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}> {
 	}
 	
 	/**
-	 * 更新操作<br>
+	 * 更新操作<p>
 	 * URL:${urlPrefix}/update
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
@@ -97,7 +98,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}> {
 	}
 	
 	/**
-	 * 删除操作<br>
+	 * 删除操作<p>
 	 * URL:${urlPrefix}/delete/{id}
 	 */
 	@RequestMapping("delete/{id}")
@@ -106,7 +107,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}> {
 	}
 	
 	/**
-	 * 批量删除操作<br>
+	 * 批量删除操作<p>
 	 * URL:${urlPrefix}/delete
 	 */
 	@RequestMapping("delete")
@@ -115,7 +116,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}> {
 	}
 	
 	/**
-	 * 根据id查找实体（json）<br>
+	 * 根据id查找实体（json）<p>
 	 * URL:${urlPrefix}/get/{id}
 	 */
 	@RequestMapping("get/{id}")
