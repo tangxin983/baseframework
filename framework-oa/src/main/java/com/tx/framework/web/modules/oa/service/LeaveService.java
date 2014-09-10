@@ -27,7 +27,7 @@ import com.tx.framework.web.modules.workflow.service.WorkFlowService;
  */
 @Service
 @Transactional
-public class LeaveService extends BaseService<Leave, String> {
+public class LeaveService extends BaseService<Leave> {
 
 	private static final String PROCESS_DEF_KEY = "leave";
 

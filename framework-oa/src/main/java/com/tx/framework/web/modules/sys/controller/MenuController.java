@@ -26,7 +26,7 @@ import com.tx.framework.web.modules.sys.service.MenuService;
 
 @Controller
 @RequestMapping(value = "sys/menu")
-public class MenuController extends BaseController<Menu, String> {
+public class MenuController extends BaseController<Menu> {
 
 	private MenuService menuService;
 
@@ -120,7 +120,6 @@ public class MenuController extends BaseController<Menu, String> {
 	 * 更新菜单页面
 	 */
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
-	@Override
 	public String updateForm(@PathVariable("id") String id, Model model) {
 		Menu menu = menuService.selectById(id);
 		if (menu != null) {
@@ -154,7 +153,6 @@ public class MenuController extends BaseController<Menu, String> {
 	 * 删除菜单
 	 */
 	@RequestMapping("delete/{id}")
-	@Override
 	public String delete(@PathVariable("id") String id,
 			RedirectAttributes redirectAttributes) {
 		menuService.deleteMenu(id);

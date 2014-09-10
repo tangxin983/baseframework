@@ -6,6 +6,6 @@ import com.tx.framework.web.modules.sys.entity.User;
 
 
 @MyBatisDao
-public interface UserDao extends BaseDao<User, String> {
+public interface UserDao extends BaseDao<User> {
 
 }

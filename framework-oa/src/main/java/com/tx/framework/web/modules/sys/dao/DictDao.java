@@ -14,7 +14,7 @@ import com.tx.framework.web.modules.sys.entity.Dict;
  * @since 2014-06-25
  */
 @MyBatisDao
-public interface DictDao extends BaseDao<Dict, String> {
+public interface DictDao extends BaseDao<Dict> {
 	
 	@Select("select type from sys_dict group by type")
 	public List<String> findTypeList();

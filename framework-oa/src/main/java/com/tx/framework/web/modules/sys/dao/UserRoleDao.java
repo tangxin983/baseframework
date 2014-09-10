@@ -6,6 +6,6 @@ import com.tx.framework.web.modules.sys.entity.UserRole;
 
 
 @MyBatisDao
-public interface UserRoleDao extends BaseDao<UserRole, String> {
+public interface UserRoleDao extends BaseDao<UserRole> {
 
 }

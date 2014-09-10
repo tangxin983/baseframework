@@ -9,7 +9,7 @@ import com.tx.framework.web.common.persistence.dao.BaseDao;
 import com.tx.framework.web.modules.sys.entity.Menu;
 
 @MyBatisDao
-public interface MenuDao extends BaseDao<Menu, String> {
+public interface MenuDao extends BaseDao<Menu> {
 
 	@Select("select distinct sys_menu.* from sys_user "
 			+ "left join sys_user_role on sys_user.id = sys_user_role.user_id "

@@ -1,5 +1,6 @@
 package com.tx.framework.web.common.persistence.dao;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ import com.tx.framework.web.common.persistence.entity.Page;
  * 
  * @param <T>
  */
-public interface BaseDao<T extends BaseEntity, PK> {
+public interface BaseDao<T extends BaseEntity> {
 
 	public static final String CLASS_KEY = "clazz";
 
@@ -57,7 +58,8 @@ public interface BaseDao<T extends BaseEntity, PK> {
 	 * @return
 	 */
 	@SelectProvider(type = CrudProvider.class, method = "selectById")
-	public T selectById(@Param(CLASS_KEY) Class<T> clazz, @Param(ID_KEY) PK id);
+	public T selectById(@Param(CLASS_KEY) Class<T> clazz,
+			@Param(ID_KEY) Serializable id);
 
 	/**
 	 * 查询记录并排序
@@ -186,7 +188,7 @@ public interface BaseDao<T extends BaseEntity, PK> {
 	 */
 	@DeleteProvider(type = CrudProvider.class, method = "deleteById")
 	public void deleteById(@Param(CLASS_KEY) Class<T> clazz,
-			@Param(ID_KEY) PK id);
+			@Param(ID_KEY) Serializable id);
 
 	/**
 	 * 根据条件删除记录

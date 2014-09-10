@@ -32,7 +32,7 @@ import com.tx.framework.web.modules.sys.service.AreaService;
  */
 @Controller
 @RequestMapping(value = "sys/area")
-public class AreaController extends BaseController<Area, String> {
+public class AreaController extends BaseController<Area> {
 
 	private AreaService areaService;
 

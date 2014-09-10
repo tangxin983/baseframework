@@ -1,5 +1,6 @@
 package com.tx.framework.web.common.service;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -21,15 +22,15 @@ import com.tx.framework.web.common.persistence.entity.Page;
  * @param <T>
  * @param <PK>
  */
-public abstract class BaseService<T extends BaseEntity, PK> {
+public abstract class BaseService<T extends BaseEntity> {
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
-	protected BaseDao<T, PK> dao; 
+	protected BaseDao<T> dao; 
 	
 	protected final Class<T> genericType;
 	
-	public void setDao(BaseDao<T, PK> dao) {  
+	public void setDao(BaseDao<T> dao) {  
         this.dao = dao;  
     }  
 	
@@ -53,7 +54,7 @@ public abstract class BaseService<T extends BaseEntity, PK> {
 	 * @param id 主键
 	 * @return
 	 */
-	public T selectById(PK id) {
+	public T selectById(Serializable id) {
 		return dao.selectById(genericType, id);
 	}
 	
@@ -182,7 +183,7 @@ public abstract class BaseService<T extends BaseEntity, PK> {
 	 * 根据主键删除记录
 	 * @param id
 	 */
-	public void deleteById(PK id) {
+	public void deleteById(Serializable id) {
 		dao.deleteById(genericType, id);
 	}
 	
@@ -190,8 +191,8 @@ public abstract class BaseService<T extends BaseEntity, PK> {
 	 * 根据主键批量删除记录
 	 * @param ids
 	 */
-	public void deleteByIds(List<PK> ids) {
-		for(PK id : ids){
+	public void deleteByIds(List<? extends Serializable> ids) {
+		for(Serializable id : ids){
 			dao.deleteById(genericType, id);
 		}
 	}

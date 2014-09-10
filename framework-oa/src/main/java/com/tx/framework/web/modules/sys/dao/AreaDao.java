@@ -10,6 +10,6 @@ import com.tx.framework.web.modules.sys.entity.Area;
  * @since 2014-05-12
  */
 @MyBatisDao
-public interface AreaDao extends BaseDao<Area, String> {
+public interface AreaDao extends BaseDao<Area> {
 	
 }

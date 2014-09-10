@@ -10,6 +10,6 @@ import com.tx.framework.web.modules.oa.entity.Leave;
  * @since 2014-05-28
  */
 @MyBatisDao
-public interface LeaveDao extends BaseDao<Leave, String> {
+public interface LeaveDao extends BaseDao<Leave> {
 	
 }

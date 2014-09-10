@@ -8,7 +8,7 @@ public class Constant {
 	
 	public static final String PAGINATION_TYPE_TRAD = "tradition";
 	
-	public static final String PAGINATION_SIZE = "3";
+	public static final String PAGINATION_SIZE = "10";
 	
 	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 

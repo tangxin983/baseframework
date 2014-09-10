@@ -9,7 +9,7 @@ import com.tx.framework.web.common.persistence.dao.BaseDao;
 import com.tx.framework.web.modules.sys.entity.Role;
 
 @MyBatisDao
-public interface RoleDao extends BaseDao<Role, String> {
+public interface RoleDao extends BaseDao<Role> {
 
 	@Select("select * from sys_role LEFT JOIN sys_user_role on sys_role.id = sys_user_role.role_id "
 			+ "WHERE sys_user_role.user_id = #{userId}")

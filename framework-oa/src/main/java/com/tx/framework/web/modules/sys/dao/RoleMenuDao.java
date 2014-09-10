@@ -6,6 +6,6 @@ import com.tx.framework.web.modules.sys.entity.RoleMenu;
 
 
 @MyBatisDao
-public interface RoleMenuDao extends BaseDao<RoleMenu, String> {
+public interface RoleMenuDao extends BaseDao<RoleMenu> {
 
 }

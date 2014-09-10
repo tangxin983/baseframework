@@ -21,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.tx.framework.common.util.Servlets;
 import com.tx.framework.web.common.config.Constant;
-import com.tx.framework.web.common.controller.OaController;
+import com.tx.framework.web.common.controller.BaseController;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.modules.oa.entity.Leave;
 import com.tx.framework.web.modules.oa.service.LeaveService;
@@ -33,7 +33,7 @@ import com.tx.framework.web.modules.oa.service.LeaveService;
  */
 @Controller
 @RequestMapping(value = "oa/leave")
-public class LeaveController extends OaController<Leave, String> {
+public class LeaveController extends BaseController<Leave> {
 
 	private LeaveService leaveService;
 
@@ -151,7 +151,7 @@ public class LeaveController extends OaController<Leave, String> {
 	 * URL:oa/leave/delete
 	 */
 	@RequestMapping("delete")
-	public String multiDelete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
+	public String multiDel(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
 		return super.multiDelete(ids, redirectAttributes);
 	}
 	

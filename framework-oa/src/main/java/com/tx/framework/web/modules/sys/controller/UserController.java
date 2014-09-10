@@ -26,7 +26,7 @@ import com.tx.framework.web.modules.sys.service.UserService;
 
 @Controller
 @RequestMapping(value = "sys/user")
-public class UserController extends BaseController<User, String> {
+public class UserController extends BaseController<User> {
 	
 	@Autowired
 	private RoleService roleService;
@@ -119,7 +119,7 @@ public class UserController extends BaseController<User, String> {
 	 * 批量删除用户
 	 */
 	@RequestMapping("delete")
-	public String multiDelete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
+	public String multiDel(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
 		if(!User.isAdmin(ids)){
 			userService.deleteUser(ids);
 			addMessage(redirectAttributes, "删除" + ids.size() + "条记录 成功");

@@ -1,5 +1,6 @@
 package com.tx.framework.web.modules.sys.service;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ import com.tx.framework.web.modules.sys.entity.Dict;
  */
 @Service
 @Transactional
-public class DictService extends BaseService<Dict, String> {
+public class DictService extends BaseService<Dict> {
 
 	private DictDao dictDao;
 
@@ -53,27 +54,23 @@ public class DictService extends BaseService<Dict, String> {
 		return select(searchParams);
 	}
 
-	@Override
 	@CacheEvict(value = "dictCache", key="#entity.type")
 	public void insert(Dict entity) {
 		dao.insert(entity);
 	}
 
-	@Override
 	@CacheEvict(value = "dictCache", key="#entity.type")
 	public void update(Dict entity) {
 		dao.update(entity);
 	}
 
-	@Override
 	@CacheEvict(value = "dictCache", allEntries = true)
 	public void deleteById(String id) {
 		super.deleteById(id);
 	}
 
-	@Override
 	@CacheEvict(value = "dictCache", allEntries = true)
-	public void deleteByIds(List<String> ids) {
+	public void deleteByIds(List<? extends Serializable> ids) {
 		super.deleteByIds(ids);
 	}
 

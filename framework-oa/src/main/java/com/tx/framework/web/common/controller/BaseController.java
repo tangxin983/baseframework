@@ -1,11 +1,11 @@
 package com.tx.framework.web.common.controller;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
-import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,110 +13,114 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
 import com.tx.framework.common.util.Servlets;
-import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.persistence.entity.BaseEntity;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.service.BaseService;
 
 /**
  * 提供基础的crud控制处理
+ * 
  * @author tangx
  *
  * @param <T>
- * @param <PK>
  */
-public abstract class BaseController<T extends BaseEntity, PK>  implements ServletContextAware{
-	
-	protected Logger logger = LoggerFactory.getLogger(getClass());
-	
-	protected BaseService<T, PK> service;
+public abstract class BaseController<T extends BaseEntity> implements ServletContextAware {
 
-	public void setService(BaseService<T, PK> service) {
+	protected Logger logger = LoggerFactory.getLogger(getClass());
+
+	protected BaseService<T> service;
+
+	public void setService(BaseService<T> service) {
 		this.service = service;
 	}
-	
+
 	protected ServletContext servletContext;
 
-    public void setServletContext(ServletContext context){
-    	this.servletContext = context;
-    }
-    
-    /**
+	public void setServletContext(ServletContext context) {
+		this.servletContext = context;
+	}
+
+	/**
 	 * 供子类设置额外的查询参数
+	 * 
 	 * @param searchParams
 	 */
-//	protected void setExtraSearchParam(Map<String, Object> searchParams){
-//		
-//	}
-	
+	// protected void setExtraSearchParam(Map<String, Object> searchParams){
+	//
+	// }
+
 	/**
-	 * 通过反射取得requestMapping value（头尾的'/'会被去掉）
-	 * @return
+	 * 通过反射取得controller的上下文（头尾的'/'会被去掉）
+	 * 
+	 * @return 上下文字符串
 	 */
 	protected String getControllerContext() {
 		String context = "";
-		Class<?>  c = this.getClass();
-        if ( c != null ) {
-            RequestMapping mapping = c.getAnnotation(RequestMapping.class);
-    		String[] mappingValues = mapping.value();
-    		context = mappingValues[0];
-    		if(context.startsWith("/")){
-    			context = context.substring(1);
-    		}
-    		if(context.endsWith("/")){
-    			context = context.substring(0,context.length() - 1);
-    		}
-        }
-        return context;
-    }
-	
+		Class<?> c = this.getClass();
+		if (c != null) {
+			RequestMapping mapping = c.getAnnotation(RequestMapping.class);
+			String[] mappingValues = mapping.value();
+			context = mappingValues[0];
+			if (context.startsWith("/")) {
+				context = context.substring(1);
+			}
+			if (context.endsWith("/")) {
+				context = context.substring(0, context.length() - 1);
+			}
+		}
+		return context;
+	}
+
 	/**
-	 * 列表页<br>
+	 * 列表页<p>
 	 * 默认为"modules/" + ControllerContext + "List"。比如/a/b对应modules/a/bList
+	 * 
 	 * @return
 	 */
-	protected String getListPage(){
+	protected String getListPage() {
 		return "modules/" + getControllerContext() + "List";
 	}
-	
+
 	/**
-	 * 新增表单页<br>
+	 * 新增表单页<p>
 	 * 默认为"modules/" + ControllerContext + "Form"。比如/a/b对应modules/a/bForm
+	 * 
 	 * @return
 	 */
-	protected String getCreateFormPage(){
+	protected String getCreateFormPage() {
 		return "modules/" + getControllerContext() + "Form";
 	}
-	
+
 	/**
-	 * 更新表单页<br>
+	 * 更新表单页<p>
 	 * 默认为"modules/" + ControllerContext + "Form"。比如/a/b对应modules/a/bForm
+	 * 
 	 * @return
 	 */
-	protected String getUpdateFormPage(){
+	protected String getUpdateFormPage() {
 		return "modules/" + getControllerContext() + "Form";
 	}
-	
+
 	/**
 	 * 分页展示
-	 * @param pageNumber 当前页码
-	 * @param pageSize 每页记录数
+	 * 
+	 * @param pageNumber
+	 *            当前页码
+	 * @param pageSize
+	 *            每页记录数
 	 * @param model
 	 * @param request
 	 * @return
 	 */
-	public String paginationList(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
-			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
-			Model model, ServletRequest request) {
+	public String paginationList(int pageNumber, int pageSize, Model model,
+			ServletRequest request) {
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
 		Page<T> entitys = service.selectByPage(searchParams, null, pageNumber, pageSize);
 		model.addAttribute("page", entitys);
@@ -124,9 +128,10 @@ public abstract class BaseController<T extends BaseEntity, PK>  implements Servl
 		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
 		return getListPage();
 	}
-	
+
 	/**
 	 * 不分页展示所有记录
+	 * 
 	 * @param model
 	 * @param request
 	 * @return
@@ -137,9 +142,10 @@ public abstract class BaseController<T extends BaseEntity, PK>  implements Servl
 		model.addAttribute("entitys", entitys);
 		return getListPage();
 	}
-	
+
 	/**
-	 * 跳转新增页面 
+	 * 跳转新增页面
+	 * 
 	 * @param model
 	 * @return 新增页面
 	 */
@@ -150,13 +156,14 @@ public abstract class BaseController<T extends BaseEntity, PK>  implements Servl
 
 	/**
 	 * 新增操作
+	 * 
 	 * @param entity
 	 * @param result
 	 * @param model
 	 * @param redirectAttributes
 	 * @return
 	 */
-	public String create(@Valid T entity, BindingResult result, Model model, 
+	public String create(T entity, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			addMessage(model, getFieldErrorMessage(result));
@@ -169,11 +176,12 @@ public abstract class BaseController<T extends BaseEntity, PK>  implements Servl
 
 	/**
 	 * 跳转更新页面
+	 * 
 	 * @param id
 	 * @param model
 	 * @return 更新页面
 	 */
-	public String updateForm(@PathVariable("id") PK id, Model model) {
+	public String updateForm(Serializable id, Model model) {
 		model.addAttribute("entity", service.selectById(id));
 		model.addAttribute("action", "update");
 		return getUpdateFormPage();
@@ -181,17 +189,18 @@ public abstract class BaseController<T extends BaseEntity, PK>  implements Servl
 
 	/**
 	 * 更新操作
+	 * 
 	 * @param entity
 	 * @param result
 	 * @param model
 	 * @param redirectAttributes
 	 * @return
 	 */
-	public String update(@Valid @ModelAttribute("entity")T entity, BindingResult result, Model model, 
+	public String update(T entity, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			addMessage(model, getFieldErrorMessage(result));
-			return updateForm((PK)entity.getId(), model);
+			return updateForm(entity.getId(), model);
 		}
 		service.update(entity);
 		addMessage(redirectAttributes, "更新成功");
@@ -200,84 +209,96 @@ public abstract class BaseController<T extends BaseEntity, PK>  implements Servl
 
 	/**
 	 * 删除操作
+	 * 
 	 * @param id
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	public String delete(@PathVariable("id") PK id, RedirectAttributes redirectAttributes) {
+	public String delete(Serializable id, RedirectAttributes redirectAttributes) {
 		service.deleteById(id);
 		addMessage(redirectAttributes, "删除成功");
 		return "redirect:/" + getControllerContext();
 	}
-	
+
 	/**
 	 * 批量删除操作
+	 * 
 	 * @param ids
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	public String multiDelete(@RequestParam("ids")List<PK> ids,RedirectAttributes redirectAttributes) {
+	public String multiDelete(List<? extends Serializable> ids,
+			RedirectAttributes redirectAttributes) {
 		service.deleteByIds(ids);
 		addMessage(redirectAttributes, "删除" + ids.size() + "条记录 成功");
 		return "redirect:/" + getControllerContext();
 	}
-	
+
 	/**
-	 * 根据id查找实体
+	 * 根据id查找实体并返回json
+	 * 
 	 * @param id
 	 * @return json对象
 	 */
-	@ResponseBody
-	public T get(@PathVariable("id") PK id) {
+	public T get(Serializable id) {
 		return service.selectById(id);
 	}
-	
+
 	/**
 	 * 添加Flash消息
-     * @param messages 消息
+	 * 
+	 * @param messages
+	 *            消息
 	 */
-	protected void addMessage(RedirectAttributes redirectAttributes, String... messages) {
+	protected void addMessage(RedirectAttributes redirectAttributes,
+			String... messages) {
 		StringBuilder sb = new StringBuilder();
-		for (String message : messages){
-			sb.append(message).append(messages.length>1?"<br/>":"");
+		for (String message : messages) {
+			sb.append(message).append(messages.length > 1 ? "<br/>" : "");
 		}
 		redirectAttributes.addFlashAttribute("message", sb.toString());
 	}
-	
+
 	/**
 	 * 添加Model消息
-	 * @param messages 消息
+	 * 
+	 * @param messages
+	 *            消息
 	 */
 	protected void addMessage(Model model, String... messages) {
 		StringBuilder sb = new StringBuilder();
-		for (String message : messages){
-			sb.append(message).append(messages.length>1?"<br/>":"");
+		for (String message : messages) {
+			sb.append(message).append(messages.length > 1 ? "<br/>" : "");
 		}
 		model.addAttribute("message", sb.toString());
 	}
-	
+
 	/**
 	 * 获取服务端参数验证错误信息
+	 * 
 	 * @param result
 	 */
-	protected String[] getFieldErrorMessage(BindingResult result){
+	protected String[] getFieldErrorMessage(BindingResult result) {
 		List<String> message = Lists.newArrayList();
-		for(FieldError error : result.getFieldErrors()){
+		for (FieldError error : result.getFieldErrors()) {
 			message.add(error.getDefaultMessage());
 		}
 		message.add(0, "数据校验失败：");
-		return message.toArray(new String[]{});
+		return message.toArray(new String[] {});
 	}
-	
+
 	/**
 	 * 所有RequestMapping方法调用前的Model准备方法, 实现Struts2 Preparable二次部分绑定的效果
 	 * 先根据form的id从数据库查出对象,再把Form提交的内容绑定到该对象上。
 	 * 因为仅update()方法的form中有id属性，因此仅在update时实际执行.
-	 * @param id 主键
+	 * 
+	 * @param id
+	 *            主键
 	 * @param model
 	 */
 	@ModelAttribute
-	public void bindingEntity(@RequestParam(value = "id", defaultValue = "-1") PK id, Model model) {
+	public void bindingEntity(@RequestParam(value = "id", defaultValue = "-1") Serializable id,
+			Model model) {
 		if (!id.equals("-1")) {
 			model.addAttribute("entity", service.selectById(id));
 		}

@@ -24,7 +24,7 @@ import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
 
 @Service
 @Transactional
-public class RoleService extends BaseService<Role, String> {
+public class RoleService extends BaseService<Role> {
 
 	private RoleDao roleDao;
 

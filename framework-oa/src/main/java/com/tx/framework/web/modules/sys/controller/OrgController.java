@@ -32,7 +32,7 @@ import com.tx.framework.web.modules.sys.service.OrgService;
  */
 @Controller
 @RequestMapping(value = "sys/org")
-public class OrgController extends BaseController<Org, String> {
+public class OrgController extends BaseController<Org> {
 
 	private OrgService orgService;
 	

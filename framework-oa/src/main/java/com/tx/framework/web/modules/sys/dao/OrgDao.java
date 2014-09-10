@@ -10,6 +10,6 @@ import com.tx.framework.web.modules.sys.entity.Org;
  * @since 2014-05-15
  */
 @MyBatisDao
-public interface OrgDao extends BaseDao<Org, String> {
+public interface OrgDao extends BaseDao<Org> {
 	
 }

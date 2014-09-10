@@ -23,7 +23,7 @@ import com.tx.framework.web.modules.sys.entity.Org;
  */
 @Service
 @Transactional
-public class OrgService extends BaseService<Org, String> {
+public class OrgService extends BaseService<Org> {
 
 	private OrgDao orgDao;
 

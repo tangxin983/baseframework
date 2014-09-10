@@ -29,7 +29,7 @@ import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
 
 @Service
 @Transactional
-public class UserService extends BaseService<User, String> {
+public class UserService extends BaseService<User> {
 	
 	@Autowired
 	private IdentityService identityService;

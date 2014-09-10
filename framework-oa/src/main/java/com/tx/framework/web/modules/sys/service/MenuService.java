@@ -23,7 +23,7 @@ import com.tx.framework.web.modules.sys.security.ShiroAuthorizingRealm;
 
 @Service
 @Transactional
-public class MenuService extends BaseService<Menu, String> {
+public class MenuService extends BaseService<Menu> {
 	
 	@Autowired
 	private RoleMenuDao roleMenuDao;

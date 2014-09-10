@@ -26,7 +26,7 @@ import com.tx.framework.web.modules.sys.service.RoleService;
 
 @Controller
 @RequestMapping(value = "sys/role")
-public class RoleController extends BaseController<Role, String> {
+public class RoleController extends BaseController<Role> {
 
 	@Autowired
 	private MenuService menuService;
@@ -110,7 +110,7 @@ public class RoleController extends BaseController<Role, String> {
 	 * 批量删除角色
 	 */
 	@RequestMapping("delete")
-	public String multiDelete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
+	public String multiDel(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
 		if(roleService.isDelete(ids)){
 			roleService.deleteRole(ids);
 			addMessage(redirectAttributes, "删除" + ids.size() + "条记录 成功");

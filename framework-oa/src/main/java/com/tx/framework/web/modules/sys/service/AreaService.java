@@ -23,7 +23,7 @@ import com.tx.framework.web.modules.sys.entity.Area;
  */
 @Service
 @Transactional
-public class AreaService extends BaseService<Area, String> {
+public class AreaService extends BaseService<Area> {
 
 	private AreaDao areaDao;
 
