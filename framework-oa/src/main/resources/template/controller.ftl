@@ -25,7 +25,7 @@ import ${packageName}.${moduleName}.service${subModuleName}.${ClassName}Service;
  */
 @Controller
 @RequestMapping(value = "${urlPrefix}")
-public class ${ClassName}Controller extends BaseController<${ClassName}, String> {
+public class ${ClassName}Controller extends BaseController<${ClassName}> {
 
 	private ${ClassName}Service ${className}Service;
 
@@ -110,7 +110,7 @@ public class ${ClassName}Controller extends BaseController<${ClassName}, String>
 	 * URL:${urlPrefix}/delete
 	 */
 	@RequestMapping("delete")
-	public String multiDelete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
+	public String multiDel(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
 		return super.multiDelete(ids, redirectAttributes);
 	}
 	

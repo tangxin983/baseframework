@@ -10,6 +10,6 @@ import ${entityPackageName}.${ClassName};
  * @since ${classVersion}
  */
 @MyBatisDao
-public interface ${ClassName}Dao extends BaseDao<${ClassName}, String> {
+public interface ${ClassName}Dao extends BaseDao<${ClassName}> {
 	
 }

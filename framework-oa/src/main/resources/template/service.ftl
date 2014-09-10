@@ -14,7 +14,7 @@ import ${packageName}.${moduleName}.dao${subModuleName}.${ClassName}Dao;
  */
 @Service
 @Transactional
-public class ${ClassName}Service extends BaseService<${ClassName}, String> {
+public class ${ClassName}Service extends BaseService<${ClassName}> {
 
 	private ${ClassName}Dao ${className}Dao;
 
