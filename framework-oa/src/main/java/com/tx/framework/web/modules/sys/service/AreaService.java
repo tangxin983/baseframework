@@ -95,7 +95,7 @@ public class AreaService extends BaseService<Area> {
 		List<Area> childs = findChildsByPid(id);
 		List<String> ids = CollectionUtils.extractToList(childs, "id", true);
 		ids.add(id);
-		deleteByIds(ids);
+		super.delete(ids);
 	}
 	
 	/**

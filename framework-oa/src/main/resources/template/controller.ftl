@@ -111,8 +111,8 @@ public class ${ClassName}Controller extends BaseController<${ClassName}> {
 	 * URL:${urlPrefix}/delete
 	 */
 	@RequestMapping("delete")
-	public String multiDel(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
-		return super.multiDelete(ids, redirectAttributes);
+	public String delete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
+		return super.delete(ids, redirectAttributes);
 	}
 	
 	/**

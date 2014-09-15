@@ -1,0 +1,212 @@
+package com.tx.framework.web.modules.cms.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.tx.framework.web.common.controller.BaseController;
+import com.tx.framework.web.modules.cms.entity.Category;
+import com.tx.framework.web.modules.cms.service.CategoryService;
+
+/**
+ * cms栏目Controller
+ * 
+ * @author tangx
+ * @since 2014-09-10
+ */
+@Controller
+@RequestMapping(value = "cms/category")
+public class CategoryController extends BaseController<Category> {
+
+	private CategoryService categoryService;
+
+	@Autowired
+	public void setCategoryService(CategoryService categoryService) {
+		super.setService(categoryService);
+		this.categoryService = categoryService;
+	}
+
+	/**
+	 * 跳转列表页
+	 * <p>
+	 * url:cms/category
+	 */
+	@RequestMapping
+	public String view(Model model) {
+		List<Category> sourcelist = categoryService.findCategoryBySort(null);
+		List<Category> list = Lists.newArrayList();
+		sortMenuList(list, sourcelist, "1");
+		model.addAttribute("entitys", list);
+		return getListPage();
+	}
+
+	/**
+	 * 对原始list进行整理以适合treetable要求
+	 * 
+	 * @param list
+	 * @param sourcelist
+	 * @param parentId
+	 */
+	private void sortMenuList(List<Category> list, List<Category> sourcelist,
+			String parentId) {
+		for (int i = 0; i < sourcelist.size(); i++) {
+			Category e = sourcelist.get(i);
+			if (e.getParentId().equals(parentId)) {
+				list.add(e);
+				// 判断是否还有子节点, 有则继续获取子节点
+				for (int j = 0; j < sourcelist.size(); j++) {
+					Category child = sourcelist.get(j);
+					if (child.getParentId().equals(e.getId())) {
+						sortMenuList(list, sourcelist, e.getId());
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * 获取树形菜单数据
+	 * 
+	 * @param extId
+	 * @return
+	 */
+	@RequestMapping(value = "treeData")
+	@ResponseBody
+	public List<Map<String, Object>> treeData(
+			@RequestParam(required = false) String extId) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Category> list = categoryService.findCategoryBySort(null);
+		for (Category e : list) {
+			// 排除extId及其子菜单
+			if (extId == null
+					|| (extId != null && !extId.equals(e.getId()) && e
+							.getParentIds().indexOf("," + extId + ",") == -1)) {
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParentId());
+				map.put("name", e.getName());
+				mapList.add(map);
+			}
+		}
+		return mapList;
+	}
+
+	/**
+	 * 跳转新增页面
+	 * <p>
+	 * url:cms/category/create
+	 */
+	@RequestMapping(value = "create", method = RequestMethod.GET)
+	public String createForm(Category category, Model model) {
+		// 如果没有传入父栏目id，则默认父栏目是顶级栏目
+		if (category == null) {
+			category = new Category();
+		}
+		if (StringUtils.isBlank(category.getParentId())) {
+			category.setParentId("1");
+		}
+		// 设置父栏目名称
+		Category parent = categoryService.selectById(category.getParentId());
+		if (parent != null) {
+			category.setParentName(parent.getName());
+		}
+		model.addAttribute("entity", category);
+		model.addAttribute("action", "create");
+		return getCreateFormPage();
+	}
+
+	/**
+	 * 新增操作
+	 * <p>
+	 * url:cms/category/create
+	 */
+	@RequestMapping(value = "create", method = RequestMethod.POST)
+	public String create(@Valid Category entity, BindingResult result,
+			Model model, RedirectAttributes redirectAttributes) {
+		return super.create(entity, result, model, redirectAttributes);
+	}
+
+	/**
+	 * 跳转更新页面
+	 * <p>
+	 * URL:cms/category/update/{id}
+	 */
+	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
+	public String updateForm(@PathVariable("id") String id, Model model) {
+		Category category = categoryService.selectById(id);
+		if (category != null) {
+			// 设置父栏目名称
+			Category parent = categoryService
+					.selectById(category.getParentId());
+			if (parent != null) {
+				category.setParentName(parent.getName());
+			}
+		}
+		model.addAttribute("entity", category);
+		model.addAttribute("action", "update");
+		return getUpdateFormPage();
+	}
+
+	/**
+	 * 更新操作
+	 * <p>
+	 * URL:cms/category/update
+	 */
+	@RequestMapping(value = "update", method = RequestMethod.POST)
+	public String update(@Valid @ModelAttribute("entity") Category entity,
+			BindingResult result, Model model,
+			RedirectAttributes redirectAttributes) {
+		return super.update(entity, result, model, redirectAttributes);
+	}
+
+	/**
+	 * 删除操作
+	 * <p>
+	 * URL:cms/category/delete/{id}
+	 */
+	@RequestMapping("delete/{id}")
+	public String delete(@PathVariable("id") String id,
+			RedirectAttributes redirectAttributes) {
+		return super.delete(id, redirectAttributes);
+	}
+
+	/**
+	 * 批量删除操作
+	 * <p>
+	 * URL:cms/category/delete
+	 */
+	@RequestMapping("delete")
+	public String delete(@RequestParam("ids") List<String> ids,
+			RedirectAttributes redirectAttributes) {
+		return super.delete(ids, redirectAttributes);
+	}
+
+	/**
+	 * 根据id查找实体（json）
+	 * <p>
+	 * URL:cms/category/get/{id}
+	 */
+	@RequestMapping("get/{id}")
+	@ResponseBody
+	public Category get(@PathVariable("id") String id) {
+		return super.get(id);
+	}
+
+}

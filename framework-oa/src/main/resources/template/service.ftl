@@ -24,4 +24,25 @@ public class ${ClassName}Service extends BaseService<${ClassName}> {
 		this.${className}Dao = ${className}Dao;
 	}
 	
+	// ========== 以下为简单增删改示例。 修改以适应实际需求===========
+	@Override
+	public void insert(${ClassName} entity) {
+		super.insert(entity);
+	}
+	
+	@Override
+	public void update(${ClassName} entity) {
+		super.update(entity);
+	}
+
+	@Override
+	public void delete(String id) {
+		super.delete(id);
+	}
+	 
+	@Override
+	public void delete(List<String> ids) {
+		super.delete(ids);
+	}
+	
 }

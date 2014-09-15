@@ -1,6 +1,5 @@
 package com.tx.framework.web.modules.sys.service;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -66,12 +65,12 @@ public class DictService extends BaseService<Dict> {
 
 	@CacheEvict(value = "dictCache", allEntries = true)
 	public void deleteById(String id) {
-		super.deleteById(id);
+		super.delete(id);
 	}
 
 	@CacheEvict(value = "dictCache", allEntries = true)
-	public void deleteByIds(List<? extends Serializable> ids) {
-		super.deleteByIds(ids);
+	public void deleteByIds(List<String> ids) {
+		super.delete(ids);
 	}
 
 }

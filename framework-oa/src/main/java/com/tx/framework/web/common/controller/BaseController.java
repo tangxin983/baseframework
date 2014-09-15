@@ -1,6 +1,5 @@
 package com.tx.framework.web.common.controller;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -181,7 +180,7 @@ public abstract class BaseController<T extends BaseEntity> implements ServletCon
 	 * @param model
 	 * @return 更新页面
 	 */
-	public String updateForm(Serializable id, Model model) {
+	public String updateForm(String id, Model model) {
 		model.addAttribute("entity", service.selectById(id));
 		model.addAttribute("action", "update");
 		return getUpdateFormPage();
@@ -214,8 +213,8 @@ public abstract class BaseController<T extends BaseEntity> implements ServletCon
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	public String delete(Serializable id, RedirectAttributes redirectAttributes) {
-		service.deleteById(id);
+	public String delete(String id, RedirectAttributes redirectAttributes) {
+		service.delete(id);
 		addMessage(redirectAttributes, "删除成功");
 		return "redirect:/" + getControllerContext();
 	}
@@ -227,9 +226,9 @@ public abstract class BaseController<T extends BaseEntity> implements ServletCon
 	 * @param redirectAttributes
 	 * @return redirect到列表页
 	 */
-	public String multiDelete(List<? extends Serializable> ids,
+	public String delete(List<String> ids,
 			RedirectAttributes redirectAttributes) {
-		service.deleteByIds(ids);
+		service.delete(ids);
 		addMessage(redirectAttributes, "删除" + ids.size() + "条记录 成功");
 		return "redirect:/" + getControllerContext();
 	}
@@ -240,7 +239,7 @@ public abstract class BaseController<T extends BaseEntity> implements ServletCon
 	 * @param id
 	 * @return json对象
 	 */
-	public T get(Serializable id) {
+	public T get(String id) {
 		return service.selectById(id);
 	}
 
@@ -297,7 +296,7 @@ public abstract class BaseController<T extends BaseEntity> implements ServletCon
 	 * @param model
 	 */
 	@ModelAttribute
-	public void bindingEntity(@RequestParam(value = "id", defaultValue = "-1") Serializable id,
+	public void bindingEntity(@RequestParam(value = "id", defaultValue = "-1") String id,
 			Model model) {
 		if (!id.equals("-1")) {
 			model.addAttribute("entity", service.selectById(id));

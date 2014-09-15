@@ -163,7 +163,7 @@ public class MenuService extends BaseService<Menu> {
 		List<Menu> childs = findChildsByPid(id);
 		List<String> ids = CollectionUtils.extractToList(childs, "id", true);
 		ids.add(id);
-		deleteByIds(ids);
+		super.delete(ids);
 		// 删除关联的RoleMenu记录
 		for(String menuId : ids){
 			Map<String, Object> para = Maps.newHashMap();

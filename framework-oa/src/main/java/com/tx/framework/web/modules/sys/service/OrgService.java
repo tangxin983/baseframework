@@ -83,7 +83,7 @@ public class OrgService extends BaseService<Org> {
 		List<Org> childs = findChildsByPid(id);
 		List<String> ids = CollectionUtils.extractToList(childs, "id", true);
 		ids.add(id);
-		deleteByIds(ids);
+		delete(ids);
 	}
 	
 	/**

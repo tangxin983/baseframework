@@ -1,6 +1,5 @@
 package com.tx.framework.web.common.service;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +53,7 @@ public abstract class BaseService<T extends BaseEntity> {
 	 * @param id 主键
 	 * @return
 	 */
-	public T selectById(Serializable id) {
+	public T selectById(String id) {
 		return dao.selectById(genericType, id);
 	}
 	
@@ -183,7 +182,7 @@ public abstract class BaseService<T extends BaseEntity> {
 	 * 根据主键删除记录
 	 * @param id
 	 */
-	public void deleteById(Serializable id) {
+	public void delete(String id) {
 		dao.deleteById(genericType, id);
 	}
 	
@@ -191,8 +190,8 @@ public abstract class BaseService<T extends BaseEntity> {
 	 * 根据主键批量删除记录
 	 * @param ids
 	 */
-	public void deleteByIds(List<? extends Serializable> ids) {
-		for(Serializable id : ids){
+	public void delete(List<String> ids) {
+		for(String id : ids){
 			dao.deleteById(genericType, id);
 		}
 	}
