@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-<meta name="decorator" content="default" />
 <title>菜单管理</title>
 <script type="text/javascript">
 	$(document).ready(function() {

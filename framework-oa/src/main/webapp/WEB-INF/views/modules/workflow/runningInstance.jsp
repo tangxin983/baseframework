@@ -3,7 +3,6 @@
 <html>
 <head>
 	<title>运行流程</title>
-	<meta name="decorator" content="default"/>
 </head>
 <body>
 	<tags:message content="${message}" />

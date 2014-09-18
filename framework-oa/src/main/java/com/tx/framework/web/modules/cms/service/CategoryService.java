@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
+import com.tx.framework.common.util.CollectionUtils;
 import com.tx.framework.web.common.service.BaseService;
 import com.tx.framework.web.modules.cms.dao.CategoryDao;
 import com.tx.framework.web.modules.cms.entity.Category;
@@ -66,6 +67,17 @@ public class CategoryService extends BaseService<Category> {
 				categoryDao.update(e);
 			}
 		}
+	}
+	
+	 
+	@Override
+	public void delete(String id) {
+		// 查找子节点的id
+		List<Category> childs = findChildsByPid(id);
+		List<String> ids = CollectionUtils.extractToList(childs, "id", true);
+		// 将自身id加入
+		ids.add(id);
+		super.delete(ids);
 	}
 	
 	/**

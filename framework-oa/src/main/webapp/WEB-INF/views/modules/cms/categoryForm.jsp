@@ -3,7 +3,6 @@
 <html>
 <head>
 <title>栏目管理</title>
-<meta name="decorator" content="default" />
 <script type="text/javascript">
 	$(document).ready(function() {
 	});

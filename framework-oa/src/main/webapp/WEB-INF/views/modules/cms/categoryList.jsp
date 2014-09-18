@@ -3,7 +3,6 @@
 <html>
 <head>
 <title>栏目管理</title>
-<meta name="decorator" content="default" />
 <%@include file="/WEB-INF/views/include/treetable.jsp"%>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -19,18 +18,11 @@
 	<!-- search form -->
 	<nav class="navbar navbar-default">
 		<form class="navbar-form navbar-left" valid="false">
-			<div class="form-group">
-				<input name="s_siteId" value="${param.s_siteId}"
-					class="form-control" placeholder="siteId">
-			</div>
-			<button type="submit" class="btn btn-primary">
-				<span class="glyphicon glyphicon-search"></span> 查询
-			</button>
 			<shiro:hasPermission name="cms:category:create">
+				<a href="${ctxModule}/create" class="btn btn-primary"> <span
+					class="glyphicon glyphicon-plus"></span> 添加栏目
+				</a>
 			</shiro:hasPermission>
-			<a href="${ctxModule}/create" class="btn btn-primary"> <span
-				class="glyphicon glyphicon-plus"></span> 添加栏目
-			</a>
 		</form>
 	</nav>
 
@@ -63,7 +55,22 @@
 							<td>${fns:getDictLabel('show_hide', category.inMenu, '隐藏')}</td>
 							<td>${fns:getDictLabel('show_hide', category.inList, '隐藏')}</td>
 							<td>${fns:getDictLabel('cms_show_mode',category.showModes, '默认展现方式')}</td>
-							<td></td>
+							<td>
+								<shiro:hasPermission name="cms:category:delete">
+									<a href="${ctxModule}/delete/${category.id}" class="btn btn-danger"
+										title="删除"
+										onclick="return confirmx('要删除该栏目及其子栏目吗?', this.href)"> <span
+										class="glyphicon glyphicon-remove"></span>
+									</a>
+								</shiro:hasPermission> 
+								<shiro:hasPermission name="cms:category:create">
+									<a
+										href="${ctxModule}/create?parentId=${category.id}"
+										class="btn btn-primary" title="添加子栏目"> <span
+										class="glyphicon glyphicon-plus"></span>
+									</a>
+								</shiro:hasPermission>
+							</td>
 						</tr>
 					</c:forEach>
 				</tbody>

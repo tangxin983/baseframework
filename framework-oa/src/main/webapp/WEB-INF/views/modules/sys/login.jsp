@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-<meta name="decorator" content="default" />
 <title>登录页</title>
 <script type="text/javascript">
 	function reloadCaptcha() {

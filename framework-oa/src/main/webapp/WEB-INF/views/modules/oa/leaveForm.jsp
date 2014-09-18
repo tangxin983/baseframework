@@ -3,7 +3,6 @@
 <html>
 <head>
 	<title>请假管理</title>
-	<meta name="decorator" content="default"/>
 	<!-- 这里引入额外的css和js 
 	<link rel="stylesheet" type="text/css" href="" />
 	<script type="text/javascript" src=""></script>
