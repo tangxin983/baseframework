@@ -3,7 +3,6 @@
 <html>
 <head>
 <title>部署流程</title>
-<meta name="decorator" content="default" />
 </head>
 <body>
 	<tags:message content="${message}" />
