@@ -13,6 +13,16 @@
 
 	<!-- 依赖项定义 -->
 	<dependencies>
+		<!-- j2ee begin -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
+		<!-- j2ee end -->
 		<!-- spring framework -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -159,14 +169,7 @@
         </dependency>
 		<!-- workflow end -->
 
-		<!-- j2ee from common -->
-
-		<!-- JSON from common -->
-
-		<!-- LOGGING from common -->
-
-		<!-- UTILS from common -->
-
+		<!-- JSON,LOGGING,UTILS from common -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>common</artifactId>
