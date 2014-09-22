@@ -142,7 +142,7 @@
 		 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>framework-common</artifactId>
+			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

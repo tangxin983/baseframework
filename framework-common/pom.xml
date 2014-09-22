@@ -6,8 +6,8 @@
 		<artifactId>framework-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>framework-common</artifactId>
-	<name>framework-common</name>
+	<artifactId>common</artifactId>
+	<name>common</name>
 	<description>common module dependencied by other module</description>
 
 	<dependencies>
