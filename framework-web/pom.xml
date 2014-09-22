@@ -12,6 +12,16 @@
 
 	<!-- 依赖项定义 -->
 	<dependencies>
+		<!-- j2ee begin -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
+		<!-- j2ee end -->
 		<!-- spring basic -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -75,6 +85,18 @@
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis-spring</artifactId>
 		</dependency>
+		
+		<!-- hibernate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+		
+		<!-- JSR303 Bean Validator -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
  
 		<!-- connection pool -->
 		<dependency>
@@ -130,16 +152,7 @@
 		</dependency>
 		<!-- TEST end -->
 		
-		<!-- j2ee web spec from common -->
-
-		<!-- JSR303 BeanValidator from common -->
-
-		<!-- JSON from common -->
-
-		<!-- LOGGING from common -->
-		 
-		<!-- UTILS from common -->
-		 
+		<!-- JSON,LOGGING,UTILS from common -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>common</artifactId>

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.tx.framework.common.util.Servlets;
+import com.tx.framework.web.common.utils.Servlets;
 
 /**
  * 提供基础的crud控制处理

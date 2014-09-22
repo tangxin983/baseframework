@@ -17,10 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-
-
-import com.tx.framework.common.util.Servlets;
 import com.tx.framework.web.common.base.AjaxPaginationController;
+import com.tx.framework.web.common.utils.Servlets;
 import com.tx.framework.web.entity.MenuImagemap;
 import com.tx.framework.web.entity.MenuLayout;
 import com.tx.framework.web.manage.service.menu.MenuLayoutService;

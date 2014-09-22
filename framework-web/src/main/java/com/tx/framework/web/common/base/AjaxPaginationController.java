@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.tx.framework.common.util.Servlets;
 import com.tx.framework.web.common.page.Page;
 import com.tx.framework.web.common.utils.Constant;
+import com.tx.framework.web.common.utils.Servlets;
 import com.tx.framework.web.manage.freemarker.FreeMarkerResolver;
 
 public abstract class AjaxPaginationController<T> extends BaseController<T> {
