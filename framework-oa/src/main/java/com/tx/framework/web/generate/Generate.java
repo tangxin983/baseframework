@@ -54,14 +54,14 @@ public class Generate {
 		// 以下参数必填
 		String packageName = "com.tx.framework.web.modules";// 生成代码所处包名
 		String moduleName = "cms"; // 模块名，例：sys
-		String className = "comment"; // 功能英文名，例：user
-		String functionName = "评论"; // 功能中文名，例：用户
+		String className = "article"; // 功能英文名，例：user
+		String functionName = "文章"; // 功能中文名，例：用户
 		String tpl = "/src/main/resources/template";// 模板目录
 		String view = "/src/main/webapp/WEB-INF/views";// 视图目录
 
 		// 以下参数可选
 		String subModuleName = ""; // 子模块名
-		String tableName = "cms_comment"; // 功能对应的数据库表名（若为空则默认与className一致）例如:sys_user
+		String tableName = "cms_article"; // 功能对应的数据库表名（若为空则默认与className一致）例如:sys_user
 		String author = "tangx"; // 作者
 		Boolean isPagination = true;// 列表页是否分页 true分页false不分页
 
