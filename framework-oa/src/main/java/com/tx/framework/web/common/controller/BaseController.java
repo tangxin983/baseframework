@@ -18,10 +18,10 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
-import com.tx.framework.common.util.Servlets;
 import com.tx.framework.web.common.persistence.entity.BaseEntity;
 import com.tx.framework.web.common.persistence.entity.Page;
 import com.tx.framework.web.common.service.BaseService;
+import com.tx.framework.web.common.utils.Servlets;
 
 /**
  * 提供基础的crud控制处理
