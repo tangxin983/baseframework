@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.tx.framework.common.util.CollectionUtils;
@@ -18,6 +19,7 @@ import com.tx.framework.web.modules.cms.entity.Category;
 
 /**
  * cms栏目Service
+ * 
  * @author tangx
  * @since 2014-09-10
  */
@@ -32,7 +34,45 @@ public class CategoryService extends BaseService<Category> {
 		super.setDao(categoryDao);
 		this.categoryDao = categoryDao;
 	}
-	
+
+	/**
+	 * 获取栏目TreeTable列表
+	 * 
+	 * @param searchParams
+	 * @return
+	 */
+	public List<Category> getCategoryForTreeTable(Map<String, Object> searchParams) {
+		List<Category> sourcelist = findCategoryBySort(null);
+		List<Category> list = Lists.newArrayList();
+		sortList(list, sourcelist, "1");
+		return list;
+	}
+
+	/**
+	 * 对原始list进行整理以适合treetable要求
+	 * 
+	 * @param list
+	 * @param sourcelist
+	 * @param parentId
+	 */
+	private void sortList(List<Category> list, List<Category> sourcelist,
+			String parentId) {
+		for (int i = 0; i < sourcelist.size(); i++) {
+			Category e = sourcelist.get(i);
+			if (e.getParentId().equals(parentId)) {
+				list.add(e);
+				// 判断是否还有子节点, 有则继续获取子节点
+				for (int j = 0; j < sourcelist.size(); j++) {
+					Category child = sourcelist.get(j);
+					if (child.getParentId().equals(e.getId())) {
+						sortList(list, sourcelist, e.getId());
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * 按照排序获取栏目列表
 	 * 
@@ -44,14 +84,14 @@ public class CategoryService extends BaseService<Category> {
 		orders.put("sort", "asc");
 		return select(searchParams, orders);
 	}
-	
+
 	@Override
 	public void insert(Category entity) {
 		Category parent = selectById(entity.getParentId());// 获取父栏目
 		entity.setParentIds(parent.getParentIds() + parent.getId() + ",");
 		categoryDao.insert(entity);
 	}
-	
+
 	@Override
 	public void update(Category entity) {
 		String oldParentIds = entity.getParentIds(); // 获取修改前的parentIds，用于更新子节点的parentIds
@@ -60,16 +100,16 @@ public class CategoryService extends BaseService<Category> {
 		entity.setParentIds(parent.getParentIds() + parent.getId() + ",");
 		categoryDao.update(entity);
 		// 更新子节点的parentIds
-		if(StringUtils.isNotBlank(oldParentIds)){
+		if (StringUtils.isNotBlank(oldParentIds)) {
 			List<Category> childs = findChildsByPid(entity.getId());
 			for (Category e : childs) {
-				e.setParentIds(e.getParentIds().replace(oldParentIds, entity.getParentIds()));
+				e.setParentIds(e.getParentIds().replace(oldParentIds,
+						entity.getParentIds()));
 				categoryDao.update(e);
 			}
 		}
 	}
-	
-	 
+
 	@Override
 	public void delete(String id) {
 		// 查找子节点的id
@@ -79,13 +119,14 @@ public class CategoryService extends BaseService<Category> {
 		ids.add(id);
 		super.delete(ids);
 	}
-	
+
 	/**
 	 * 根据父节点id查找所有子节点
+	 * 
 	 * @param id
 	 * @return
 	 */
-	public List<Category> findChildsByPid(String id){
+	public List<Category> findChildsByPid(String id) {
 		Table<String, String, Object> table = HashBasedTable.create();
 		table.put("parentIds", "like", "," + id + ",");
 		return select(table);

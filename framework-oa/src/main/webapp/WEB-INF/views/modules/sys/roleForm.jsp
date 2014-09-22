@@ -31,6 +31,9 @@
 				data : {oldName : "${entity.enName}"}
 			}
 		});
+		//<c:if test="${not empty entity.dataScope}">
+		$('#dataScope').selectpicker('val', "${entity.dataScope}");
+		//</c:if>
 		var setting = {
 			check : {
 				enable : true,
@@ -51,28 +54,17 @@
 				}
 			}
 		};
-		// 初始化菜单树
-		var zNodes = [
-		//<c:forEach items="${menuList}" var="menu">
-		{
-			id : '${menu.id}',
-			pId : '${menu.parentId}',
-			name : "${menu.parentId != '0'?menu.name:'所有权限'}"
-		},
-		//</c:forEach>
-		];
-		tree = $.fn.zTree.init($("#menuTree"), setting, zNodes);
-		// 默认展开全部节点
-		tree.expandAll(true);
-		// 默认选择节点
-		//<c:forEach var="menuId" items="${entity.menuIds}">
-		var node = tree.getNodeByParam("id", "${menuId}");
-		tree.checkNode(node, true, false);
-		//</c:forEach>
-	
-		//<c:if test="${not empty entity.dataScope}">
-		$('#dataScope').selectpicker('val', "${entity.dataScope}");
-		//</c:if>
+		$.get("${ctx}/sys/menu/treeData", function(zNodes){
+			// 初始化树结构
+			tree = $.fn.zTree.init($("#menuTree"), setting, zNodes);
+			// 默认展开全部节点
+			tree.expandAll(true);
+			// 默认选择节点
+			//<c:forEach var="menuId" items="${entity.menuIds}">
+			var node = tree.getNodeByParam("id", "${menuId}");
+			tree.checkNode(node, true, false);
+			//</c:forEach>
+		});
 	});
 </script>
 </head>

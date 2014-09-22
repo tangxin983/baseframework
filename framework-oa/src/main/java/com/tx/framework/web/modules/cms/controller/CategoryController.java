@@ -49,38 +49,10 @@ public class CategoryController extends BaseController<Category> {
 	 */
 	@RequestMapping
 	public String view(Model model) {
-		List<Category> sourcelist = categoryService.findCategoryBySort(null);
-		List<Category> list = Lists.newArrayList();
-		sortMenuList(list, sourcelist, "1");
-		model.addAttribute("entitys", list);
+		model.addAttribute("entitys", categoryService.getCategoryForTreeTable(null));
 		return getListPage();
 	}
-
-	/**
-	 * 对原始list进行整理以适合treetable要求
-	 * 
-	 * @param list
-	 * @param sourcelist
-	 * @param parentId
-	 */
-	private void sortMenuList(List<Category> list, List<Category> sourcelist,
-			String parentId) {
-		for (int i = 0; i < sourcelist.size(); i++) {
-			Category e = sourcelist.get(i);
-			if (e.getParentId().equals(parentId)) {
-				list.add(e);
-				// 判断是否还有子节点, 有则继续获取子节点
-				for (int j = 0; j < sourcelist.size(); j++) {
-					Category child = sourcelist.get(j);
-					if (child.getParentId().equals(e.getId())) {
-						sortMenuList(list, sourcelist, e.getId());
-						break;
-					}
-				}
-			}
-		}
-	}
-
+ 
 	/**
 	 * 获取树形菜单数据
 	 * 

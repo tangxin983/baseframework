@@ -21,15 +21,11 @@ import com.google.common.collect.Maps;
 import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.controller.BaseController;
 import com.tx.framework.web.modules.sys.entity.Role;
-import com.tx.framework.web.modules.sys.service.MenuService;
 import com.tx.framework.web.modules.sys.service.RoleService;
 
 @Controller
 @RequestMapping(value = "sys/role")
 public class RoleController extends BaseController<Role> {
-
-	@Autowired
-	private MenuService menuService;
 
 	private RoleService roleService;
 
@@ -54,7 +50,7 @@ public class RoleController extends BaseController<Role> {
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.GET)
 	public String createForm(Model model) {
-		model.addAttribute("menuList", menuService.findAllMenuBySort(null));
+//		model.addAttribute("menuList", menuService.findAllMenuBySort(null));
 		return super.createForm(model);
 	}
 
@@ -74,7 +70,7 @@ public class RoleController extends BaseController<Role> {
 	 */
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable("id") String id, Model model) {
-		model.addAttribute("menuList", menuService.findAllMenuBySort(null));
+//		model.addAttribute("menuList", menuService.findAllMenuBySort(null));
 		Role role = service.selectById(id);
 		role.setMenuIds(roleService.findRoleMenu(id));
 		model.addAttribute("entity", role);
