@@ -39,7 +39,7 @@
 				zNodes[i].target = "_self";
 			}
 			// 初始化树结构
-			tree = $.fn.zTree.init($("#categoryTree"), setting, zNodes);
+			tree = $.fn.zTree.init($("#cTree"), setting, zNodes);
 			// 默认展开全部节点
 			tree.expandAll(true);
 			//<c:if test="${not empty param.s_categoryId}">
@@ -61,7 +61,7 @@
 					<div class="text-muted bootstrap-admin-box-title">栏目列表</div>
 				</div>
 				<div class="panel-body">
-					<div id="categoryTree" class="ztree"></div>
+					<div id="cTree" class="ztree"></div>
 				</div>
 			</div>
 		</div>
@@ -69,13 +69,15 @@
 			<!-- search form -->
 			<nav class="navbar navbar-default">
 				<form class="navbar-form navbar-left" valid="false">
-					<div class="form-group">
-						<input name="s_categoryId" value="${param.s_categoryId}"
-							class="form-control" placeholder="categoryId">
+					<div class="form-group col-md-3">
+						<tags:treeselect id="category" name="s_categoryId"
+								value="${category.id}" labelName="categoryName"
+								labelValue="${category.name}" allowClear="false" title="栏目"
+								url="/cms/category/treeData" />
 					</div>
 					<div class="form-group">
 						<input name="s_title" value="${param.s_title}"
-							class="form-control" placeholder="title">
+							class="form-control" placeholder="标题">
 					</div>
 					<button type="submit" class="btn btn-primary">
 						<span class="glyphicon glyphicon-search"></span> 查询
@@ -123,9 +125,9 @@
 											value="${entity.id}"></td>
 										<td><shiro:hasPermission name="cms:article:edit">
 												<a href="${ctxModule}/update/${entity.id}" title="修改">
-													${entity.categoryId} </a>
+													${entity.category.name} </a>
 											</shiro:hasPermission> <shiro:lacksPermission name="cms:article:edit">
-									${entity.categoryId}
+									${entity.category.name}
 									</shiro:lacksPermission></td>
 										<td>${entity.title}</td>
 										<td>${entity.link}</td>

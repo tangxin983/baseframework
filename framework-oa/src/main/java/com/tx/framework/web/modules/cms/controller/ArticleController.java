@@ -1,23 +1,32 @@
 package com.tx.framework.web.modules.cms.controller;
 
 import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import org.springframework.web.bind.annotation.ModelAttribute;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import com.tx.framework.web.common.controller.BaseController;
+
 import com.tx.framework.web.common.config.Constant;
+import com.tx.framework.web.common.controller.BaseController;
+import com.tx.framework.web.common.persistence.entity.Page;
+import com.tx.framework.web.common.utils.Servlets;
 import com.tx.framework.web.modules.cms.entity.Article;
+import com.tx.framework.web.modules.cms.entity.Category;
 import com.tx.framework.web.modules.cms.service.ArticleService;
+import com.tx.framework.web.modules.cms.service.CategoryService;
 
 /**
  * 文章Controller
@@ -36,6 +45,9 @@ public class ArticleController extends BaseController<Article> {
 		this.articleService = articleService;
 	}
 	
+	@Autowired
+	private CategoryService categoryService;
+	
 	// ========== 以下为简单crud示例。注意：一旦修改url，对应生成的视图url也需手动修改 ===========
 	/**
 	 * 跳转列表页（分页）<p>
@@ -45,7 +57,21 @@ public class ArticleController extends BaseController<Article> {
 	public String paginationList(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
 			@RequestParam(value = "size", defaultValue = Constant.PAGINATION_SIZE) int pageSize,
 			Model model, HttpServletRequest request) {
-		return super.paginationList(pageNumber, pageSize, model, request);
+		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
+		Category category = new Category();
+		if(searchParams.get("categoryId") == null) {
+			category.setId("1");
+			category.setName("所有栏目");
+		}else{
+			category = categoryService.selectById(searchParams.get("categoryId").toString());
+		}
+		// 这里使用对象clone，避免在selectByPage中设置的额外参数暴露在url中
+		Page<Article> entitys = service.selectByPage(ObjectUtils.clone(searchParams), null, pageNumber, pageSize);
+		model.addAttribute("page", entitys);
+		model.addAttribute("category", category);
+		// 将搜索条件编码成字符串，用于分页的URL
+		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
+		return getListPage();
 	}
 	
 	/**

@@ -8,7 +8,9 @@
 		<!-- 启用延迟加载 -->
 		<setting name="lazyLoadingEnabled" value="true" />
 		<setting name="aggressiveLazyLoading" value="false" />
-		<!-- 使用驼峰命名法,数据库字段a_column对应domain字段aColumn,免去写resultMap的麻烦 -->
+		<!-- 自动映射使用驼峰命名法,即数据库字段a_column对应domain字段aColum -->
 		<setting name="mapUnderscoreToCamelCase" value="true" />
+		<!-- 给予被嵌套的resultMap以自动映射支持（注意多表join时，后表的同名字段值会覆盖前表的同名字段，可以使用别名来避免） -->
+		<setting name="autoMappingBehavior" value="FULL" />
 	</settings>
 </configuration>
