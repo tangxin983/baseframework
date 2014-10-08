@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
@@ -121,7 +122,8 @@ public abstract class BaseController<T extends BaseEntity> implements ServletCon
 	public String paginationList(int pageNumber, int pageSize, Model model,
 			ServletRequest request) {
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "s_");
-		Page<T> entitys = service.selectByPage(searchParams, null, pageNumber, pageSize);
+		// clone参数，避免在selectByPage中设置的额外参数暴露在url中
+		Page<T> entitys = service.selectByPage(ObjectUtils.clone(searchParams), null, pageNumber, pageSize);
 		model.addAttribute("page", entitys);
 		// 将搜索条件编码成字符串，用于分页的URL
 		model.addAttribute("searchParams", Servlets.encodeParameterStringWithPrefix(searchParams, "s_"));
