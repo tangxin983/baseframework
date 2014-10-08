@@ -6,11 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,28 +18,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.common.controller.BaseController;
-import com.tx.framework.web.modules.cms.entity.Article;
+import com.tx.framework.web.common.config.Constant;
 import com.tx.framework.web.modules.cms.entity.Category;
-import com.tx.framework.web.modules.cms.service.ArticleService;
+import com.tx.framework.web.modules.cms.entity.Link;
 import com.tx.framework.web.modules.cms.service.CategoryService;
+import com.tx.framework.web.modules.cms.service.LinkService;
 
 /**
- * 文章Controller
+ * 链接Controller
  * @author tangx
- * @since 2014-09-22
+ * @since 2014-09-30
  */
 @Controller
-@RequestMapping(value = "cms/article")
-public class ArticleController extends BaseController<Article> {
+@RequestMapping(value = "cms/link")
+public class LinkController extends BaseController<Link> {
 
-	private ArticleService articleService;
+	private LinkService linkService;
 
 	@Autowired
-	public void setArticleService(ArticleService articleService) {
-		super.setService(articleService);
-		this.articleService = articleService;
+	public void setLinkService(LinkService linkService) {
+		super.setService(linkService);
+		this.linkService = linkService;
 	}
 	
 	@Autowired
@@ -48,7 +48,7 @@ public class ArticleController extends BaseController<Article> {
 	// ========== 以下为简单crud示例。注意：一旦修改url，对应生成的视图url也需手动修改 ===========
 	/**
 	 * 跳转列表页（分页）<p>
-	 * url:cms/article
+	 * url:cms/link
 	 */
 	@RequestMapping
 	public String paginationList(@RequestParam(value = "page", defaultValue = "1") int pageNumber,
@@ -73,7 +73,7 @@ public class ArticleController extends BaseController<Article> {
 	
 	/**
 	 * 跳转新增页面<p>
-	 * url:cms/article/create
+	 * url:cms/link/create
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.GET)
 	public String createForm(Model model) {
@@ -82,17 +82,17 @@ public class ArticleController extends BaseController<Article> {
 
 	/**
 	 * 新增操作<p>
-	 * url:cms/article/create
+	 * url:cms/link/create
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public String create(@Valid Article entity, BindingResult result, Model model,
+	public String create(@Valid Link entity, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
 		return super.create(entity, result, model, redirectAttributes);
 	}
 	
 	/**
 	 * 跳转更新页面<p>
-	 * URL:cms/article/update/{id}
+	 * URL:cms/link/update/{id}
 	 */
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET)
 	public String updateForm(@PathVariable("id") String id, Model model) {
@@ -101,17 +101,17 @@ public class ArticleController extends BaseController<Article> {
 	
 	/**
 	 * 更新操作<p>
-	 * URL:cms/article/update
+	 * URL:cms/link/update
 	 */
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute("entity")Article entity, BindingResult result, 
+	public String update(@Valid @ModelAttribute("entity")Link entity, BindingResult result, 
 		Model model, RedirectAttributes redirectAttributes) {
 		return super.update(entity, result, model, redirectAttributes);
 	}
 	
 	/**
 	 * 删除操作<p>
-	 * URL:cms/article/delete/{id}
+	 * URL:cms/link/delete/{id}
 	 */
 	@RequestMapping("delete/{id}")
 	public String delete(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
@@ -120,7 +120,7 @@ public class ArticleController extends BaseController<Article> {
 	
 	/**
 	 * 批量删除操作<p>
-	 * URL:cms/article/delete
+	 * URL:cms/link/delete
 	 */
 	@RequestMapping("delete")
 	public String delete(@RequestParam("ids")List<String> ids,RedirectAttributes redirectAttributes) {
@@ -129,11 +129,11 @@ public class ArticleController extends BaseController<Article> {
 	
 	/**
 	 * 根据id查找实体（json）<p>
-	 * URL:cms/article/get/{id}
+	 * URL:cms/link/get/{id}
 	 */
 	@RequestMapping("get/{id}")
 	@ResponseBody
-	public Article get(@PathVariable("id") String id) {
+	public Link get(@PathVariable("id") String id) {
 		return super.get(id);
 	}
 

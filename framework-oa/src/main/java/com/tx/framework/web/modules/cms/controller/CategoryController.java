@@ -74,6 +74,7 @@ public class CategoryController extends BaseController<Category> {
 				map.put("id", e.getId());
 				map.put("pId", e.getParentId());
 				map.put("name", e.getName());
+				map.put("type", e.getModule());
 				mapList.add(map);
 			}
 		}

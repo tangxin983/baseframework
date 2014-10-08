@@ -35,7 +35,7 @@
 					zNodes.splice(i, 1);
 				}
 				// 添加url
-				zNodes[i].url = "${ctxModule}?s_categoryId=" + zNodes[i].id;
+				zNodes[i].url = "${ctx}/cms/" + zNodes[i].type + "?s_categoryId=" + zNodes[i].id;
 				zNodes[i].target = "_self";
 			}
 			// 初始化树结构
@@ -109,10 +109,6 @@
 									<th><input type="checkbox" id="selectAll"></th>
 									<th>categoryId</th>
 									<th>title</th>
-									<th>link</th>
-									<th>color</th>
-									<th>image</th>
-									<th>keywords</th>
 									<!--
 							<th>操作</th>
 							-->
@@ -130,10 +126,6 @@
 									${entity.category.name}
 									</shiro:lacksPermission></td>
 										<td>${entity.title}</td>
-										<td>${entity.link}</td>
-										<td>${entity.color}</td>
-										<td>${entity.image}</td>
-										<td>${entity.keywords}</td>
 										<!--
 								<td>
 									<a href="${ctxModule}/update/${entity.id}" class="btn btn-default" title="修改">
