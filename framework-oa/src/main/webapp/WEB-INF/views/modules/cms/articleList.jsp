@@ -117,15 +117,20 @@
 							<tbody>
 								<c:forEach items="${page.result}" var="entity">
 									<tr>
-										<td><input type="checkbox" name="ids"
-											value="${entity.id}"></td>
-										<td><shiro:hasPermission name="cms:article:edit">
-												<a href="${ctxModule}/update/${entity.id}" title="修改">
-													${entity.category.name} </a>
-											</shiro:hasPermission> <shiro:lacksPermission name="cms:article:edit">
-									${entity.category.name}
-									</shiro:lacksPermission></td>
-										<td>${entity.title}</td>
+										<td>
+											<input type="checkbox" name="ids" value="${entity.id}">
+										</td>
+										<td>${entity.category.name}</td>
+										<td>
+											<shiro:hasPermission name="cms:article:edit">
+											<a href="${ctxModule}/update/${entity.id}" title="修改">
+												${entity.title}
+											</a>
+											</shiro:hasPermission> 
+											<shiro:lacksPermission name="cms:article:edit">
+											${entity.title}
+											</shiro:lacksPermission>
+										</td>
 										<!--
 								<td>
 									<a href="${ctxModule}/update/${entity.id}" class="btn btn-default" title="修改">

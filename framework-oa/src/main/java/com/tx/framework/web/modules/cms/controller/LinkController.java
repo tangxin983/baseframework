@@ -66,11 +66,6 @@ public class LinkController extends BaseController<Link> {
 		return super.paginationList(pageNumber, pageSize, model, request);
 	}
 	
-	@Override
-	protected String getListPage() {
-		return "modules/cms/publishList";
-	}
-	
 	/**
 	 * 跳转新增页面<p>
 	 * url:cms/link/create

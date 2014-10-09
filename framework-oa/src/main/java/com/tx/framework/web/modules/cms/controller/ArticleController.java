@@ -66,11 +66,6 @@ public class ArticleController extends BaseController<Article> {
 		return super.paginationList(pageNumber, pageSize, model, request);
 	}
 	
-	@Override
-	protected String getListPage() {
-		return "modules/cms/publishList";
-	}
-	
 	/**
 	 * 跳转新增页面<p>
 	 * url:cms/article/create
