@@ -3,6 +3,8 @@ package ${packageName}.${moduleName}.entity${subModuleName};
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 import com.tx.framework.web.common.persistence.entity.BaseEntity;
 
 /**
@@ -16,7 +18,13 @@ public class ${ClassName} extends BaseEntity {
 
 	<#list entityFields as field>
 	@Column(name = "${field.colName}")
-	private ${field.type} ${field.name};
+	<#if field.notNull == '1'>
+	@NotNull
+	</#if>
+	<#if field.type == 'Date'>
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	</#if>
+	private ${field.type} ${field.name}; //${field.colRemark}
 	
 	</#list>
 	

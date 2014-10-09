@@ -13,6 +13,8 @@
 	</script>
 </head>
 <body>
+	<tags:message content="${r"${message}"}" />
+
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<div class="text-muted bootstrap-admin-box-title">${functionName}编辑</div>
@@ -22,10 +24,15 @@
 				<input type="hidden" name="id" value="${r"${entity.id}"}">
 				<#list entityFields as field>
 				<div class="form-group">
-					<label class="col-md-2 control-label">${field.name}：</label>
+					<label class="col-md-2 control-label">${field.colRemark}：</label>
 					<div class="col-md-6">
-						<input name="${field.name}" maxlength="50" class="form-control required"
+						<#if field.type == 'Date'>
+						<input name="${field.name}" readonly="readonly" class="form-control Wdate <#if field.notNull == '1'>required</#if>"
+							value="${r"${entity."}${field.name}}" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:true});"/>
+						<#else>
+						<input name="${field.name}" maxlength="50" class="form-control <#if field.notNull == '1'>required</#if>"
 							value="${r"${entity."}${field.name}}" />
+						</#if>
 					</div>
 				</div>
 				</#list>

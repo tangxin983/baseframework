@@ -25,7 +25,7 @@
 		<form class="navbar-form navbar-left" valid="false">
 			<#list entityFields as field>
 			<div class="form-group">
-				<input name="s_${field.name}" value="${r"${param.s_"}${field.name}}" class="form-control" placeholder="${field.name}">
+				<input name="s_${field.name}" value="${r"${param.s_"}${field.name}}" class="form-control" placeholder="${field.colRemark}">
 			</div>
 			</#list>
 			<button type="submit" class="btn btn-primary">
@@ -56,7 +56,7 @@
 						<tr>
 							<th><input type="checkbox" id="selectAll"></th>
 							<#list entityFields as field>
-							<th>${field.name}</th>
+							<th>${field.colRemark}</th>
 							</#list>
 							<!--
 							<th>操作</th>
@@ -84,7 +84,11 @@
 									</shiro:lacksPermission>
 		    					</td>
 		    					<#else>
-							  	<td>${r"${entity."}${field.name}}</td>
+			    				<#if field.type == 'Date'>
+								<td><fmt:formatDate value="${r"${entity."}${field.name}}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+								<#else>
+								<td>${r"${entity."}${field.name}}</td>
+								</#if>
 								</#if>
 								</#list>
 								<!--

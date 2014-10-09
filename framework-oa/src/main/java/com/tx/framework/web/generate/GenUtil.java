@@ -1,17 +1,16 @@
 package com.tx.framework.web.generate;
 
 import java.io.InputStream;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.google.common.collect.Lists;
@@ -19,10 +18,13 @@ import com.google.common.collect.Maps;
 
 /**
  * 代码生成辅助类
+ * 
  * @author tangx
  *
  */
 public class GenUtil {
+	
+	private static Logger logger = LoggerFactory.getLogger(GenUtil.class);
 
 	private GenUtil() {
 
@@ -35,16 +37,16 @@ public class GenUtil {
 		try {
 			prop.load(in);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
 	/**
-	 * 从数据库中读出表的字段名和字段类型
+	 * 从数据库中读出表的字段名、字段类型、是否允许为空等信息
+	 * 
 	 * @param tableName
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List<Map<String, String>> getRsmd(String tableName) {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName(prop.getProperty("jdbc.driver"));
@@ -52,33 +54,36 @@ public class GenUtil {
 		dataSource.setUsername(prop.getProperty("jdbc.username"));
 		dataSource.setPassword(prop.getProperty("jdbc.password"));
 		final List<Map<String, String>> columns = Lists.newArrayList();
-		JdbcTemplate tpl = new JdbcTemplate(dataSource);
-		tpl.query("select * from " + tableName, new ResultSetExtractor() {
-			@Override
-			public Integer extractData(ResultSet rs) throws SQLException,
-					DataAccessException {
-				ResultSetMetaData rsmd = rs.getMetaData();
-				int columnCount = rsmd.getColumnCount();
-				for (int i = 1; i <= columnCount; i++) {
-					// 由于实体类继承了基础实体 这里忽略id列
-					if(rsmd.getColumnName(i).equals("id")){
-						continue;
-					}
-					Map<String, String> column = Maps.newHashMap();
-					column.put("colName", rsmd.getColumnName(i));
-					column.put("name", colName2FieldName(rsmd.getColumnName(i)));
-					column.put("Name", StringUtils.capitalize(column.get("name")));
-					column.put("type", sqlType2JavaType(rsmd.getColumnTypeName(i)));
-					columns.add(column);
+		try {
+			DatabaseMetaData dbmd = dataSource.getConnection().getMetaData();
+			ResultSet rs = dbmd.getColumns(null, "%", tableName, "%");
+			while (rs.next()) {
+				// 由于实体类继承了基础实体 这里忽略id列
+				if (rs.getString("COLUMN_NAME").equalsIgnoreCase("id")) {
+					continue;
 				}
-				return columnCount;
+				Map<String, String> column = Maps.newHashMap();
+				column.put("colName", rs.getString("COLUMN_NAME"));
+				column.put("name", colName2FieldName(rs.getString("COLUMN_NAME")));
+				column.put("Name", StringUtils.capitalize(column.get("name")));
+				column.put("type", sqlType2JavaType(rs.getString("TYPE_NAME")));
+				column.put("colRemark", StringUtils.defaultString(rs.getString("REMARKS")));
+				if (rs.getString("NULLABLE").equals(String.valueOf(DatabaseMetaData.columnNoNulls))) {
+					column.put("notNull", "1");
+				} else {
+					column.put("notNull", "0");
+				}
+				columns.add(column);
 			}
-		});
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+		}
 		return columns;
 	}
- 
+
 	/**
 	 * 将数据库类型转化为java类型
+	 * 
 	 * @param sqlType
 	 * @return
 	 */
@@ -120,30 +125,31 @@ public class GenUtil {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * 将列名转换为java驼峰式命名
+	 * 
 	 * @param colName
 	 * @return
 	 */
 	private static String colName2FieldName(String colName) {
-		if(StringUtils.isBlank(colName)){
+		if (StringUtils.isBlank(colName)) {
 			return "";
 		}
-        char ch[] = colName.toCharArray();
-        for (int i = 0; i < ch.length; i++) {
-            if (i == 0) {
-                ch[i] = Character.toLowerCase(ch[i]);
-            }
-            if ((i + 1) < ch.length) {
-                if (ch[i] == '_') {
-                    ch[i + 1] = Character.toUpperCase(ch[i + 1]);
-                } else {
-                    ch[i + 1] = Character.toLowerCase(ch[i + 1]);
-                }
-            }
-        }
-        return new String(ch).replace("_", "");
-    }
+		char ch[] = colName.toCharArray();
+		for (int i = 0; i < ch.length; i++) {
+			if (i == 0) {
+				ch[i] = Character.toLowerCase(ch[i]);
+			}
+			if ((i + 1) < ch.length) {
+				if (ch[i] == '_') {
+					ch[i + 1] = Character.toUpperCase(ch[i + 1]);
+				} else {
+					ch[i + 1] = Character.toLowerCase(ch[i + 1]);
+				}
+			}
+		}
+		return new String(ch).replace("_", "");
+	}
 
 }
