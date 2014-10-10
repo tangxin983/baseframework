@@ -6,10 +6,10 @@
 		<artifactId>framework-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>oa</artifactId>
-	<name>oa</name>
+	<artifactId>site</artifactId>
+	<name>site</name>
 	<packaging>war</packaging>
-	<description>oa application</description>
+	<description>site for oa,cms</description>
 
 	<!-- 依赖项定义 -->
 	<dependencies>
