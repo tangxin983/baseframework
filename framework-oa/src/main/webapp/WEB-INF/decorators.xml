@@ -15,4 +15,7 @@
 
 	<!-- 无菜单有js和css的装饰，在页面增加<meta name="decorator" content="none"/>启用 -->	 
 	<decorator name="none" page="decorators/none.jsp"/>
+	
+	<!-- 用于装饰cms内容发布页面，在页面增加<meta name="decorator" content="cmsPublish"/>启用 -->	 
+	<decorator name="cmsPublish" page="decorators/cmsPublish.jsp"/>
 </decorators>

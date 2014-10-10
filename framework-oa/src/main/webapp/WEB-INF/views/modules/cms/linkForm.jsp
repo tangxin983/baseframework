@@ -3,6 +3,7 @@
 <html>
 <head>
 	<title>链接管理</title>
+	<meta name="decorator" content="cmsPublish"/>
 	<!-- 这里引入额外的css和js 
 	<link rel="stylesheet" type="text/css" href="" />
 	<script type="text/javascript" src=""></script>
@@ -21,7 +22,7 @@
 			<form class="form-horizontal" action="${ctxModule}/${action}" method="post">
 				<input type="hidden" name="id" value="${entity.id}">
 				<div class="form-group">
-					<label class="col-md-2 control-label">categoryId：</label>
+					<label class="col-md-2 control-label">归属栏目:</label>
 					<div class="col-md-6">
 						<input name="categoryId" maxlength="50" class="form-control required"
 							value="${entity.categoryId}" />
