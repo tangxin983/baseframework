@@ -10,9 +10,9 @@
 	<description>framework for tx's j2ee project</description>
 	
 	<modules>
-		<module>framework-common</module>
-		<module>framework-web</module>
-		<module>framework-oa</module>
+		<module>common</module>
+		<module>site</module>
+		<module>dining</module>
 	</modules>
 
 	<properties>
